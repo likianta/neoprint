@@ -1,0 +1,5 @@
+/.idea/
+/dist/
+/neoprint/_screenshots/*
+__pycache__/
+!/neoprint/_screenshots/.gitkeep

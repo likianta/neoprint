@@ -1,45 +1,44 @@
 [project]
 name = "neoprint"
-version = "0.1.0a0"
-description = "Python print with source map and varnames."
+version = "0.1.0a6"
+description = "Python print in new era."
 readme = "README.md"
-authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
-packages = [{ include = "neoprint" }]
-requires-python = ">=3.8"
-dynamic = ["dependencies"]
-license = "MIT"
-
-[project.urls]
-homepage = "https://github.com/likianta/neoprint"
-
-[tool.poetry.dependencies]
-python = "^3.8"
-rich = "^14.0.0"
-svg-ultralight = { version = "^0.34.0", python = "^3.9", optional = true }
-
-[tool.poetry.group.dev.dependencies]
-# argsense = "^0.5.8"
-argsense = { version = "^1.0.1b1", source = "likianta" }
-# depsland = { version = "^0.9.0a14", source = "likianta", python = "^3.12" }
-# html2image = "^2.0.4"
-ipython = { version = "^9.0.0", python = "^3.12" }
-lk-utils = { version = "^3.3.0a16", source = "likianta" }
-# nuitka = { version = "^2.5.6", python = "==3.12" }
-svg-ultralight = { version = "^0.34.0", python = "^3.12" }
-
-[tool.poetry.extras]
-ext = ["svg-ultralight"]
-
-[[tool.poetry.source]]
-name = "tsinghua"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
-priority = "primary"
-
-[[tool.poetry.source]]
-name = "likianta"
-url = "http://47.102.108.149:2131/"
-priority = "supplemental"
+requires-python = ">=3.10"
+dependencies = [
+    "loguru>=0.7.3",
+    "objprint>=0.3.0",
+    "rich>=15.0.0",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["neoprint"]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint.isort]
+force-single-line = true
+no-sections = true
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
+
+# [tool.uv]
+# allow-insecure-host = ["pypi.tuna.tsinghua.edu.cn"]
+
+[[tool.uv.index]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+default = true
+
+[[tool.uv.index]]
+name = "likianta"
+url = "http://localhost:2191/"
+explicit = true

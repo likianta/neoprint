@@ -104,7 +104,7 @@ class CallSiteAnalyzer(ast.NodeVisitor):
                         self.args.append(arg.id)
                     elif isinstance(arg, ast.Starred):
                         if isinstance(arg.value, ast.Name):
-                            self.args.append(f'*{arg.value.id}')
+                            self.args.append('*' + arg.value.id)
         self.generic_visit(node)
 
 

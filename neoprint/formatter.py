@@ -19,7 +19,7 @@ class MessageFormatter:
         self,
         args: Tuple[Any, ...],
         frame: Optional[FrameInfo] = None,
-        marks: Optional['ParsedMarks'] = None,
+        marks: Optional[ParsedMarks] = None,
         show_source: bool = True,
         show_funcname: bool = True,
         show_varnames: bool = False,
@@ -39,7 +39,9 @@ class MessageFormatter:
 
         index_part = ''
         if show_index and index_value is not None:
-            index_part = color_text(f'[{index_value}]', self.INDEX_COLOR)
+            index_part = color_text(
+                '[{}]'.format(index_value), self.INDEX_COLOR
+            )
             parts.append(index_part)
 
         body_parts: List[str] = []
@@ -47,7 +49,7 @@ class MessageFormatter:
             varnames = frame.varnames
             if varnames and len(varnames) == len(args):
                 for name, value in zip(varnames, args):
-                    body_parts.append(f'{name} = {value}')
+                    body_parts.append('{} = {}'.format(name, value))
             else:
                 body_parts.extend(str(a) for a in args)
         else:
@@ -60,34 +62,34 @@ class MessageFormatter:
         elif color_level in (4, 6, 8):
             style = AnsiStyle.BOLD
 
-        formatted_body = self.SEPARATOR.join(body_parts)
+        formatted_body = ' '.join(body_parts)
         if color_level > 0:
             formatted_body = color_text(formatted_body, color, style)
 
         if parts:
-            separator = color_text('  >  ', AnsiColor.WHITE)
-            return separator.join(parts) + separator + formatted_body
+            head_sep = color_text('  >  ', AnsiColor.WHITE)
+            return head_sep.join(parts) + head_sep + formatted_body
         else:
             return formatted_body
 
     def format_source(self, frame: FrameInfo) -> str:
-        text = f'{frame.filename}:{frame.lineno}'
+        text = '{}:{}'.format(frame.filename, frame.lineno)
         return color_text(text, self.SOURCE_COLOR, AnsiStyle.BOLD)
 
     def format_funcname(self, frame: FrameInfo) -> str:
         funcname = frame.funcname
         if not funcname.startswith('<'):
-            funcname = f'{funcname}()'
+            funcname = '{}{}'.format(funcname, '()')
         return color_text(funcname, self.FUNC_COLOR)
 
     def format_index(self, value: int, color: str = None) -> str:
-        text = f'[{value}]'
+        text = '[{}]'.format(value)
         return color_text(text, color or self.INDEX_COLOR)
 
     def format_time(self, start: float, end: float = None) -> str:
         start_str = time.strftime('%H:%M:%S', time.localtime(start))
         if end is None:
-            return color_text(f'[{start_str}]', AnsiColor.GREEN)
+            return color_text('[{}]'.format(start_str), AnsiColor.GREEN)
 
         diff = end - start
         color = AnsiColor.GREEN
@@ -98,15 +100,15 @@ class MessageFormatter:
 
         end_str = time.strftime('%H:%M:%S', time.localtime(end))
         if diff < 1.0:
-            diff_str = f'{diff * 1000:.0f}ms'
+            diff_str = '{:.0f}ms'.format(diff * 1000)
         else:
-            diff_str = f'{diff:.1f}s'
+            diff_str = '{:.1f}s'.format(diff)
 
-        return (
-            f'{color_text(f"[{start_str}]", AnsiColor.GREEN)} '
-            f'{color_text("->", AnsiColor.WHITE)} '
-            f'{color_text(f"[{end_str}]", color)} '
-            f'{color_text(f"({diff_str})", color)}'
+        return '{s_start} {arrow} {s_end} {s_diff}'.format(
+            s_start=color_text('[{}]'.format(start_str), AnsiColor.GREEN),
+            arrow=color_text('->', AnsiColor.WHITE),
+            s_end=color_text('[{}]'.format(end_str), color),
+            s_diff=color_text('({})'.format(diff_str), color),
         )
 
     def format_divider(self, pattern: str = '-', width: int = 60) -> str:
@@ -119,7 +121,11 @@ class MessageFormatter:
             lambda m: color_text(m.group(2), m.group(1)),
             text,
         )
-        text = re.sub(r'\[(\w+)\](.+?)\[/(\w+)\]', self._rich_tag_handler, text)
+        text = re.sub(
+            r'\[(\w+)\](.+?)\[/(\w+)\]',
+            self._rich_tag_handler,
+            text,
+        )
         return text
 
     @staticmethod

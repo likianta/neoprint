@@ -48,6 +48,19 @@ class MarkupParser:
         'v': 0,
     }
 
+    _key_to_attr: Dict[str, str] = {
+        'c': 'color',
+        'd': 'divider',
+        'f': 'flush',
+        'i': 'index',
+        'l': 'expand',
+        'p': 'parent',
+        'r': 'rich',
+        's': 'short',
+        't': 'timer',
+        'v': 'verbosity',
+    }
+
     def is_valid_markup(self, text: str) -> bool:
         return bool(self._mark_pattern.match(text))
 
@@ -56,7 +69,8 @@ class MarkupParser:
         for match in self._mark_token_pattern.findall(markup) or []:
             key = match[0]
             value = int(match[1]) if match[1] else self._defaults.get(key, 0)
-            setattr(marks, key, value)
+            attr = self._key_to_attr.get(key, key)
+            setattr(marks, attr, value)
         return marks
 
     def extract_from_args(

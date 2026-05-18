@@ -9,11 +9,11 @@ from .markup import MarkupParser
 
 
 class Counter:
-    _global_index: int = 0
+    _global_index: int = -1
     _scoped_indexes: Dict[str, int] = {}
 
     def reset_all(self) -> None:
-        self._global_index = 0
+        self._global_index = -1
         self._scoped_indexes.clear()
 
     def update_global(self) -> int:
@@ -22,7 +22,7 @@ class Counter:
 
     def update_scoped(self, scope_id: str) -> int:
         if scope_id not in self._scoped_indexes:
-            self._scoped_indexes[scope_id] = 0
+            self._scoped_indexes[scope_id] = -1
         self._scoped_indexes[scope_id] += 1
         return self._scoped_indexes[scope_id]
 
@@ -66,17 +66,27 @@ def show(*args: Any, **kwargs: Any) -> None:
 
     index_value = None
     show_index = False
+    reset_only = False
     if marks.index is not None:
         show_index = True
         if marks.index == 0:
             counter.reset_all()
-            return
+            index_value = None
+            show_index = False
+            reset_only = True
         elif marks.index == 1:
-            index_value = counter.update_scoped(frame.id)
+            index_value = counter.update_scoped(frame.funcname)
         elif marks.index == 2:
             index_value = counter.update_global()
         else:
             index_value = counter.update_global()
+
+    if marks.divider is not None:
+        from .console import get_console_width
+
+        width = get_console_width() - 4
+        divider = formatter.format_divider('-', width)
+        console.print(divider)
 
     message = formatter.format_message(
         args=raw_args,
@@ -90,15 +100,11 @@ def show(*args: Any, **kwargs: Any) -> None:
         index_value=index_value,
     )
 
-    if marks.divider is not None:
-        from .console import get_console_width
-
-        width = get_console_width() - 4
-        divider = formatter.format_divider('-', width)
-        console.print(divider)
-
     if marks.rich is not None:
         message = formatter.apply_rich_markup(message)
+
+    if not raw_args:
+        return
 
     console.print(message)
 

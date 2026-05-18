@@ -3,7 +3,7 @@ import sys
 
 
 ANSI_ESCAPE = '\033['
-ANSI_RESET = f'{ANSI_ESCAPE}0m'
+ANSI_RESET = ANSI_ESCAPE + '0m'
 
 
 class AnsiColor:
@@ -50,11 +50,11 @@ LEVEL_COLORS = {
 
 def _apply_style(color: str, style: str = '') -> str:
     style_code = style + ';' if style else ''
-    return f'{ANSI_ESCAPE}{style_code}{color}m'
+    return ANSI_ESCAPE + style_code + color + 'm'
 
 
 def color_text(text: str, color: str, style: str = '') -> str:
-    return f'{_apply_style(color, style)}{text}{ANSI_RESET}'
+    return _apply_style(color, style) + text + ANSI_RESET
 
 
 def strip_ansi(text: str) -> str:
@@ -96,5 +96,5 @@ def print(
 
 
 def clear_line() -> None:
-    sys.stdout.write(f'\r{ANSI_ESCAPE}K{ANSI_RESET}')
+    sys.stdout.write('\r' + ANSI_ESCAPE + 'K' + ANSI_RESET)
     sys.stdout.flush()

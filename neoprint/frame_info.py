@@ -15,7 +15,7 @@ class FrameInfo:
 
     @property
     def id(self) -> str:
-        return f'{self.filepath}:{self.lineno}'
+        return self.filepath + ':' + str(self.lineno)
 
     @property
     def filename(self) -> str:
@@ -60,7 +60,7 @@ def from_frame(frame) -> FrameInfo:
     code = frame.f_code
     filepath = frame.f_globals.get('__file__', code.co_filename)
     if filepath.startswith('<') and filepath.endswith('>'):
-        filepath = f'<{filepath[1:-1]}@{id(frame)}>'
+        filepath = '<' + filepath[1:-1] + '@' + str(id(frame)) + '>'
     else:
         filepath = os.path.abspath(filepath)
     funcname = code.co_name

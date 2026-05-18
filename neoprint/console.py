@@ -1,36 +1,100 @@
-import rich
+import os
 import sys
-from rich.traceback import Traceback
-from loguru import logger as _loguru_logger
-
-# remove the pre-configured default handler
-_loguru_logger.remove()
-_loguru_logger.add(
-    sys.stdout,
-    format=(
-        '<magenta>{name}</magenta>'
-        ':<cyan>{function}</cyan>'
-        ':<green>{line}</green>'
-        ' <light-black>|</light-black>'
-        ' <level>{message}</level>'
-    ),
-)
-
-_rich_console = rich.get_console()
 
 
-def exception(e: Exception, show_locals: bool = False) -> None:
-    _rich_console.print(
-        Traceback.from_exception(
-            type(e), e, e.__traceback__, show_locals=show_locals
-        )
-    )
+ANSI_ESCAPE = '\033['
+ANSI_RESET = f'{ANSI_ESCAPE}0m'
 
 
-critical = exception  # alias
-debug = _loguru_logger.debug
-error = _loguru_logger.error
-info = _loguru_logger.info
-print = info  # alias
-show = info  # alias
-warning = _loguru_logger.warning
+class AnsiColor:
+    BLACK = '30'
+    RED = '31'
+    GREEN = '32'
+    YELLOW = '33'
+    BLUE = '34'
+    MAGENTA = '35'
+    CYAN = '36'
+    WHITE = '37'
+    DEFAULT = '39'
+
+    BRIGHT_BLACK = '90'
+    BRIGHT_RED = '91'
+    BRIGHT_GREEN = '92'
+    BRIGHT_YELLOW = '93'
+    BRIGHT_BLUE = '94'
+    BRIGHT_MAGENTA = '95'
+    BRIGHT_CYAN = '96'
+    BRIGHT_WHITE = '97'
+
+
+class AnsiStyle:
+    RESET = '0'
+    BOLD = '1'
+    DIM = '2'
+    ITALIC = '3'
+    UNDERLINE = '4'
+
+
+LEVEL_COLORS = {
+    0: AnsiColor.DEFAULT,
+    1: AnsiColor.MAGENTA,
+    2: AnsiColor.BLUE,
+    3: AnsiColor.GREEN,
+    4: AnsiColor.BRIGHT_GREEN,
+    5: AnsiColor.YELLOW,
+    6: AnsiColor.BRIGHT_YELLOW,
+    7: AnsiColor.RED,
+    8: AnsiColor.BRIGHT_RED,
+}
+
+
+def _apply_style(color: str, style: str = '') -> str:
+    style_code = style + ';' if style else ''
+    return f'{ANSI_ESCAPE}{style_code}{color}m'
+
+
+def color_text(text: str, color: str, style: str = '') -> str:
+    return f'{_apply_style(color, style)}{text}{ANSI_RESET}'
+
+
+def strip_ansi(text: str) -> str:
+    import re
+
+    pattern = r'\033\[[0-9;]*m'
+    return re.sub(pattern, '', text)
+
+
+def get_console_width() -> int:
+    if hasattr(sys.stdout, 'columns') and sys.stdout.columns:
+        return sys.stdout.columns
+    if hasattr(os, 'get_terminal_size'):
+        try:
+            size = os.get_terminal_size()
+            if size.columns > 0:
+                return size.columns
+        except OSError:
+            pass
+    fallback = os.environ.get('COLUMNS', '')
+    if fallback.isdigit():
+        return int(fallback)
+    return 80
+
+
+CONSOLE_WIDTH = get_console_width()
+
+
+def print(
+    *args: object, sep: str = ' ', end: str = '\n', flush: bool = False
+) -> None:
+    output = sep.join(str(arg) for arg in args) + end
+    try:
+        sys.stdout.write(output)
+        if flush:
+            sys.stdout.flush()
+    except IOError:
+        pass
+
+
+def clear_line() -> None:
+    sys.stdout.write(f'\r{ANSI_ESCAPE}K{ANSI_RESET}')
+    sys.stdout.flush()

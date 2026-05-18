@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Tuple
 from .console import AnsiColor, AnsiStyle, color_text
 from .console import LEVEL_COLORS as COLOR_MAP
 from .frame_info import FrameInfo
-from .markup import ParsedMarks
+from .markup import MarkupParser, ParsedMarks
 
 
 class MessageFormatter:
@@ -14,6 +14,11 @@ class MessageFormatter:
     FUNC_COLOR = AnsiColor.GREEN
     INDEX_COLOR = AnsiColor.WHITE
     DIM_COLOR = AnsiColor.WHITE
+
+    def _format_value(self, value: Any) -> str:
+        if isinstance(value, str):
+            return '"{}"'.format(value)
+        return str(value)
 
     def format_message(
         self,
@@ -49,11 +54,13 @@ class MessageFormatter:
             varnames = frame.varnames
             if varnames and len(varnames) == len(args):
                 for name, value in zip(varnames, args):
-                    body_parts.append('{} = {}'.format(name, value))
+                    body_parts.append('{} = {}'.format(
+                        name, self._format_value(value)
+                    ))
             else:
-                body_parts.extend(str(a) for a in args)
+                body_parts.extend(self._format_value(a) for a in args)
         else:
-            body_parts = [str(a) for a in args]
+            body_parts = [self._format_value(a) for a in args]
 
         color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
         style = AnsiStyle.RESET
@@ -62,7 +69,8 @@ class MessageFormatter:
         elif color_level in (4, 6, 8):
             style = AnsiStyle.BOLD
 
-        formatted_body = ' '.join(body_parts)
+        separator = color_text('; ', AnsiColor.BRIGHT_BLACK)
+        formatted_body = separator.join(body_parts)
         if color_level > 0:
             formatted_body = color_text(formatted_body, color, style)
 
@@ -135,6 +143,77 @@ class MessageFormatter:
         closing = m.group(3)
         style = AnsiStyle.BOLD if closing == 'b' else AnsiStyle.RESET
         return color_text(content, color, style)
+
+    def get_body_string(
+        self,
+        *args: Any,
+        markup: str = '',
+        _caller_filepath: str = None,
+        _caller_lineno: int = None,
+    ) -> str:
+        from inspect import currentframe
+        from .sourcemap import get_varnames_from_call
+
+        parser = MarkupParser()
+        marks = parser.parse(markup) if markup else ParsedMarks()
+
+        if _caller_filepath and _caller_lineno:
+            filepath = _caller_filepath
+            lineno = _caller_lineno
+        else:
+            frame = currentframe()
+            if frame is None:
+                return ' '.join(str(a) for a in args)
+
+            caller_frame = frame.f_back
+            if caller_frame is None:
+                return ' '.join(str(a) for a in args)
+
+            filepath = caller_frame.f_code.co_filename
+            lineno = caller_frame.f_lineno
+
+        varnames = get_varnames_from_call(filepath, lineno, 'np.show')
+        if not varnames:
+            varnames = get_varnames_from_call(
+                filepath, lineno, 'np.get_body_string'
+            )
+        if not varnames:
+            varnames = get_varnames_from_call(filepath, lineno, 'show')
+        if not varnames:
+            varnames = get_varnames_from_call(
+                filepath, lineno, 'get_body_string'
+            )
+
+        color_level = 0
+        if marks.verbosity is not None:
+            color_level = marks.verbosity
+        elif marks.color is not None:
+            color_level = marks.color
+
+        body_parts: List[str] = []
+        if marks.verbosity is not None and varnames:
+            if len(varnames) == len(args):
+                for name, value in zip(varnames, args):
+                    body_parts.append('{} = {}'.format(
+                        name, self._format_value(value)
+                    ))
+            else:
+                body_parts.extend(self._format_value(a) for a in args)
+        else:
+            body_parts = [self._format_value(a) for a in args]
+
+        color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
+        style = AnsiStyle.RESET
+        if color_level in (3, 5, 7):
+            style = AnsiStyle.DIM
+        elif color_level in (4, 6, 8):
+            style = AnsiStyle.BOLD
+
+        separator = color_text('; ', AnsiColor.BRIGHT_BLACK)
+        result = separator.join(body_parts)
+        if color_level > 0:
+            result = color_text(result, color, style)
+        return result
 
 
 formatter = MessageFormatter()

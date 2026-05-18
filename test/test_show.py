@@ -214,7 +214,8 @@ class TestShowFunction:
     def test_show_multiple_args_space_separated(self, capsys):
         np.show('a', 'b', 'c')
         captured = capsys.readouterr()
-        assert 'a b c' in captured.out
+        stripped = np.strip_ansi(captured.out)
+        assert '"a"; "b"; "c"' in stripped
 
     def test_show_with_markup_first(self, capsys):
         np.show(':v4', 'success message')

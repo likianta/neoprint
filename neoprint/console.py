@@ -36,7 +36,7 @@ class AnsiStyle:
 
 
 LEVEL_COLORS = {
-    0: AnsiColor.DEFAULT,
+    0: AnsiColor.BRIGHT_BLACK,
     1: AnsiColor.MAGENTA,
     2: AnsiColor.BLUE,
     3: AnsiColor.GREEN,

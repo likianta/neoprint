@@ -26,3 +26,17 @@ __all__ = [
 ]
 
 __version__ = '0.1.0a8'
+
+
+def get_body_string(*args, markup=''):
+    import inspect
+
+    frame = inspect.currentframe()
+    caller_frame = frame.f_back
+    caller_filepath = caller_frame.f_code.co_filename
+    caller_lineno = caller_frame.f_lineno
+
+    return formatter.get_body_string(
+        *args, markup=markup, _caller_filepath=caller_filepath,
+        _caller_lineno=caller_lineno
+    )

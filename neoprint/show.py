@@ -88,13 +88,21 @@ def show(*args: Any, **kwargs: Any) -> None:
         divider = formatter.format_divider('-', width)
         console.print(divider)
 
+    if marks.verbosity is not None and raw_args:
+        from .sourcemap import get_varnames_from_call
+
+        varnames = get_varnames_from_call(frame.filepath, frame.lineno, 'np.show')
+        if not varnames:
+            varnames = get_varnames_from_call(frame.filepath, frame.lineno, 'show')
+        frame.varnames = varnames if varnames else ()
+
     message = formatter.format_message(
         args=raw_args,
         frame=frame,
         marks=marks,
         show_source=config.show_source,
         show_funcname=config.show_funcname,
-        show_varnames=config.show_varnames,
+        show_varnames=config.show_varnames or (marks.verbosity is not None),
         show_index=show_index,
         color_level=color_level if color_level is not None else 0,
         index_value=index_value,

@@ -80,13 +80,22 @@ class MessageFormatter:
         body_parts: List[str] = []
         if show_varnames and frame:
             varnames = frame.varnames
-            if varnames and len(varnames) == len(args):
-                for name, value in zip(varnames, args):
+            varname_count = len(varnames)
+            if varname_count > 0 and varname_count < len(args):
+                prefix_args = args[:-varname_count]
+                suffix_args = args[-varname_count:]
+                body_parts = [str(a) for a in prefix_args]
+                for arg, varname in zip(suffix_args, varnames):
                     body_parts.append('{} = {}'.format(
-                        name, self._format_value(value)
+                        varname, self._format_value(arg)
+                    ))
+            elif varname_count > 0:
+                for arg, varname in zip(args, varnames):
+                    body_parts.append('{} = {}'.format(
+                        varname, self._format_value(arg)
                     ))
             else:
-                body_parts.extend(self._format_value(a) for a in args)
+                body_parts = [self._format_value(a) for a in args]
         else:
             body_parts = [self._format_value(a) for a in args]
 
@@ -248,7 +257,12 @@ class MessageFormatter:
         *args: Any,
         markup: str = '',
         color_code_scheme: str = 'none',
+        _caller_filepath: str = None,
+        _caller_lineno: int = None,
     ) -> str:
+        from inspect import currentframe
+        from .sourcemap import get_varnames_from_call
+
         parser = MarkupParser()
         marks = parser.parse(markup) if markup else ParsedMarks()
 
@@ -267,10 +281,45 @@ class MessageFormatter:
         else:
             color_func = color_text
 
-        if color_level > 0:
-            body_parts = [color_func(str(a), color) for a in args]
+        if _caller_filepath and _caller_lineno:
+            filepath = _caller_filepath
+            lineno = _caller_lineno
+        else:
+            frame = currentframe()
+            if frame is not None:
+                caller_frame = frame.f_back
+                if caller_frame is not None:
+                    filepath = caller_frame.f_code.co_filename
+                    lineno = caller_frame.f_lineno
+                else:
+                    filepath = None
+                    lineno = None
+            else:
+                filepath = None
+                lineno = None
+
+        body_parts: List[str] = []
+        if marks.verbosity is not None and filepath and lineno:
+            varnames = get_varnames_from_call(filepath, lineno, 'np.show')
+            if not varnames:
+                varnames = get_varnames_from_call(filepath, lineno, 'np.format')
+            if not varnames:
+                varnames = get_varnames_from_call(filepath, lineno, 'show')
+            if not varnames:
+                varnames = get_varnames_from_call(filepath, lineno, 'format')
+
+            if varnames and len(varnames) == len(args):
+                for name, value in zip(varnames, args):
+                    body_parts.append('{} = {}'.format(
+                        name, self._format_value(value)
+                    ))
+            else:
+                body_parts = [self._format_value(a) for a in args]
         else:
             body_parts = [str(a) for a in args]
+
+        if color_level > 0:
+            body_parts = [color_func(part, color) for part in body_parts]
 
         separator = color_func('; ', AnsiColor.BRIGHT_BLACK)
         result = separator.join(body_parts)

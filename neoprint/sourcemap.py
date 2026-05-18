@@ -151,10 +151,6 @@ class VarnamesAnalyzer(ast.NodeVisitor):
                 for arg in node.args:
                     if isinstance(arg, ast.Name):
                         self.varnames.append(arg.id)
-                    elif isinstance(arg, ast.Constant):
-                        self.varnames.append(repr(arg.value))
-                    else:
-                        self.varnames.append(None)
         self.generic_visit(node)
 
 

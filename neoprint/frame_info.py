@@ -12,6 +12,7 @@ class FrameInfo:
     lineno: int
     funcname: str
     code_context: Optional[str] = None
+    _varnames: Optional[Tuple[str, ...]] = None
 
     @property
     def id(self) -> str:
@@ -37,10 +38,16 @@ class FrameInfo:
 
     @property
     def varnames(self) -> Tuple[str, ...]:
+        if self._varnames is not None:
+            return self._varnames
         try:
             return get_varnames(self.filepath, self.lineno)
         except Exception:
             return ()
+
+    @varnames.setter
+    def varnames(self, value: Tuple[str, ...]) -> None:
+        self._varnames = value
 
     def get_parent(self, level: int = 1) -> Optional['FrameInfo']:
         try:

@@ -1,17 +1,18 @@
 [project]
 name = "neoprint"
-version = "0.1.0a6"
-description = "Python print in new era."
+version = "0.1.0a8"
+description = "The artish print for modern consoles."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = [
     "loguru>=0.7.3",
     "objprint>=0.3.0",
-    "rich>=15.0.0",
+    "rich>=14.0.0",
+    # "rich>=15.0.0",
 ]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.29.0"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
@@ -29,9 +30,6 @@ no-sections = true
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401", "F403"]
-
-# [tool.uv]
-# allow-insecure-host = ["pypi.tuna.tsinghua.edu.cn"]
 
 [[tool.uv.index]]
 name = "tsinghua"

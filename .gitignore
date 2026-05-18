@@ -1,5 +1,4 @@
 /.idea/
 /dist/
-/neoprint/_screenshots/*
+/human/
 __pycache__/
-!/neoprint/_screenshots/.gitkeep

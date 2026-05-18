@@ -17,6 +17,9 @@ class Config:
             cls._instance = super().__new__(cls)
         return cls._instance
 
+    def __call__(self, **kwargs: Any) -> None:
+        self.update(**kwargs)
+
     def update(self, **kwargs: Any) -> None:
         for key, value in kwargs.items():
             if hasattr(self, key):

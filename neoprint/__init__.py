@@ -13,6 +13,7 @@ from .show import show
 
 __all__ = [
     'show',
+    'format',
     'config',
     'formatter',
     'color_text',
@@ -24,6 +25,10 @@ __all__ = [
     'MarkupParser',
     'ParsedMarks',
 ]
+
+
+def format(*args, markup: str = '', color_code_scheme: str = 'none') -> str:
+    return formatter.format(*args, markup=markup, color_code_scheme=color_code_scheme)
 
 __version__ = '0.1.0a8'
 

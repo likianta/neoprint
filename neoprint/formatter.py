@@ -15,10 +15,38 @@ class MessageFormatter:
     INDEX_COLOR = AnsiColor.WHITE
     DIM_COLOR = AnsiColor.WHITE
 
+    _ansi_to_bbcode = {
+        AnsiColor.BLACK: 'black',
+        AnsiColor.RED: 'red',
+        AnsiColor.GREEN: 'green',
+        AnsiColor.YELLOW: 'yellow',
+        AnsiColor.BLUE: 'blue',
+        AnsiColor.MAGENTA: 'magenta',
+        AnsiColor.CYAN: 'cyan',
+        AnsiColor.WHITE: 'white',
+        AnsiColor.BRIGHT_BLACK: 'bright_black',
+        AnsiColor.BRIGHT_RED: 'red',
+        AnsiColor.BRIGHT_GREEN: 'green',
+        AnsiColor.BRIGHT_YELLOW: 'yellow',
+        AnsiColor.BRIGHT_BLUE: 'blue',
+        AnsiColor.BRIGHT_MAGENTA: 'magenta',
+        AnsiColor.BRIGHT_CYAN: 'cyan',
+        AnsiColor.BRIGHT_WHITE: 'white',
+    }
+
     def _format_value(self, value: Any) -> str:
         if isinstance(value, str):
             return '"{}"'.format(value)
         return str(value)
+
+    def _color_text_none(self, text: str, color: str = None, style: str = '') -> str:
+        return text
+
+    def _color_text_bbcode(self, text: str, color: str = None, style: str = '') -> str:
+        if color is None:
+            return text
+        bbcode_color = self._ansi_to_bbcode.get(color, 'white')
+        return f'[{bbcode_color}]{text}[/]'
 
     def format_message(
         self,
@@ -213,6 +241,40 @@ class MessageFormatter:
         result = separator.join(body_parts)
         if color_level > 0:
             result = color_text(result, color, style)
+        return result
+
+    def format(
+        self,
+        *args: Any,
+        markup: str = '',
+        color_code_scheme: str = 'none',
+    ) -> str:
+        parser = MarkupParser()
+        marks = parser.parse(markup) if markup else ParsedMarks()
+
+        color_level = 0
+        if marks.verbosity is not None:
+            color_level = marks.verbosity
+        elif marks.color is not None:
+            color_level = marks.color
+
+        color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
+
+        if color_code_scheme == 'none':
+            color_func = self._color_text_none
+        elif color_code_scheme == 'bbcode':
+            color_func = self._color_text_bbcode
+        else:
+            color_func = color_text
+
+        if color_level > 0:
+            body_parts = [color_func(str(a), color) for a in args]
+        else:
+            body_parts = [str(a) for a in args]
+
+        separator = color_func('; ', AnsiColor.BRIGHT_BLACK)
+        result = separator.join(body_parts)
+
         return result
 
 

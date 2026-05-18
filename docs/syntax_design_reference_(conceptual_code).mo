@@ -23,29 +23,30 @@ Show varnames:
 
 Index:
     [
-        np.show('aaa', index=1)
-        np.show('aaa', ':i')
-        #   level   function
-        #   0       do not show index
-        #   1       crease index at each call
-        #   2       inherit last index scope
-        #   3       global index
-        np.show('aaa', ':i0')
-        np.show('aaa', ':i1')
-        np.show('aaa', ':i2')
-        np.show('aaa', ':i3')
+        # level function
+        # ----- ---------------------------
+        # :i0   reset index
+        # :i1   line-level index
+        # :i2   scope-level index (default)
+        # :i3   global-level index
 
-        # scoped index
-        npi = np.index()
-        for i in range(10):
-            if ...:
-                npi.show('aaa')
-            else:
-                npi.show('bbb')
+        # foo.py
+        np.show('first', ':i')
+        np.show('second', ':i')
+        np.show('third', ':i')
 
-        with np.indexing():
-            np.show('aaa')
-            np.show('bbb')
+        def bar():
+            np.show('first', ':i')
+            np.show('second', ':i')
+            np.show('third', ':i')
+
+        with np.scope():
+            np.show('first', ':i')
+            np.show('second', ':i')
+            np.show('third', ':i')
+
+        for _ in range(10):
+            np.show('increase index at each call', ':i1')
     ]
 
 Progress:

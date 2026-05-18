@@ -51,8 +51,8 @@ class MessageFormatter:
     def format_message(
         self,
         args: Tuple[Any, ...],
-        frame: Optional[FrameInfo] = None,
-        marks: Optional[ParsedMarks] = None,
+        frame: Optional[FrameInfo],
+        marks: ParsedMarks,
         show_source: bool = True,
         show_funcname: bool = True,
         show_varnames: bool = False,
@@ -70,14 +70,8 @@ class MessageFormatter:
             func_part = self.format_funcname(frame)
             parts.append(func_part)
 
-        index_part = ''
-        if show_index and index_value is not None:
-            index_part = color_text(
-                '[{}]'.format(index_value), self.INDEX_COLOR
-            )
-            parts.append(index_part)
-
         body_parts: List[str] = []
+
         if show_varnames and frame:
             varnames = frame.varnames
             varname_count = len(varnames)
@@ -98,6 +92,12 @@ class MessageFormatter:
                 body_parts = [self._format_value(a) for a in args]
         else:
             body_parts = [self._format_value(a) for a in args]
+
+        if show_index and index_value is not None:
+            index_part = color_text(
+                '[{}]'.format(index_value), self.INDEX_COLOR
+            )
+            body_parts.insert(0, index_part)
 
         color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
         style = AnsiStyle.RESET
@@ -259,6 +259,8 @@ class MessageFormatter:
         color_code_scheme: str = 'none',
         _caller_filepath: str = None,
         _caller_lineno: int = None,
+        _index_value: int = None,
+        _index: int = None,
     ) -> str:
         from inspect import currentframe
         from .sourcemap import get_varnames_from_call
@@ -324,7 +326,11 @@ class MessageFormatter:
         separator = color_func('; ', AnsiColor.BRIGHT_BLACK)
         result = separator.join(body_parts)
 
-        return result
+        index_str = ''
+        if _index is not None and _index_value is not None:
+            index_str = color_func('[{}] '.format(_index_value), AnsiColor.WHITE)
+
+        return index_str + result
 
 
 formatter = MessageFormatter()

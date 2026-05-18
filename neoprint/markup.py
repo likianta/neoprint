@@ -39,7 +39,7 @@ class MarkupParser:
         'c': 0,
         'd': 0,
         'f': 0,
-        'i': 1,
+        'i': 2,
         'l': 0,
         'p': 1,
         'r': 0,

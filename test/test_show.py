@@ -44,7 +44,7 @@ class TestMarkupParser:
 
     def test_parse_index(self):
         marks = self.parser.parse(':i')
-        assert marks.index == 1
+        assert marks.index == 2
 
         marks = self.parser.parse(':i0')
         assert marks.index == 0
@@ -54,6 +54,9 @@ class TestMarkupParser:
 
         marks = self.parser.parse(':i2')
         assert marks.index == 2
+
+        marks = self.parser.parse(':i3')
+        assert marks.index == 3
 
     def test_parse_parent(self):
         marks = self.parser.parse(':p')
@@ -139,7 +142,7 @@ class TestMarkupParser:
     def test_parse_combined(self):
         marks = self.parser.parse(':v4i')
         assert marks.verbosity == 4
-        assert marks.index == 1
+        assert marks.index == 2
 
     def test_extract_from_args_no_markup(self):
         args = ('hello', 'world')

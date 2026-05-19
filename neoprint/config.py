@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 
 class Config:
     show_source: bool = True
-    show_funcname: bool = True
+    show_funcname: bool = False
     show_varnames: bool = False
     show_index: bool = False
     index_mode: int = 1

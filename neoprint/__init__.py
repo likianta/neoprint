@@ -87,6 +87,78 @@ def capture_output(color_code_scheme: str = 'none'):
     old_stdout = sys.stdout
     old_print = console.print
     output_list: list[str] = []
+    
+    # ANSI 颜色到 bbcode 的映射
+    _ansi_color_to_bbcode = {
+        '30': 'black',
+        '31': 'red',
+        '32': 'green',
+        '33': 'yellow',
+        '34': 'blue',
+        '35': 'magenta',
+        '36': 'cyan',
+        '37': 'white',
+        '90': 'bright_black',
+        '91': 'red',
+        '92': 'green',
+        '93': 'yellow',
+        '94': 'blue',
+        '95': 'magenta',
+        '96': 'cyan',
+        '97': 'white',
+    }
+
+    def ansi_to_bbcode(text):
+        """将 ANSI 转义序列转换为 bbcode 格式"""
+        import re
+        result = []
+        i = 0
+        n = len(text)
+        open_tags = []
+        
+        while i < n:
+            if text.startswith('\033[', i) or text.startswith('\x1b[', i):
+                i += 2
+                code_end = text.find('m', i)
+                if code_end == -1:
+                    result.append(text[i:])
+                    break
+                
+                codes = text[i:code_end].split(';')
+                i = code_end + 1
+                
+                # 处理重置代码
+                if any(code in ('0', '') for code in codes):
+                    # 关闭所有标签
+                    for _ in range(len(open_tags)):
+                        result.append('[/]')
+                    open_tags.clear()
+                    continue
+                
+                # 解析样式和颜色
+                style = ''
+                color = None
+                for code in codes:
+                    if code == '1':
+                        style = ''  # bbcode 没有专门的 bold 标记，默认不添加
+                    elif code == '2':
+                        style = 'dim '
+                    elif code in _ansi_color_to_bbcode:
+                        color = _ansi_color_to_bbcode[code]
+                
+                if color:
+                    tag = f'[{style}{color}]'
+                    open_tags.append(tag)
+                    result.append(tag)
+            else:
+                result.append(text[i])
+                i += 1
+        
+        # 确保关闭所有标签
+        for _ in range(len(open_tags)):
+            result.append('[/]')
+        
+        return ''.join(result)
 
     class CapturedOutput:
         def __init__(self):
@@ -102,6 +174,13 @@ def capture_output(color_code_scheme: str = 'none'):
                     if self._color_code_scheme == 'none':
                         from .console import strip_ansi
                         line = strip_ansi(line)
+                    elif self._color_code_scheme == 'ascii':
+                        # 将 ANSI 转义序列转义为 Python 字符串表示（使用十六进制 \x1b 格式）
+                        line = line.replace('\033', '\\x1b')
+                        line = line.replace('\x1b', '\\x1b')
+                    elif self._color_code_scheme == 'bbcode':
+                        # 将 ANSI 转换为 bbcode
+                        line = ansi_to_bbcode(line)
                     processed.append(line)
                 self._processed_output = processed
             return self._processed_output

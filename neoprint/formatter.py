@@ -4,16 +4,23 @@ from typing import Any, List, Optional, Tuple
 
 from .console import AnsiColor, AnsiStyle, color_text
 from .console import LEVEL_COLORS as COLOR_MAP
+from .config import config
 from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
 
 
 class MessageFormatter:
-    SEPARATOR = '  >  '
     SOURCE_COLOR = AnsiColor.BLUE
     FUNC_COLOR = AnsiColor.GREEN
     INDEX_COLOR = AnsiColor.WHITE
     DIM_COLOR = AnsiColor.WHITE
+
+    @staticmethod
+    def _pad_lineno(lineno: int) -> str:
+        width = 3
+        while width < len(str(lineno)):
+            width += 3
+        return '{:<{}}'.format(lineno, width)
 
     _ansi_to_bbcode = {
         AnsiColor.BLACK: 'black',
@@ -46,7 +53,8 @@ class MessageFormatter:
         if color is None:
             return text
         bbcode_color = self._ansi_to_bbcode.get(color, 'white')
-        return f'[{bbcode_color}]{text}[/]'
+        prefix = 'dim ' if style == AnsiStyle.DIM else ''
+        return f'[{prefix}{bbcode_color}]{text}[/]'
 
     def format_message(
         self,
@@ -106,20 +114,31 @@ class MessageFormatter:
         elif color_level in (4, 6, 8):
             style = AnsiStyle.BOLD
 
-        separator = color_text('; ', AnsiColor.BRIGHT_BLACK)
-        formatted_body = separator.join(body_parts)
+        separator = color_text(';', AnsiColor.BRIGHT_BLACK)
+        formatted_body_parts = []
+        for i, part in enumerate(body_parts):
+            if i == 0:
+                formatted_body_parts.append(part)
+            else:
+                formatted_body_parts.append(separator + ' ' + part)
+
+        formatted_body = ''.join(formatted_body_parts)
+
         if color_level > 0:
             formatted_body = color_text(formatted_body, color, style)
 
         if parts:
-            head_sep = color_text('  >  ', AnsiColor.WHITE)
-            return head_sep.join(parts) + head_sep + formatted_body
+            head_sep_2 = ' | '
+            return ''.join(parts) + head_sep_2 + formatted_body
         else:
             return formatted_body
 
     def format_source(self, frame: FrameInfo) -> str:
-        text = '{}:{}'.format(frame.filename, frame.lineno)
-        return color_text(text, self.SOURCE_COLOR, AnsiStyle.BOLD)
+        filename_part = color_text(frame.filename, self.SOURCE_COLOR, AnsiStyle.BOLD)
+        head_sep_1 = color_text(':', self.SOURCE_COLOR, AnsiStyle.DIM)
+        lineno_padded = self._pad_lineno(frame.lineno)
+        lineno_part = color_text(lineno_padded, self.SOURCE_COLOR, AnsiStyle.DIM)
+        return filename_part + head_sep_1 + lineno_part
 
     def format_funcname(self, frame: FrameInfo) -> str:
         funcname = frame.funcname
@@ -260,6 +279,7 @@ class MessageFormatter:
     ) -> str:
         from inspect import currentframe
         from .sourcemap import get_varnames_from_call
+        from .frame_info import FrameInfo
 
         parser = MarkupParser()
         marks = parser.parse(markup) if markup else ParsedMarks()
@@ -275,9 +295,11 @@ class MessageFormatter:
         else:
             color_func = color_text
 
+        frame_info = None
         if _caller_filepath and _caller_lineno:
             filepath = _caller_filepath
             lineno = _caller_lineno
+            frame_info = FrameInfo(filepath, lineno, '<module>')
         else:
             frame = currentframe()
             if frame is not None:
@@ -285,6 +307,8 @@ class MessageFormatter:
                 if caller_frame is not None:
                     filepath = caller_frame.f_code.co_filename
                     lineno = caller_frame.f_lineno
+                    funcname = caller_frame.f_code.co_name
+                    frame_info = FrameInfo(filepath, lineno, funcname)
                 else:
                     filepath = None
                     lineno = None
@@ -315,14 +339,44 @@ class MessageFormatter:
         if color_level > 0:
             body_parts = [color_func(part, color) for part in body_parts]
 
-        separator = color_func('; ', AnsiColor.BRIGHT_BLACK)
-        result = separator.join(body_parts)
+        # 构建新的分隔符格式
+        formatted_body_parts = []
+        for i, part in enumerate(body_parts):
+            if i == 0:
+                formatted_body_parts.append(part)
+            else:
+                separator = color_func(';', AnsiColor.BRIGHT_BLACK)
+                formatted_body_parts.append(separator + ' ' + part)
+        formatted_body = ''.join(formatted_body_parts)
 
-        index_str = ''
+        result = formatted_body
+
+        # 添加 source 部分（类似于 format_message）
+        parts: List[str] = []
+        if frame_info and config.show_source:
+            filename_part = color_func(frame_info.filename, self.SOURCE_COLOR, AnsiStyle.BOLD)
+            head_sep_1 = color_func(':', self.SOURCE_COLOR, AnsiStyle.DIM)
+            lineno_padded = self._pad_lineno(frame_info.lineno)
+            lineno_part = color_func(lineno_padded, self.SOURCE_COLOR, AnsiStyle.DIM)
+            parts.append(filename_part + head_sep_1 + lineno_part)
+
+        if frame_info and config.show_funcname:
+            funcname = frame_info.funcname
+            if not funcname.startswith('<'):
+                funcname = '{}{}'.format(funcname, '()')
+            func_part = color_func(funcname, self.FUNC_COLOR)
+            parts.append(func_part)
+
+        if parts:
+            head_sep_2 = ' ' + color_func('|', AnsiColor.BRIGHT_BLACK) + ' '
+            result = ''.join(parts) + head_sep_2 + result
+
+        # 添加 index
         if _index is not None and _index_value is not None:
             index_str = color_func('[{}] '.format(_index_value), AnsiColor.WHITE)
+            result = index_str + result
 
-        return index_str + result
+        return result
 
 
 formatter = MessageFormatter()

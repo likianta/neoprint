@@ -140,7 +140,7 @@ def show(*args: Any, **kwargs: Any) -> None:
         parts: list[str] = []
         if frame and config.show_source:
             # 手动构建不带颜色的前缀，用于测试输出
-            source_part = f"{frame.filename}:{frame.lineno}"
+            source_part = f"{frame.filename}:{formatter._pad_lineno(frame.lineno)}"
             parts.append(source_part)
         if frame and config.show_funcname:
             funcname = frame.funcname
@@ -148,7 +148,7 @@ def show(*args: Any, **kwargs: Any) -> None:
                 funcname = f"{funcname}()"
             parts.append(funcname)
         
-        separator = '  >  '
+        head_sep_2 = ' | '
         
         if marks.expand is not None:
             for exc in exception_args:
@@ -181,8 +181,7 @@ def show(*args: Any, **kwargs: Any) -> None:
                 
                 # 构建完整输出，添加前导换行符！
                 if parts:
-                    prefix = separator.join(parts) + separator
-                    prefix = prefix.rstrip()
+                    prefix = head_sep_2.join(parts) + '  | '
                     full_output = '\n' + prefix + '\n' + indented_tb + '\n'
                 else:
                     full_output = indented_tb
@@ -194,7 +193,7 @@ def show(*args: Any, **kwargs: Any) -> None:
                 
                 # 构建完整输出
                 if parts:
-                    prefix = separator.join(parts) + separator
+                    prefix = head_sep_2.join(parts) + '  | '
                     full_output = prefix + exc_str
                 else:
                     full_output = exc_str

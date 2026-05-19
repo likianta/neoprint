@@ -87,7 +87,7 @@ def show(*args: Any, **kwargs: Any) -> None:
     else:
         frame = _get_caller_frame(extra_levels)
 
-    color_level = marks.color if marks.color is not None else 0
+    color_level = marks.verbosity if marks.verbosity is not None else 0
 
     index_value = None
     show_index = False

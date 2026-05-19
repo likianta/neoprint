@@ -221,7 +221,7 @@ class MessageFormatter:
                 filepath, lineno, 'get_body_string'
             )
 
-        color_level = marks.color if marks.color is not None else 0
+        color_level = marks.verbosity if marks.verbosity is not None else 0
 
         body_parts: List[str] = []
         if marks.show_varnames is not None and marks.show_varnames > 0 and varnames:
@@ -264,7 +264,7 @@ class MessageFormatter:
         parser = MarkupParser()
         marks = parser.parse(markup) if markup else ParsedMarks()
 
-        color_level = marks.color if marks.color is not None else 0
+        color_level = marks.verbosity if marks.verbosity is not None else 0
 
         color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
 

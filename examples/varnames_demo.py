@@ -6,8 +6,8 @@ def main():
     age = 30
     city = 'New York'
 
-    print('Using get_body_string with :v markup:')
-    result = np.get_body_string(name, age, city, markup=':v')
+    print('Using get_body_string with :n markup (show_varnames):')
+    result = np.get_body_string(name, age, city, markup=':n')
     print(result)
     print()
 
@@ -16,12 +16,12 @@ def main():
     print(result)
     print()
 
-    print('With color level :v4 (success):')
+    print('With verbosity level :v4 (success):')
     result = np.get_body_string(name, age, city, markup=':v4')
     print(result)
     print()
 
-    print('With color level :v6 (warning):')
+    print('With verbosity level :v6 (warning):')
     result = np.get_body_string(name, age, city, markup=':v6')
     print(result)
 

@@ -1,8 +1,3 @@
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pytest
 import neoprint as np
 from neoprint.markup import MarkupParser, ParsedMarks
@@ -16,7 +11,7 @@ class TestMarkupParser:
         assert self.parser.is_valid_markup(':i')
         assert self.parser.is_valid_markup(':v')
         assert self.parser.is_valid_markup(':p')
-        assert self.parser.is_valid_markup(':c')
+        assert self.parser.is_valid_markup(':n')
         assert self.parser.is_valid_markup(':d')
         assert self.parser.is_valid_markup(':r')
         assert self.parser.is_valid_markup(':t')
@@ -31,11 +26,11 @@ class TestMarkupParser:
         assert self.parser.is_valid_markup(':v8')
         assert self.parser.is_valid_markup(':p1')
         assert self.parser.is_valid_markup(':p2')
-        assert self.parser.is_valid_markup(':c2')
+        assert self.parser.is_valid_markup(':n1')
 
     def test_is_valid_markup_combined(self):
         assert self.parser.is_valid_markup(':v4i')
-        assert self.parser.is_valid_markup(':pv2')
+        assert self.parser.is_valid_markup(':nv')
 
     def test_is_valid_markup_invalid(self):
         assert not self.parser.is_valid_markup('i')
@@ -71,22 +66,28 @@ class TestMarkupParser:
         marks = self.parser.parse(':p2')
         assert marks.parent == 2
 
-    def test_parse_show_varnames(self):
+    def test_parse_verbosity(self):
         marks = self.parser.parse(':v')
-        assert marks.show_varnames == 1
+        assert marks.verbosity == 0
 
         marks = self.parser.parse(':v0')
-        assert marks.show_varnames == 0
+        assert marks.verbosity == 0
 
-        marks = self.parser.parse(':v1')
+        marks = self.parser.parse(':v4')
+        assert marks.verbosity == 4
+
+        marks = self.parser.parse(':v8')
+        assert marks.verbosity == 8
+
+    def test_parse_show_varnames(self):
+        marks = self.parser.parse(':n')
         assert marks.show_varnames == 1
 
-    def test_parse_color(self):
-        marks = self.parser.parse(':c')
-        assert marks.color == 0
+        marks = self.parser.parse(':n0')
+        assert marks.show_varnames == 0
 
-        marks = self.parser.parse(':c2')
-        assert marks.color == 2
+        marks = self.parser.parse(':n1')
+        assert marks.show_varnames == 1
 
     def test_parse_divider(self):
         marks = self.parser.parse(':d')
@@ -134,8 +135,8 @@ class TestMarkupParser:
         assert marks.flush == 1
 
     def test_parse_combined(self):
-        marks = self.parser.parse(':v1i')
-        assert marks.show_varnames == 1
+        marks = self.parser.parse(':v4i')
+        assert marks.verbosity == 4
         assert marks.index == 2
 
     def test_extract_from_args_no_markup(self):
@@ -144,21 +145,21 @@ class TestMarkupParser:
         assert raw_args == args
         assert pos == 0
         assert marks.index is None
-        assert marks.show_varnames is None
+        assert marks.verbosity is None
 
     def test_extract_from_args_markup_first(self):
-        args = (':v1', 'hello', 'world')
+        args = (':v4', 'hello', 'world')
         raw_args, pos, marks = self.parser.extract_from_args(args)
         assert raw_args == ('hello', 'world')
         assert pos == 1
-        assert marks.show_varnames == 1
+        assert marks.verbosity == 4
 
     def test_extract_from_args_markup_last(self):
-        args = ('hello', 'world', ':v1')
+        args = ('hello', 'world', ':v4')
         raw_args, pos, marks = self.parser.extract_from_args(args)
         assert raw_args == ('hello', 'world')
         assert pos == -1
-        assert marks.show_varnames == 1
+        assert marks.verbosity == 4
 
 
 class TestFrameInfo:
@@ -215,18 +216,18 @@ class TestShowFunction:
         assert '"a"; "b"; "c"' in stripped
 
     def test_show_with_markup_first(self, capsys):
-        np.show(':c4', 'success message')
+        np.show(':v4', 'success message')
         captured = capsys.readouterr()
         assert 'success message' in captured.out
         assert '\033[' in captured.out
 
     def test_show_with_markup_last(self, capsys):
-        np.show('info message', ':c2')
+        np.show('info message', ':v2')
         captured = capsys.readouterr()
         assert 'info message' in captured.out
 
-    def test_show_with_color_level(self, capsys):
-        np.show(':c8', 'error message')
+    def test_show_with_verbosity_level(self, capsys):
+        np.show(':v8', 'error message')
         captured = capsys.readouterr()
         assert 'error message' in captured.out
 

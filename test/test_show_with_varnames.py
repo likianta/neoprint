@@ -9,7 +9,7 @@ class TestGetBodyString:
         age = 30
         city = 'New York'
 
-        result = np.get_body_string(name, age, city, markup=':v')
+        result = np.get_body_string(name, age, city, markup=':n')
         stripped = np.strip_ansi(result)
         assert 'name = "Alice"' in stripped
         assert 'age = 30' in stripped
@@ -22,7 +22,7 @@ class TestGetBodyString:
         age = 30
         city = 'New York'
 
-        result = np.get_body_string(name, age, city, markup=':v')
+        result = np.get_body_string(name, age, city, markup=':n')
         stripped = np.strip_ansi(result)
         assert stripped == 'name = "Alice"; age = 30; city = "New York"'
 
@@ -36,7 +36,7 @@ class TestGetBodyString:
     def test_get_body_string_with_color(self):
         import neoprint as np
 
-        result = np.get_body_string('test', markup=':c4')
+        result = np.get_body_string('test', markup=':v4')
         assert '\033[' in result
 
     def test_get_body_string_mixed_types(self):
@@ -46,7 +46,7 @@ class TestGetBodyString:
         count = 42
         active = True
 
-        result = np.get_body_string(name, count, active, markup=':v')
+        result = np.get_body_string(name, count, active, markup=':n')
         stripped = np.strip_ansi(result)
         assert 'name = "Bob"' in stripped
         assert 'count = 42' in stripped
@@ -68,7 +68,7 @@ class TestGetBodyString:
         name = 'Alice'
         city = 'New York'
 
-        result = np.get_body_string(name, city, markup=':v')
+        result = np.get_body_string(name, city, markup=':n')
         stripped = np.strip_ansi(result)
         assert 'name = "Alice"' in stripped
         assert 'city = "New York"' in stripped

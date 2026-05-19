@@ -16,18 +16,18 @@ def main() -> None:
     # print(text)
     assert text == 'hello; world'
 
-    text = np.format('hello', 'world', markup=':c4', color_code_scheme='bbcode')
+    text = np.format('hello', 'world', markup=':v4', color_code_scheme='bbcode')
     # print(text)
     assert text == '[green]hello[/][bright_black]; [/][green]world[/]'
 
     name = 'Alice'
     age = 20
     city = 'New York'
-    text = np.format(name, age, city, markup=':v', color_code_scheme='none')
+    text = np.format(name, age, city, markup=':n', color_code_scheme='none')
     # print(text)
     assert text == 'name = "Alice"; age = 20; city = "New York"'
 
-    text = np.format(name, age, city, markup=':v', color_code_scheme='bbcode')
+    text = np.format(name, age, city, markup=':n', color_code_scheme='bbcode')
     # print(text)
     assert text == (
         'name = "Alice"'

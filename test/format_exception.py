@@ -1,6 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import neoprint as np
 from textwrap import dedent
 
@@ -10,16 +7,16 @@ try:
     1 / 0
 except ZeroDivisionError as e:
     with np.capture_output() as cap:
-        np.show(e, ':c8')
-        np.show(e, ':lc8')
+        np.show(e, ':v8')
+        np.show(e, ':lv8')
 
-    assert cap.output[0] == 'format_exception.py:13  >  <module>  >  division by zero'
+    assert cap.output[0] == 'format_exception.py:10  >  <module>  >  division by zero'
     
     expected_traceback = dedent(
         """
-        format_exception.py:14  >  <module>  >
+        format_exception.py:11  >  <module>  >
             Traceback (most recent call last):
-                File "C:\\Likianta\\workspace\\dev.master.likianta\\neoprint\\test\\format_exception.py", line 10, in <module>
+                File "C:\\Likianta\\workspace\\dev.master.likianta\\neoprint\\test\\format_exception.py", line 7, in <module>
                     1 / 0
                     ~~^~~
             ZeroDivisionError: division by zero

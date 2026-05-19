@@ -19,7 +19,7 @@ class MarkType(Enum):
 
 @dataclass
 class ParsedMarks:
-    color: Optional[int] = None
+    verbosity: Optional[int] = None
     divider: Optional[int] = None
     expand: Optional[int] = None
     flush: Optional[int] = None
@@ -32,33 +32,33 @@ class ParsedMarks:
 
 
 class MarkupParser:
-    _mark_pattern = re.compile(r'^:(?:[cdfilprstv][0-9]?)+$')
-    _mark_token_pattern = re.compile(r'([cdfilprstv])([0-9]?)')
+    _mark_pattern = re.compile(r'^:(?:[dfilnprstv][0-9]?)+$')
+    _mark_token_pattern = re.compile(r'([dfilnprstv])([0-9]?)')
 
     _defaults: Dict[str, int] = {
-        'c': 0,
         'd': 0,
         'f': 0,
         'i': 2,
         'l': 0,
+        'n': 1,
         'p': 1,
         'r': 0,
         's': 0,
         't': 1,
-        'v': 1,
+        'v': 0,
     }
 
     _key_to_attr: Dict[str, str] = {
-        'c': 'color',
         'd': 'divider',
         'f': 'flush',
         'i': 'index',
         'l': 'expand',
+        'n': 'show_varnames',
         'p': 'parent',
         'r': 'rich',
         's': 'short',
         't': 'timer',
-        'v': 'show_varnames',
+        'v': 'verbosity',
     }
 
     def is_valid_markup(self, text: str) -> bool:

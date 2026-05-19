@@ -59,7 +59,7 @@ LEVEL_COLORS = {
 
 def _apply_style(color: str, style: str = '') -> str:
     style_code = style + ';' if style else ''
-    return ANSI_ESCAPE + style_code + color + 'm'
+    return ANSI_ESCAPE + '0;' + style_code + color + 'm'
 
 
 def color_text(text: str, color: str, style: str = '') -> str:

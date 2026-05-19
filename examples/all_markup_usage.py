@@ -61,11 +61,11 @@ def main():
         np.show(':i', 'MyScope 2nd')
         np.show(':i', 'MyScope 3rd')
 
-    print_divider('Variable Names (:v)')
+    print_divider('Variable Names (:n)')
     name = 'Alice'
     age = 30
     city = 'New York'
-    np.show(name, age, city, markup=':v')
+    np.show(name, age, city, markup=':n')
 
     print_divider('Combined Markups')
     np.show(':v4:i', 'success with scope index')

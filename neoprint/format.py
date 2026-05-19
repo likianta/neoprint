@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
 from .formatter import formatter
 from .markup import MarkupParser, ParsedMarks
@@ -68,7 +68,7 @@ def format(
     return formatter.format(
         *args,
         markup=markup,
-        color_code_scheme=color_code_scheme,
+        color_code_scheme=color_code_scheme,  # type: ignore
         _caller_filepath=caller_filepath,
         _caller_lineno=caller_lineno,
         _index_value=index_value,

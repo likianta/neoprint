@@ -348,11 +348,20 @@ class MessageFormatter:
             if not varnames:
                 varnames = get_varnames_from_call(filepath, lineno, 'format')
 
-            if varnames and len(varnames) == len(args):
-                for name, value in zip(varnames, args):
-                    body_parts.append(
-                        '{} = {}'.format(name, self._format_value(value))
-                    )
+            if varnames:
+                if len(varnames) < len(args):
+                    prefix_args = args[:-len(varnames)]
+                    suffix_args = args[-len(varnames):]
+                    body_parts = [str(a) for a in prefix_args]
+                    for name, value in zip(varnames, suffix_args):
+                        body_parts.append(
+                            '{} = {}'.format(name, self._format_value(value))
+                        )
+                else:
+                    for name, value in zip(varnames, args):
+                        body_parts.append(
+                            '{} = {}'.format(name, self._format_value(value))
+                        )
             else:
                 body_parts = [self._format_value(a) for a in args]
         else:
@@ -367,7 +376,10 @@ class MessageFormatter:
             if i == 0:
                 formatted_body_parts.append(part)
             else:
-                separator = color_func(';', AnsiColor.BRIGHT_BLACK)
+                if color_code_scheme == 'ansi':
+                    separator = '\x1b[' + AnsiColor.BRIGHT_BLACK + 'm' + ';' + '\x1b[0m'
+                else:
+                    separator = color_func(';', AnsiColor.BRIGHT_BLACK)
                 formatted_body_parts.append(separator + ' ' + part)
         formatted_body = ''.join(formatted_body_parts)
 

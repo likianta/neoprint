@@ -16,9 +16,8 @@ Elevate frame pointer:
 Show varnames:
     [
         aaa = 'Alpha'
-        np.show(aaa, varnames=1)
-        np.show(aaa, ':v')
-        np.show(aaa, ':v1')
+        np.show(aaa, ':n')
+        np.show(aaa, ':n1')
     ]
 
 Index:
@@ -63,17 +62,17 @@ Progress:
             np.show(...)
     ]
 
-Color:
+Color verbosity:
     [
-        np.show('normal text', ':c0')
-        np.show('gray text for hint or weak tip', ':c1')
-        np.show('cyan text for infomation', ':c2')
-        np.show('dim green for weak success', ':c3')
-        np.show('accent green for success', ':c4')
-        np.show('dim yellow for weak warning', ':c5')
-        np.show('accent yellow for warning', ':c6')
-        np.show('dim red for weak error', ':c7')
-        np.show('accent red for error', ':c8')
+        np.show('normal text', ':v0')
+        np.show('gray text for hint or weak tip', ':v1')
+        np.show('cyan text for infomation', ':v2')
+        np.show('dim green for weak success', ':v3')
+        np.show('accent green for success', ':v4')
+        np.show('dim yellow for weak warning', ':v5')
+        np.show('accent yellow for warning', ':v6')
+        np.show('dim red for weak error', ':v7')
+        np.show('accent red for error', ':v8')
         #   shorthand: 1/3/5/7 are dim colors, 2/4/6/8 are accent colors
     ]
 
@@ -93,13 +92,4 @@ Configure style:
         #   the second row with a smart indent.
         np.config_exception_handler(handler='rich')
         np.config_exception_handler(handler='builtin')
-    ]
-
-Scoped:
-    [
-        with np.mute():
-            ...
-        
-        with np.scope(parent=1):
-            ...
     ]

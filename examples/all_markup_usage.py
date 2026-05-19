@@ -68,15 +68,9 @@ def main():
     np.show(name, age, city, markup=':n')
 
     print_divider('Combined Markups')
-    np.show(':v4:i', 'success with scope index')
-    np.show(':v6:i1', 'warning with line index')
-    np.show(':v4:i3', 'success with global index')
-
-    print_divider('Color Shorthand (:c)')
-    np.show(':c2', 'cyan text')
-    np.show(':c4', 'green text')
-    np.show(':c6', 'yellow text')
-    np.show(':c8', 'red text')
+    np.show(':v4i', 'success with scope index')
+    np.show(':v6i1', 'warning with line index')
+    np.show(':v4i3', 'success with global index')
 
 
 if __name__ == '__main__':

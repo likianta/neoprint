@@ -301,11 +301,12 @@ class MessageFormatter:
         parser = MarkupParser()
         marks = parser.parse(markup) if markup else ParsedMarks()
 
+        has_verbosity_mark = marks.verbosity is not None
         color_level = marks.verbosity if marks.verbosity is not None else 0
 
         color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
 
-        if color_code_scheme == 'none':
+        if color_code_scheme == 'none' or (has_verbosity_mark and color_level == 0):
             color_func = self._color_text_none
         elif color_code_scheme == 'bbcode':
             color_func = self._color_text_bbcode
@@ -367,8 +368,12 @@ class MessageFormatter:
         else:
             body_parts = [str(a) for a in args]
 
-        if color_level > 0:
-            body_parts = [color_func(part, color) for part in body_parts]
+        if has_verbosity_mark and color_level > 0:
+            style = AnsiStyle.DIM if color_level in (3, 5, 7) else ''
+            if color_level == 9:
+                body_parts = [color_func(part, AnsiColor.BRIGHT_WHITE, '41') for part in body_parts]
+            elif color:
+                body_parts = [color_func(part, color, style) for part in body_parts]
 
         # 构建新的分隔符格式
         formatted_body_parts = []
@@ -376,7 +381,7 @@ class MessageFormatter:
             if i == 0:
                 formatted_body_parts.append(part)
             else:
-                if color_code_scheme == 'ansi':
+                if color_code_scheme == 'ansi' and has_verbosity_mark and color_level > 0:
                     separator = '\x1b[' + AnsiColor.BRIGHT_BLACK + 'm' + ';' + '\x1b[0m'
                 else:
                     separator = color_func(';', AnsiColor.BRIGHT_BLACK)
@@ -386,13 +391,14 @@ class MessageFormatter:
         # 添加 source 部分（类似于 format_message）
         parts: List[str] = []
         if frame_info and config.show_source:
+            source_color = AnsiColor.RED if color_level == 9 else self.SOURCE_COLOR
             filename_part = color_func(
-                frame_info.filename, self.SOURCE_COLOR, AnsiStyle.BOLD
+                frame_info.filename, source_color, AnsiStyle.BOLD
             )
-            head_sep_1 = color_func(':', self.SOURCE_COLOR, AnsiStyle.DIM)
+            head_sep_1 = color_func(':', source_color, AnsiStyle.DIM)
             lineno_padded = self._pad_lineno(frame_info.lineno)
             lineno_part = color_func(
-                lineno_padded, self.SOURCE_COLOR, AnsiStyle.DIM
+                lineno_padded, source_color, AnsiStyle.DIM
             )
             parts.append(filename_part + head_sep_1 + lineno_part)
 

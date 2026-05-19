@@ -45,15 +45,16 @@ class AnsiStyle:
 
 
 LEVEL_COLORS = {
-    0: AnsiColor.BRIGHT_BLACK,
-    1: AnsiColor.MAGENTA,
-    2: AnsiColor.BLUE,
+    0: '',
+    1: AnsiColor.BRIGHT_BLACK,
+    2: AnsiColor.CYAN,
     3: AnsiColor.GREEN,
     4: AnsiColor.BRIGHT_GREEN,
     5: AnsiColor.YELLOW,
     6: AnsiColor.BRIGHT_YELLOW,
     7: AnsiColor.RED,
     8: AnsiColor.BRIGHT_RED,
+    9: AnsiColor.BRIGHT_WHITE,
 }
 
 

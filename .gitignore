@@ -1,5 +1,5 @@
 /.idea/
 /dist/
 /human/
-/test_*.py
+/*.py
 __pycache__/

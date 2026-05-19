@@ -221,14 +221,10 @@ class MessageFormatter:
                 filepath, lineno, 'get_body_string'
             )
 
-        color_level = 0
-        if marks.verbosity is not None:
-            color_level = marks.verbosity
-        elif marks.color is not None:
-            color_level = marks.color
+        color_level = marks.color if marks.color is not None else 0
 
         body_parts: List[str] = []
-        if marks.verbosity is not None and varnames:
+        if marks.show_varnames is not None and marks.show_varnames > 0 and varnames:
             if len(varnames) == len(args):
                 for name, value in zip(varnames, args):
                     body_parts.append('{} = {}'.format(
@@ -268,11 +264,7 @@ class MessageFormatter:
         parser = MarkupParser()
         marks = parser.parse(markup) if markup else ParsedMarks()
 
-        color_level = 0
-        if marks.verbosity is not None:
-            color_level = marks.verbosity
-        elif marks.color is not None:
-            color_level = marks.color
+        color_level = marks.color if marks.color is not None else 0
 
         color = COLOR_MAP.get(color_level, AnsiColor.DEFAULT)
 
@@ -301,7 +293,7 @@ class MessageFormatter:
                 lineno = None
 
         body_parts: List[str] = []
-        if marks.verbosity is not None and filepath and lineno:
+        if marks.show_varnames is not None and marks.show_varnames > 0 and filepath and lineno:
             varnames = get_varnames_from_call(filepath, lineno, 'np.show')
             if not varnames:
                 varnames = get_varnames_from_call(filepath, lineno, 'np.format')

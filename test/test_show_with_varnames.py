@@ -36,7 +36,7 @@ class TestGetBodyString:
     def test_get_body_string_with_color(self):
         import neoprint as np
 
-        result = np.get_body_string('test', markup=':v4')
+        result = np.get_body_string('test', markup=':c4')
         assert '\033[' in result
 
     def test_get_body_string_mixed_types(self):

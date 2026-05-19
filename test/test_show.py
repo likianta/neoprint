@@ -71,21 +71,15 @@ class TestMarkupParser:
         marks = self.parser.parse(':p2')
         assert marks.parent == 2
 
-    def test_parse_verbosity(self):
+    def test_parse_show_varnames(self):
         marks = self.parser.parse(':v')
-        assert marks.verbosity == 0
+        assert marks.show_varnames == 1
 
         marks = self.parser.parse(':v0')
-        assert marks.verbosity == 0
+        assert marks.show_varnames == 0
 
         marks = self.parser.parse(':v1')
-        assert marks.verbosity == 1
-
-        marks = self.parser.parse(':v4')
-        assert marks.verbosity == 4
-
-        marks = self.parser.parse(':v8')
-        assert marks.verbosity == 8
+        assert marks.show_varnames == 1
 
     def test_parse_color(self):
         marks = self.parser.parse(':c')
@@ -140,8 +134,8 @@ class TestMarkupParser:
         assert marks.flush == 1
 
     def test_parse_combined(self):
-        marks = self.parser.parse(':v4i')
-        assert marks.verbosity == 4
+        marks = self.parser.parse(':v1i')
+        assert marks.show_varnames == 1
         assert marks.index == 2
 
     def test_extract_from_args_no_markup(self):
@@ -150,21 +144,21 @@ class TestMarkupParser:
         assert raw_args == args
         assert pos == 0
         assert marks.index is None
-        assert marks.verbosity is None
+        assert marks.show_varnames is None
 
     def test_extract_from_args_markup_first(self):
-        args = (':v4', 'hello', 'world')
+        args = (':v1', 'hello', 'world')
         raw_args, pos, marks = self.parser.extract_from_args(args)
         assert raw_args == ('hello', 'world')
         assert pos == 1
-        assert marks.verbosity == 4
+        assert marks.show_varnames == 1
 
     def test_extract_from_args_markup_last(self):
-        args = ('hello', 'world', ':v4')
+        args = ('hello', 'world', ':v1')
         raw_args, pos, marks = self.parser.extract_from_args(args)
         assert raw_args == ('hello', 'world')
         assert pos == -1
-        assert marks.verbosity == 4
+        assert marks.show_varnames == 1
 
 
 class TestFrameInfo:
@@ -221,18 +215,18 @@ class TestShowFunction:
         assert '"a"; "b"; "c"' in stripped
 
     def test_show_with_markup_first(self, capsys):
-        np.show(':v4', 'success message')
+        np.show(':c4', 'success message')
         captured = capsys.readouterr()
         assert 'success message' in captured.out
         assert '\033[' in captured.out
 
     def test_show_with_markup_last(self, capsys):
-        np.show('info message', ':v2')
+        np.show('info message', ':c2')
         captured = capsys.readouterr()
         assert 'info message' in captured.out
 
-    def test_show_with_verbosity_level(self, capsys):
-        np.show(':v8', 'error message')
+    def test_show_with_color_level(self, capsys):
+        np.show(':c8', 'error message')
         captured = capsys.readouterr()
         assert 'error message' in captured.out
 

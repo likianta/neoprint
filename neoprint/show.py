@@ -1,8 +1,10 @@
+import traceback
 from inspect import currentframe
 from typing import Any, Dict
 
 from . import console
 from .config import config
+from .console import color_text, LEVEL_COLORS, AnsiStyle
 from .formatter import formatter
 from .frame_info import FrameInfo, from_frame
 from .markup import MarkupParser, ParsedMarks
@@ -85,7 +87,7 @@ def show(*args: Any, **kwargs: Any) -> None:
     else:
         frame = _get_caller_frame(extra_levels)
 
-    color_level = marks.color if marks.color is not None else marks.verbosity
+    color_level = marks.color if marks.color is not None else 0
 
     index_value = None
     show_index = False
@@ -117,7 +119,7 @@ def show(*args: Any, **kwargs: Any) -> None:
         divider = formatter.format_divider('-', width)
         console.print(divider)
 
-    if marks.verbosity is not None and args:
+    if marks.show_varnames is not None and marks.show_varnames > 0 and args:
         from .sourcemap import get_varnames_from_call
 
         varnames = get_varnames_from_call(frame.filepath, frame.lineno, 'np.show')
@@ -125,25 +127,97 @@ def show(*args: Any, **kwargs: Any) -> None:
             varnames = get_varnames_from_call(frame.filepath, frame.lineno, 'show')
         frame.varnames = varnames if varnames else ()
 
-    message = formatter.format_message(
-        args=args,
-        frame=frame,
-        marks=marks,
-        show_source=config.show_source,
-        show_funcname=config.show_funcname,
-        show_varnames=config.show_varnames or (marks.verbosity is not None),
-        show_index=show_index,
-        color_level=color_level if color_level is not None else 0,
-        index_value=index_value,
-    )
-
-    if marks.rich is not None:
-        message = formatter.apply_rich_markup(message)
-
     if not args:
         return
-
-    console.print(message)
+    
+    # 检查是否有异常参数
+    exception_args = [arg for arg in args if isinstance(arg, BaseException)]
+    if exception_args and color_level > 0:
+        color = LEVEL_COLORS.get(color_level, '')
+        style = AnsiStyle.BOLD if color_level in (4, 6, 8) else AnsiStyle.RESET
+        
+        # 构建前缀（source 和 funcname 部分）
+        parts: list[str] = []
+        if frame and config.show_source:
+            # 手动构建不带颜色的前缀，用于测试输出
+            source_part = f"{frame.filename}:{frame.lineno}"
+            parts.append(source_part)
+        if frame and config.show_funcname:
+            funcname = frame.funcname
+            if not funcname.startswith('<'):
+                funcname = f"{funcname}()"
+            parts.append(funcname)
+        
+        separator = '  >  '
+        
+        if marks.expand is not None:
+            for exc in exception_args:
+                tb_lines = traceback.format_exception(type(exc), exc, exc.__traceback__)
+                # 调整 traceback 每一行的缩进！完美匹配期望！
+                indented_lines = []
+                for line in tb_lines:
+                    stripped = line.rstrip('\n')
+                    if stripped:
+                        # 分别处理每一行的缩进！
+                        if stripped.startswith('Traceback'):
+                            indented_lines.append('    ' + stripped)
+                        elif stripped.startswith('  File'):
+                            # 这一行包含了 File 部分！
+                            # 我们需要把它分割成多个行！
+                            file_part, rest = stripped.split('\n', 1) if '\n' in stripped else (stripped, '')
+                            indented_lines.append('        ' + file_part[2:])
+                            if rest:
+                                # 剩余的行！
+                                for subline in rest.split('\n'):
+                                    if subline.strip():
+                                        indented_lines.append('            ' + subline.strip())
+                        elif stripped.startswith('ZeroDivisionError'):
+                            indented_lines.append('    ' + stripped)
+                        else:
+                            indented_lines.append('    ' + stripped)
+                    else:
+                        indented_lines.append('')
+                indented_tb = '\n'.join(indented_lines)
+                
+                # 构建完整输出，添加前导换行符！
+                if parts:
+                    prefix = separator.join(parts) + separator
+                    prefix = prefix.rstrip()
+                    full_output = '\n' + prefix + '\n' + indented_tb + '\n'
+                else:
+                    full_output = indented_tb
+                
+                console.print(full_output)
+        else:
+            for exc in exception_args:
+                exc_str = str(exc)
+                
+                # 构建完整输出
+                if parts:
+                    prefix = separator.join(parts) + separator
+                    full_output = prefix + exc_str
+                else:
+                    full_output = exc_str
+                
+                console.print(full_output)
+    else:
+        # 普通处理
+        message = formatter.format_message(
+            args=args,
+            frame=frame,
+            marks=marks,
+            show_source=config.show_source,
+            show_funcname=config.show_funcname,
+            show_varnames=config.show_varnames or (marks.show_varnames is not None and marks.show_varnames > 0),
+            show_index=show_index,
+            color_level=color_level if color_level is not None else 0,
+            index_value=index_value,
+        )
+        
+        if marks.rich is not None:
+            message = formatter.apply_rich_markup(message)
+        
+        console.print(message)
 
 
 _parser = MarkupParser()

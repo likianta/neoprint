@@ -90,9 +90,9 @@ class TestIndexCounterForms(TestCase):
 
     def test_combined_markup_with_index(self):
         np.format(':i0')
-        np.format(':v4:i', 'success with index')
-        np.format(':v6:i1', 'warning with line index')
-        np.format(':v4:i3', 'success with global index')
+        np.format(':c4:i', 'success with index')
+        np.format(':c6:i1', 'warning with line index')
+        np.format(':c4:i3', 'success with global index')
         np.format(':c2:i2', 'cyan with scope index')
 
     def test_line_counter_same_line(self):
@@ -101,7 +101,7 @@ class TestIndexCounterForms(TestCase):
         with np.capture_output(color_code_scheme='none') as output:
             np.show(':i1', 'call')
 
-        lines = output[0].strip().split('\n')
+        lines = output.output[0].strip().split('\n')
         self.assertEqual(len(lines), 1)
         self.assertIn('[1]', lines[0])
 

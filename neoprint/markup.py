@@ -27,8 +27,8 @@ class ParsedMarks:
     parent: Optional[int] = None
     rich: Optional[int] = None
     short: Optional[int] = None
+    show_varnames: Optional[int] = None
     timer: Optional[int] = None
-    verbosity: Optional[int] = None
 
 
 class MarkupParser:
@@ -45,7 +45,7 @@ class MarkupParser:
         'r': 0,
         's': 0,
         't': 1,
-        'v': 0,
+        'v': 1,
     }
 
     _key_to_attr: Dict[str, str] = {
@@ -58,7 +58,7 @@ class MarkupParser:
         'r': 'rich',
         's': 'short',
         't': 'timer',
-        'v': 'verbosity',
+        'v': 'show_varnames',
     }
 
     def is_valid_markup(self, text: str) -> bool:

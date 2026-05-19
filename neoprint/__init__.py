@@ -85,49 +85,43 @@ import sys
 @contextmanager
 def capture_output(color_code_scheme: str = 'none'):
     old_stdout = sys.stdout
-    old_stderr = sys.stderr
-    stdout_buffer = StringIO()
-    stderr_buffer = StringIO()
+    old_print = console.print
+    output_list: list[str] = []
 
     class CapturedOutput:
         def __init__(self):
-            self._stdout_buffer = stdout_buffer
-            self._stderr_buffer = stderr_buffer
+            self._output_list = output_list
             self._color_code_scheme = color_code_scheme
-
-        def __getitem__(self, index):
-            if index == 0:
-                val = self._stdout_buffer.getvalue().rstrip('\n')
-            elif index == 1:
-                val = self._stderr_buffer.getvalue().rstrip('\n')
-            else:
-                raise IndexError('list index out of range')
-            if self._color_code_scheme == 'none':
-                from .console import strip_ansi
-                val = strip_ansi(val)
-            return val
-
+            self._processed_output = None
+        
+        @property
+        def output(self):
+            if self._processed_output is None:
+                processed = []
+                for line in self._output_list:
+                    if self._color_code_scheme == 'none':
+                        from .console import strip_ansi
+                        line = strip_ansi(line)
+                    processed.append(line)
+                self._processed_output = processed
+            return self._processed_output
+    
     captured = CapturedOutput()
 
+    # 重写 print 方法，确保每次调用 console.print 都添加到列表中
+    def capturing_print(*args, sep=' ', end='\n', flush=False):
+        text = sep.join(str(arg) for arg in args)
+        output_list.append(text)  # 保存不包含 end 的 text
+        full_text = text + end
+        old_stdout.write(full_text)
+        if flush:
+            old_stdout.flush()
+
     try:
-        sys.stdout = stdout_buffer
-        sys.stderr = stderr_buffer
+        console.print = capturing_print
         yield captured
     finally:
-        sys.stdout = old_stdout
-        sys.stderr = old_stderr
-        stdout_val = stdout_buffer.getvalue()
-        stderr_val = stderr_buffer.getvalue()
-        if color_code_scheme == 'none':
-            from .console import strip_ansi
-            stdout_val = strip_ansi(stdout_val)
-            stderr_val = strip_ansi(stderr_val)
-        stdout_val = stdout_val.rstrip('\n')
-        stderr_val = stderr_val.rstrip('\n')
-        captured._stdout_buffer = StringIO()
-        captured._stdout_buffer.write(stdout_val)
-        captured._stderr_buffer = StringIO()
-        captured._stderr_buffer.write(stderr_val)
+        console.print = old_print
 
 __version__ = '0.1.0a8'
 

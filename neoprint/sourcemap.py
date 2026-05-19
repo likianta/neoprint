@@ -130,9 +130,7 @@ def get_call_args(
 
 
 class VarnamesAnalyzer(ast.NodeVisitor):
-    def __init__(
-        self, funcname: str, target_lineno: int
-    ) -> None:
+    def __init__(self, funcname: str, target_lineno: int) -> None:
         self.funcname = funcname
         self.target_lineno = target_lineno
         self.varnames: List[str] = []

@@ -74,13 +74,15 @@ def strip_ansi(text: str) -> str:
 
 
 def get_console_width() -> int:
-    if hasattr(sys.stdout, 'columns') and sys.stdout.columns:
-        return sys.stdout.columns
+    if hasattr(sys.stdout, 'columns'):
+        columns = sys.stdout.columns
+        if columns:
+            return int(columns)  # type: ignore
     if hasattr(os, 'get_terminal_size'):
         try:
             size = os.get_terminal_size()
             if size.columns > 0:
-                return size.columns
+                return int(size.columns)
         except OSError:
             pass
     fallback = os.environ.get('COLUMNS', '')

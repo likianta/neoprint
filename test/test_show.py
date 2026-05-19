@@ -213,7 +213,7 @@ class TestShowFunction:
         np.show('a', 'b', 'c')
         captured = capsys.readouterr()
         stripped = np.strip_ansi(captured.out)
-        assert '"a"; "b"; "c"' in stripped
+        assert 'a; b; c' in stripped
 
     def test_show_with_markup_first(self, capsys):
         np.show(':v4', 'success message')

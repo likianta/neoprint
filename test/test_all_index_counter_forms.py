@@ -116,8 +116,12 @@ class TestIndexCounterForms(TestCase):
 
         np.format(':i0')
 
-        self.assertEqual(np.format(':i', 'scope after reset'), '[1] scope after reset')
-        self.assertEqual(np.format(':i3', 'global after reset'), '[1] global after reset')
+        self.assertEqual(
+            np.format(':i', 'scope after reset'), '[1] scope after reset'
+        )
+        self.assertEqual(
+            np.format(':i3', 'global after reset'), '[1] global after reset'
+        )
 
     def test_anonymous_scope_generates_unique_id(self):
         np.format(':i0')

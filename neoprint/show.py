@@ -4,12 +4,11 @@ from typing import Any
 
 from . import console
 from .config import config
-from .console import color_text, LEVEL_COLORS, AnsiStyle
+from .console import AnsiStyle, LEVEL_COLORS
+from .format import format
 from .formatter import formatter
 from .frame_info import FrameInfo, from_frame
 from .markup import MarkupParser, ParsedMarks
-from .format import format
-from .scope import counter
 
 
 def _get_caller_frame(extra_levels: int = 0) -> FrameInfo:

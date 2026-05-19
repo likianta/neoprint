@@ -1,5 +1,24 @@
 from .console import strip_ansi
 
+_ansi_color_to_bbcode = {
+    '30': 'black',
+    '31': 'red',
+    '32': 'green',
+    '33': 'yellow',
+    '34': 'blue',
+    '35': 'magenta',
+    '36': 'cyan',
+    '37': 'white',
+    '90': 'bright_black',
+    '91': 'red',
+    '92': 'green',
+    '93': 'yellow',
+    '94': 'blue',
+    '95': 'magenta',
+    '96': 'cyan',
+    '97': 'white',
+}
+
 
 def ansi_to_bbcode(text):
     """将 ANSI 转义序列转换为 bbcode 格式"""
@@ -7,25 +26,6 @@ def ansi_to_bbcode(text):
     i = 0
     n = len(text)
     open_tags = []
-
-    _ansi_color_to_bbcode = {
-        '30': 'black',
-        '31': 'red',
-        '32': 'green',
-        '33': 'yellow',
-        '34': 'blue',
-        '35': 'magenta',
-        '36': 'cyan',
-        '37': 'white',
-        '90': 'bright_black',
-        '91': 'red',
-        '92': 'green',
-        '93': 'yellow',
-        '94': 'blue',
-        '95': 'magenta',
-        '96': 'cyan',
-        '97': 'white',
-    }
 
     while i < n:
         if i + 1 < n and text[i] in '\x1b\x033' and text[i + 1] == '[':

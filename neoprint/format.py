@@ -2,7 +2,6 @@ import inspect
 from typing import Any, Optional
 
 from .formatter import formatter
-from .frame_info import FrameInfo, from_frame
 from .markup import MarkupParser, ParsedMarks
 from .scope import counter
 

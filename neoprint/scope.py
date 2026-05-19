@@ -1,6 +1,6 @@
-from contextlib import contextmanager
 import uuid
-from typing import Any, Dict, Optional
+from contextlib import contextmanager
+from typing import Dict, Optional
 
 
 class Counter:

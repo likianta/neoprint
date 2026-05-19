@@ -2,9 +2,9 @@ import re
 import time
 from typing import Any, List, Optional, Tuple
 
+from .config import config
 from .console import AnsiColor, AnsiStyle, color_text
 from .console import LEVEL_COLORS as COLOR_MAP
-from .config import config
 from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
 
@@ -371,8 +371,6 @@ class MessageFormatter:
                 formatted_body_parts.append(separator + ' ' + part)
         formatted_body = ''.join(formatted_body_parts)
 
-        result = formatted_body
-
         # 添加 source 部分（类似于 format_message）
         parts: List[str] = []
         if frame_info and config.show_source:
@@ -393,16 +391,18 @@ class MessageFormatter:
             func_part = color_func(funcname, self.FUNC_COLOR)
             parts.append(func_part)
 
-        if parts:
-            head_sep_2 = ' ' + color_func('|', AnsiColor.BRIGHT_BLACK) + ' '
-            result = ''.join(parts) + head_sep_2 + result
+        result = formatted_body
 
         # 添加 index
         if _index is not None and _index_value is not None:
             index_str = color_func(
-                '[{}] '.format(_index_value), AnsiColor.WHITE
+                '[{}]'.format(_index_value), self.INDEX_COLOR
             )
-            result = index_str + result
+            result = index_str + ' ' + result
+
+        if parts:
+            head_sep_2 = ' ' + color_func('|', AnsiColor.BRIGHT_BLACK) + ' '
+            result = ''.join(parts) + head_sep_2 + result
 
         return result
 

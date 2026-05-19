@@ -1,4 +1,4 @@
-from .console import strip_ansi
+import re
 
 _ansi_color_to_bbcode = {
     '30': 'black',
@@ -69,6 +69,11 @@ def ansi_to_bbcode(text):
         result.append('[/]')
 
     return ''.join(result)
+
+
+def strip_ansi(text: str) -> str:
+    pattern = r'\033\[[0-9;]*m'
+    return re.sub(pattern, '', text)
 
 
 __all__ = ['ansi_to_bbcode', 'strip_ansi']

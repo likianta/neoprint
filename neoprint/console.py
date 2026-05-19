@@ -66,13 +66,6 @@ def color_text(text: str, color: str, style: str = '') -> str:
     return _apply_style(color, style) + text + ANSI_RESET
 
 
-def strip_ansi(text: str) -> str:
-    import re
-
-    pattern = r'\033\[[0-9;]*m'
-    return re.sub(pattern, '', text)
-
-
 def get_console_width() -> int:
     if hasattr(sys.stdout, 'columns'):
         columns = sys.stdout.columns

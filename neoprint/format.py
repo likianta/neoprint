@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from .formatter import formatter
 from .markup import MarkupParser, ParsedMarks
@@ -15,6 +15,7 @@ def format(
     color_code_scheme: str = 'none',
     _caller_filepath: Optional[str] = None,
     _caller_lineno: Optional[int] = None,
+    _caller_funcname: Optional[str] = None,
 ) -> str:
     if args and isinstance(args[0], str) and args[0].startswith(':'):
         markup = args[0]
@@ -23,10 +24,10 @@ def format(
         markup = args[-1]
         args = args[:-1]
 
-    caller_frame = None
+    frame = inspect.currentframe()
+    caller_frame = frame.f_back if frame is not None else None
+    
     if _caller_filepath is None or _caller_lineno is None:
-        frame = inspect.currentframe()
-        caller_frame = frame.f_back if frame is not None else None
         caller_filepath = (
             caller_frame.f_code.co_filename
             if caller_frame is not None
@@ -54,9 +55,12 @@ def format(
             if current_scope:
                 scope_id = current_scope
             else:
-                scope_id = (
-                    caller_frame.f_code.co_name if caller_frame else '<module>'
-                )
+                if _caller_funcname is not None:
+                    scope_id = _caller_funcname
+                else:
+                    scope_id = (
+                        caller_frame.f_code.co_name if caller_frame else '<module>'
+                    )
             index_value = counter.update_scoped(scope_id)
         elif marks.index == 3:
             index_value = counter.update_global()

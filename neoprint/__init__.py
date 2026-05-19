@@ -7,7 +7,6 @@ from .console import (
     color_text,
     debug,
     get_console_width,
-    strip_ansi,
 )
 from .format import format
 from .formatter import formatter
@@ -15,6 +14,7 @@ from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
 from .scope import get_current_scope, scope
 from .show import show
+from .util import strip_ansi
 
 
 __all__ = [

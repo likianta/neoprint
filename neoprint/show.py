@@ -71,6 +71,14 @@ def show(*args: Any, **kwargs: Any) -> None:
         frame.varnames = varnames if varnames else ()
 
     if not args:
+        if marks.index is not None:
+            format(
+                markup=markup_str,
+                color_code_scheme='ansi',
+                _caller_filepath=frame.filepath,
+                _caller_lineno=frame.lineno,
+                _caller_funcname=frame.funcname,
+            )
         return
 
     exception_args = [arg for arg in args if isinstance(arg, BaseException)]
@@ -149,6 +157,7 @@ def show(*args: Any, **kwargs: Any) -> None:
             color_code_scheme='ansi',
             _caller_filepath=frame.filepath,
             _caller_lineno=frame.lineno,
+            _caller_funcname=frame.funcname,
         )
 
         if marks.rich is not None:

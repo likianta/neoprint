@@ -1,6 +1,6 @@
 import re
 import time
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Literal, Optional, Tuple
 
 from .config import config
 from .console import AnsiColor, AnsiStyle, color_text
@@ -288,7 +288,7 @@ class MessageFormatter:
         self,
         *args: Any,
         markup: str = '',
-        color_code_scheme: str = 'none',
+        color_code_scheme: Literal['none', 'ansi', 'bbcode'] = 'none',
         _caller_filepath: Optional[str] = None,
         _caller_lineno: Optional[int] = None,
         _index_value: Optional[int] = None,

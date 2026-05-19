@@ -3,8 +3,7 @@ from contextlib import contextmanager
 from typing import List
 
 from . import console
-from .console import strip_ansi
-from .util import ansi_to_bbcode
+from .util import ansi_to_bbcode, strip_ansi
 
 
 class CapturedOutput:

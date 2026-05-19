@@ -44,6 +44,11 @@ def main() -> None:
             ':i1', 'line-level', 'EEE'
         ) == '[{}] line-level; EEE'.format(i + 1)
 
+    np.show(':i0')
+    assert np.format(':i', 'FFF - 1st') == '[1] FFF - 1st'
+    assert np.format(':i', 'FFF - 2nd') == '[2] FFF - 2nd'
+    assert np.format(':i', 'FFF - 3rd') == '[3] FFF - 3rd'
+
 
 if __name__ == '__main__':
     main()

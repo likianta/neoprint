@@ -2,6 +2,15 @@ import os
 import sys
 
 
+class _Debug:
+    def __init__(self):
+        self.enabled = False
+        self.output = []
+
+
+debug = _Debug()
+
+
 ANSI_ESCAPE = '\033['
 ANSI_RESET = ANSI_ESCAPE + '0m'
 
@@ -87,6 +96,8 @@ def print(
     *args: object, sep: str = ' ', end: str = '\n', flush: bool = False
 ) -> None:
     output = sep.join(str(arg) for arg in args) + end
+    if debug.enabled:
+        debug.output.append(output)
     try:
         sys.stdout.write(output)
         if flush:

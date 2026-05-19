@@ -5,11 +5,13 @@ from .console import (
     color_text,
     get_console_width,
     strip_ansi,
+    debug,
 )
 from .formatter import formatter
 from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
 from .show import show
+from . import util
 
 __all__ = [
     'show',
@@ -26,6 +28,8 @@ __all__ = [
     'ParsedMarks',
     'capture_output',
     'scope',
+    'debug',
+    'util',
 ]
 
 
@@ -110,51 +114,51 @@ def capture_output(color_code_scheme: str = 'none'):
 
     def ansi_to_bbcode(text):
         """将 ANSI 转义序列转换为 bbcode 格式"""
-        import re
         result = []
         i = 0
         n = len(text)
         open_tags = []
         
         while i < n:
-            if text.startswith('\033[', i) or text.startswith('\x1b[', i):
+            if (i + 1 < n and 
+                text[i] in '\x1b\x033' and 
+                text[i + 1] == '['):
+                ansi_start = i
                 i += 2
-                code_end = text.find('m', i)
-                if code_end == -1:
-                    result.append(text[i:])
-                    break
-                
-                codes = text[i:code_end].split(';')
-                i = code_end + 1
-                
-                # 处理重置代码
-                if any(code in ('0', '') for code in codes):
-                    # 关闭所有标签
-                    for _ in range(len(open_tags)):
-                        result.append('[/]')
-                    open_tags.clear()
-                    continue
-                
-                # 解析样式和颜色
-                style = ''
-                color = None
-                for code in codes:
-                    if code == '1':
-                        style = ''  # bbcode 没有专门的 bold 标记，默认不添加
-                    elif code == '2':
-                        style = 'dim '
-                    elif code in _ansi_color_to_bbcode:
-                        color = _ansi_color_to_bbcode[code]
-                
-                if color:
-                    tag = f'[{style}{color}]'
-                    open_tags.append(tag)
-                    result.append(tag)
+                m_pos = text.find('m', i)
+                if m_pos != -1:
+                    codes = text[i:m_pos].split(';')
+                    i = m_pos + 1
+                    
+                    if len(codes) == 1 and codes[0] == '0':
+                        for _ in range(len(open_tags)):
+                            result.append('[/]')
+                        open_tags.clear()
+                        continue
+                    
+                    style = ''
+                    color = None
+                    for code in codes:
+                        if code == '1':
+                            style = 'bold '
+                        elif code == '2':
+                            style = 'dim '
+                        elif code in _ansi_color_to_bbcode:
+                            color = _ansi_color_to_bbcode[code]
+                    
+                    if color:
+                        tag = f'[{style}{color}]'
+                        open_tags.append(tag)
+                        result.append(tag)
+                else:
+                    result.append(text[ansi_start:i])
             else:
-                result.append(text[i])
+                if text[i] == '[':
+                    result.append('\\[')
+                else:
+                    result.append(text[i])
                 i += 1
         
-        # 确保关闭所有标签
         for _ in range(len(open_tags)):
             result.append('[/]')
         

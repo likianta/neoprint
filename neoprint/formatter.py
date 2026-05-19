@@ -12,7 +12,7 @@ from .markup import MarkupParser, ParsedMarks
 class MessageFormatter:
     SOURCE_COLOR = AnsiColor.BLUE
     FUNC_COLOR = AnsiColor.GREEN
-    INDEX_COLOR = AnsiColor.WHITE
+    INDEX_COLOR = AnsiColor.RED
     DIM_COLOR = AnsiColor.WHITE
 
     @staticmethod
@@ -99,7 +99,7 @@ class MessageFormatter:
             else:
                 body_parts = [self._format_value(a) for a in args]
         else:
-            body_parts = [self._format_value(a) for a in args]
+            body_parts = [str(a) for a in args]
 
         if show_index and index_value is not None:
             index_part = color_text(
@@ -111,24 +111,27 @@ class MessageFormatter:
         style = AnsiStyle.RESET
         if color_level in (3, 5, 7):
             style = AnsiStyle.DIM
-        elif color_level in (4, 6, 8):
-            style = AnsiStyle.BOLD
+
+        # 分别给每个 body part 应用颜色
+        colored_body_parts = []
+        for i, part in enumerate(body_parts):
+            colored_part = color_text(part, color, style) if color_level > 0 else part
+            colored_body_parts.append(colored_part)
 
         separator = color_text(';', AnsiColor.BRIGHT_BLACK)
         formatted_body_parts = []
-        for i, part in enumerate(body_parts):
+        for i, part in enumerate(colored_body_parts):
             if i == 0:
                 formatted_body_parts.append(part)
+            elif i == 1 and show_index:
+                formatted_body_parts.append(' ' + part)
             else:
                 formatted_body_parts.append(separator + ' ' + part)
 
         formatted_body = ''.join(formatted_body_parts)
 
-        if color_level > 0:
-            formatted_body = color_text(formatted_body, color, style)
-
         if parts:
-            head_sep_2 = ' | '
+            head_sep_2 = ' ' + color_text('|', AnsiColor.BRIGHT_BLACK) + ' '
             return ''.join(parts) + head_sep_2 + formatted_body
         else:
             return formatted_body

@@ -41,15 +41,15 @@ def main() -> None:
 
     with np.capture_output('none') as cap:
         np.show('hello', 'world', ':v4')
-    assert cap.output[0] == '"hello"; "world"'
+    assert cap.output[0] == 'hello; world'
     
     with np.capture_output('bbcode') as cap:
         np.show('hello', 'world', ':v4')
-    assert cap.output[0] == '[green]"hello"[bright_black];[/][/] "world"'
+    assert cap.output[0] == '[green]hello[/][bright_black];[/] [green]world[/]'
     
     with np.capture_output('ascii') as cap:
         np.show('hello', 'world', ':v4')
-    assert cap.output[0] == r'\x1b[1;92m"hello"\x1b[90m;\x1b[0m "world"\x1b[0m'
+    assert cap.output[0] == r'\x1b[0;92mhello\x1b[0m\x1b[90m;\x1b[0m \x1b[0;92mworld\x1b[0m'
 
 
 if __name__ == '__main__':

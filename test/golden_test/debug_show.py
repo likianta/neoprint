@@ -1,9 +1,9 @@
 import neoprint as np
 
-np.debug.enabled = True
+np.debugger.enabled = True
 
 np.show('hello', 'world', ':v4')
-assert np.util.ansi_to_bbcode(np.debug.output[-1]) == (
+assert np.util.ansi_to_bbcode(np.debugger.output[-1]) == (
     '[bold blue]debug_show.py[/]'
     '[dim blue]:[/]'
     '[dim blue]5  [/]'
@@ -15,7 +15,7 @@ assert np.util.ansi_to_bbcode(np.debug.output[-1]) == (
 )
 
 np.show('foo', 'bar', ':i')
-assert np.util.ansi_to_bbcode(np.debug.output[-1]) == (
+assert np.util.ansi_to_bbcode(np.debugger.output[-1]) == (
     '[bold blue]debug_show.py[/]'
     '[dim blue]:[/]'
     '[dim blue]17 [/]'
@@ -28,7 +28,7 @@ assert np.util.ansi_to_bbcode(np.debug.output[-1]) == (
 )
 
 np.show('foo', 'bar', 'baz')
-assert np.util.ansi_to_bbcode(np.debug.output[-1]) == (
+assert np.util.ansi_to_bbcode(np.debugger.output[-1]) == (
     '[bold blue]debug_show.py[/]'
     '[dim blue]:[/]'
     '[dim blue]30 [/]'

@@ -52,13 +52,41 @@ class MessageFormatter:
         return text
 
     def _color_text_bbcode(
-        self, text: str, color: Optional[str] = None, style: str = ''
+        self, text: str, color: Optional[str] = None, style: str = '', bgcolor: Optional[str] = None
     ) -> str:
-        if color is None:
+        if color is None and bgcolor is None:
             return text
-        bbcode_color = self._ansi_to_bbcode.get(color, 'white')
+        
+        tag_parts = []
         prefix = 'dim ' if style == AnsiStyle.DIM else ''
-        return f'[{prefix}{bbcode_color}]{text}[/]'
+        if prefix:
+            tag_parts.append(prefix.strip())
+        
+        if color:
+            bbcode_color = self._ansi_to_bbcode.get(color, 'white')
+            tag_parts.append(bbcode_color)
+        
+        if bgcolor:
+            # 处理 ANSI 背景色代码（比如 '41'）或者 AnsiColor 值
+            # 映射 ANSI 背景色代码到对应的颜色
+            bg_color_map = {
+                '40': 'black',
+                '41': 'red',
+                '42': 'green',
+                '43': 'yellow',
+                '44': 'blue',
+                '45': 'magenta',
+                '46': 'cyan',
+                '47': 'white',
+            }
+            bbcode_bgcolor = bg_color_map.get(bgcolor, 'white')
+            tag_parts.append(f'on {bbcode_bgcolor}')
+        
+        if tag_parts:
+            tag = f'[{" ".join(tag_parts)}]'
+            return f'{tag}{text}[/]'
+        
+        return text
 
     def format_message(
         self,
@@ -75,8 +103,19 @@ class MessageFormatter:
         parts: List[str] = []
 
         if frame and show_source:
-            source_part = self.format_source(frame)
-            parts.append(source_part)
+            if color_level == 9:
+                filename_part = color_text(
+                    frame.filename, AnsiColor.RED, AnsiStyle.BOLD
+                )
+                head_sep_1 = color_text(':', AnsiColor.RED, AnsiStyle.DIM)
+                lineno_padded = self._pad_lineno(frame.lineno)
+                lineno_part = color_text(
+                    lineno_padded, AnsiColor.RED, AnsiStyle.DIM
+                )
+                parts.append(filename_part + head_sep_1 + lineno_part)
+            else:
+                source_part = self.format_source(frame)
+                parts.append(source_part)
 
         if frame and show_funcname:
             func_part = self.format_funcname(frame)
@@ -119,9 +158,12 @@ class MessageFormatter:
         # 分别给每个 body part 应用颜色
         colored_body_parts = []
         for i, part in enumerate(body_parts):
-            colored_part = (
-                color_text(part, color, style) if color_level > 0 else part
-            )
+            if color_level == 9:
+                colored_part = color_text(part, AnsiColor.BRIGHT_WHITE, '41')
+            else:
+                colored_part = (
+                    color_text(part, color, style) if color_level > 0 else part
+                )
             colored_body_parts.append(colored_part)
 
         separator = color_text(';', AnsiColor.BRIGHT_BLACK)
@@ -367,7 +409,10 @@ class MessageFormatter:
         if has_verbosity_mark and color_level > 0:
             style = AnsiStyle.DIM if color_level in (3, 5, 7) else ''
             if color_level == 9:
-                body_parts = [color_func(part, AnsiColor.BRIGHT_WHITE, '41') for part in body_parts]
+                if color_code_scheme == 'bbcode':
+                    body_parts = [color_func(part, AnsiColor.BRIGHT_WHITE, style='', bgcolor='41') for part in body_parts]
+                else:
+                    body_parts = [color_func(part, AnsiColor.BRIGHT_WHITE, '41') for part in body_parts]
             elif color:
                 body_parts = [color_func(part, color, style) for part in body_parts]
 
@@ -387,16 +432,25 @@ class MessageFormatter:
         # 添加 source 部分（类似于 format_message）
         parts: List[str] = []
         if frame_info and config.show_source:
-            source_color = AnsiColor.RED if color_level == 9 else self.SOURCE_COLOR
-            filename_part = color_func(
-                frame_info.filename, source_color, AnsiStyle.BOLD
-            )
-            head_sep_1 = color_func(':', source_color, AnsiStyle.DIM)
-            lineno_padded = self._pad_lineno(frame_info.lineno)
-            lineno_part = color_func(
-                lineno_padded, source_color, AnsiStyle.DIM
-            )
-            parts.append(filename_part + head_sep_1 + lineno_part)
+            if color_level == 9:
+                if color_code_scheme == 'bbcode':
+                    filename_part = color_func(frame_info.filename, AnsiColor.RED, AnsiStyle.BOLD)
+                    head_sep_1 = color_func(':', AnsiColor.RED, AnsiStyle.DIM)
+                    lineno_padded = self._pad_lineno(frame_info.lineno)
+                    lineno_part = color_func(lineno_padded, AnsiColor.RED, AnsiStyle.DIM)
+                else:
+                    filename_part = color_text(frame_info.filename, AnsiColor.RED, AnsiStyle.BOLD)
+                    head_sep_1 = color_text(':', AnsiColor.RED, AnsiStyle.DIM)
+                    lineno_padded = self._pad_lineno(frame_info.lineno)
+                    lineno_part = color_text(lineno_padded, AnsiColor.RED, AnsiStyle.DIM)
+                parts.append(filename_part + head_sep_1 + lineno_part)
+            else:
+                source_color = self.SOURCE_COLOR
+                filename_part = color_func(frame_info.filename, source_color, AnsiStyle.BOLD)
+                head_sep_1 = color_func(':', source_color, AnsiStyle.DIM)
+                lineno_padded = self._pad_lineno(frame_info.lineno)
+                lineno_part = color_func(lineno_padded, source_color, AnsiStyle.DIM)
+                parts.append(filename_part + head_sep_1 + lineno_part)
 
         if frame_info and config.show_funcname:
             funcname = frame_info.funcname

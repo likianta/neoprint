@@ -30,6 +30,10 @@ class ParsedMarks:
     short: Optional[int] = None
     show_varnames: Optional[int] = None
     timer: Optional[int] = None
+    
+    @property
+    def parent_level(self) -> int:
+        return self.parent if self.parent is not None else 0
 
 
 class MarkupParser:
@@ -37,7 +41,7 @@ class MarkupParser:
     _mark_token_pattern = re.compile(r'([deiflnprstv])([0-9]?)')
 
     _defaults: Dict[str, int] = {
-        'd': 0,
+        'd': 1,
         'e': 1,
         'f': 0,
         'i': 2,

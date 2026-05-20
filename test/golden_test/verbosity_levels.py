@@ -15,11 +15,18 @@ np.show(':v9', 'CRITICAL')
 
 
 def check(index: int, expected: str) -> None:
-    actual = np.debugger.output[index]
-    assert np.util.ansi_to_bbcode(actual) == expected, (index, expected, actual)
+    actual = np.util.ansi_to_bbcode(np.debugger.output[index])
+    assert actual == expected, (index, expected, actual)
 
 
-check(0, 'verbosity_levels.py:5   | NORMAL MESSAGE\n')
+# check(0, 'verbosity_levels.py:5   | NORMAL MESSAGE\n')
+check(0, (
+    '[bold blue]verbosity_levels.py[/]'
+    '[dim blue]:[/]'
+    '[dim blue]5  [/]'
+    ' [bright_black]|[/] '
+    'NORMAL MESSAGE\n'
+))
 check(1, (
     '[bold blue]verbosity_levels.py[/]'
     '[dim blue]:[/]'

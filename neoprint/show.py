@@ -1,15 +1,14 @@
 import traceback
 from inspect import currentframe
-from typing import Any, List
+from typing import Any
 
 from . import console
 from .config import config
 from .console import AnsiStyle, LEVEL_COLORS
-from .format import format, format_list
+from .format import format
 from .formatter import formatter
 from .frame_info import FrameInfo, from_frame
 from .markup import MarkupParser, ParsedMarks
-from .text_object import TextObject
 
 
 def _get_caller_frame(extra_levels: int = 0) -> FrameInfo:
@@ -80,7 +79,7 @@ def _format_rich_traceback(exc: BaseException, show_locals: bool = False) -> str
     lines.append('\u251c' + '\u2500' * 76 + '\u2524')
     exc_type = type(exc).__name__
     exc_msg = str(exc)
-    lines.append(f'\u2502 {exc_type}: {exc_msg}'.ljust(77) + ' \u2502')
+    lines.append(f'\u2502 {exc_type}:{exc_msg}'.ljust(77) + ' \u2502')
     lines.append('\u2514' + '\u2500' * 76 + '\u2518')
     
     return '\n'.join(lines)
@@ -104,34 +103,12 @@ def show(*args: Any, **kwargs: Any) -> None:
 
     marks = _parser.parse(markup_str) if markup_str else ParsedMarks()
 
-    this_frame = currentframe()
-    
-    parent_frame = this_frame.f_back if this_frame else None
-    target_frame = None
-    
-    if this_frame:
-        target_frame = this_frame.f_back
-        for _ in range(extra_levels + 1):
-            if target_frame is not None:
-                target_frame = target_frame.f_back
-        
-        if marks.parent is not None and marks.parent > 0:
-            for _ in range(marks.parent):
-                if target_frame is not None:
-                    target_frame = target_frame.f_back
-    
-    original_frame_info = None
-    frame_info = None
-    
-    if target_frame is not None:
-        filepath = target_frame.f_code.co_filename
-        lineno = target_frame.f_lineno
-        funcname = target_frame.f_code.co_name
-        frame_info = FrameInfo(filepath, lineno, funcname)
-        original_frame_info = frame_info
+    original_frame = _get_caller_frame(extra_levels)
+
+    if marks.parent is not None and marks.parent > 0:
+        frame = _get_caller_frame(extra_levels + marks.parent)
     else:
-        original_frame_info = _get_caller_frame(extra_levels)
-        frame_info = original_frame_info
+        frame = original_frame
 
     if marks.exception is not None:
         color_level = 8
@@ -167,21 +144,21 @@ def show(*args: Any, **kwargs: Any) -> None:
         varnames = ()
         for funcname in funcnames:
             varnames = get_varnames_from_call(
-                original_frame_info.filepath, original_frame_info.lineno, funcname
+                original_frame.filepath, original_frame.lineno, funcname
             )
             if varnames:
                 break
         
-        frame_info.varnames = varnames if varnames else ()
+        frame.varnames = varnames if varnames else ()
 
     if not args:
         if marks.index is not None:
             format(
                 markup=markup_str,
                 color_code_scheme='ansi',
-                _caller_filepath=frame_info.filepath,
-                _caller_lineno=frame_info.lineno,
-                _caller_funcname=frame_info.funcname,
+                _caller_filepath=frame.filepath,
+                _caller_lineno=frame.lineno,
+                _caller_funcname=frame.funcname,
             )
         return
 
@@ -199,13 +176,13 @@ def show(*args: Any, **kwargs: Any) -> None:
             style = AnsiStyle.BOLD if color_level in (4, 6, 8) else AnsiStyle.RESET
 
             parts: list[str] = []
-            if frame_info and config.show_source:
+            if frame and config.show_source:
                 source_part = (
-                    f'{frame_info.filename}:{formatter._pad_lineno(frame_info.lineno)}'
+                    f'{frame.filename}:{formatter._pad_lineno(frame.lineno)}'
                 )
                 parts.append(source_part)
-            if frame_info and config.show_funcname:
-                funcname = frame_info.funcname
+            if frame and config.show_funcname:
+                funcname = frame.funcname
                 if not funcname.startswith('<'):
                     funcname = f'{funcname}()'
                 parts.append(funcname)
@@ -223,18 +200,15 @@ def show(*args: Any, **kwargs: Any) -> None:
 
                 console.print(full_output)
     else:
-        varnames_for_format = frame_info.varnames if hasattr(frame_info, 'varnames') else None
-        text_objs: List[TextObject] = format_list(
+        varnames_for_format = frame.varnames if hasattr(frame, 'varnames') else None
+        output = format(
             *args,
             markup=markup_str,
-            _caller_filepath=frame_info.filepath,
-            _caller_lineno=frame_info.lineno,
-            _caller_funcname=frame_info.funcname,
+            color_code_scheme='ansi',
+            _caller_filepath=frame.filepath,
+            _caller_lineno=frame.lineno,
+            _caller_funcname=frame.funcname,
             _varnames=varnames_for_format,
-        )
-
-        output = ''.join(
-            (t.render('ansi') for t in text_objs)
         )
 
         if marks.rich is not None:
@@ -287,3 +261,6 @@ def warning(*args: Any, **kwargs: Any) -> None:
 def error(*args: Any, **kwargs: Any) -> None:
     args, kwargs = _combine_marks(':v8', args, kwargs)
     show(*args, _extra_levels=1, **kwargs)
+
+
+__all__ = ['show', 'print', 'debug', 'info', 'success', 'warning', 'error']

@@ -17,6 +17,36 @@ class FrameInfo:
     @property
     def id(self) -> str:
         return self.filepath + ':' + str(self.lineno)
+    
+    @property
+    def frame_id(self) -> str:
+        return self.filepath + ':' + str(self.lineno)
+    
+    @staticmethod
+    def from_frame(frame) -> 'FrameInfo':
+        code = frame.f_code
+        filepath = frame.f_globals.get('__file__', code.co_filename)
+        if filepath.startswith('<') and filepath.endswith('>'):
+            filepath = '<' + filepath[1:-1] + '@' + str(id(frame)) + '>'
+        else:
+            import os
+            filepath = os.path.abspath(filepath)
+        funcname = code.co_name
+        lineno = frame.f_lineno
+        code_context = None
+        try:
+            import inspect
+            info = inspect.getframeinfo(frame)
+            if info.code_context:
+                code_context = info.code_context[0].strip()
+        except Exception:
+            pass
+        return FrameInfo(
+            filepath=filepath,
+            lineno=lineno,
+            funcname=funcname,
+            code_context=code_context,
+        )
 
     @property
     def filename(self) -> str:

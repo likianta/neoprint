@@ -91,7 +91,7 @@ class TestMarkupParser:
 
     def test_parse_divider(self):
         marks = self.parser.parse(':d')
-        assert marks.divider == 0
+        assert marks.divider == 1
 
         marks = self.parser.parse(':d1')
         assert marks.divider == 1

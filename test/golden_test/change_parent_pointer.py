@@ -1,4 +1,5 @@
 import neoprint as np
+from pprint import pformat
 
 np.debugger.enabled = True
 
@@ -24,10 +25,11 @@ def baz():
 
 
 foo()
-assert tuple(map(np.util.strip_ansi, np.debugger.output)) == (
-    'change_parent_pointer.py:7   | [1] AAA - 1st\n',
-    'change_parent_pointer.py:8   | [2] AAA - 2nd\n',
-    'change_parent_pointer.py:8   | [3] AAA - 3rd\n',
-    'change_parent_pointer.py:8   | name = "Alice"; age = 20; city = "New York"\n',
-    'change_parent_pointer.py:9   | [4] AAA - 4th\n',
-)
+outputs = tuple(map(np.util.strip_ansi, np.debugger.output))
+assert outputs == (
+    'change_parent_pointer.py:8   | [1] AAA - 1st\n',
+    'change_parent_pointer.py:9   | [2] AAA - 2nd\n',
+    'change_parent_pointer.py:9   | [3] AAA - 3rd\n',
+    'change_parent_pointer.py:9   | name = "Alice"; age = 20; city = "New York"\n',
+    'change_parent_pointer.py:10  | [4] AAA - 4th\n',
+), pformat(outputs)

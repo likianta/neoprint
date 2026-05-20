@@ -59,8 +59,24 @@ LEVEL_COLORS = {
 
 
 def _apply_style(color: str, style: str = '') -> str:
-    style_code = style + ';' if style else ''
-    return ANSI_ESCAPE + '0;' + style_code + color + 'm'
+    # 如果 style 看起来像背景色代码（40-47），那么我们需要处理它
+    codes = []
+    codes.append('0')  # 重置
+    
+    # 处理 style：如果 style 是数字（比如 '1' 表示粗体，或者 '41' 表示红色背景）
+    if style:
+        style_parts = style.split(';')
+        for part in style_parts:
+            if part.strip():
+                codes.append(part.strip())
+    
+    # 处理 color：添加颜色代码
+    if color:
+        codes.append(color)
+    
+    # 组合所有代码
+    code_str = ';'.join(codes)
+    return ANSI_ESCAPE + code_str + 'm'
 
 
 def color_text(text: str, color: str, style: str = '') -> str:

@@ -110,7 +110,16 @@ def show(*args: Any, **kwargs: Any) -> None:
     else:
         frame = original_frame
 
-    color_level = marks.verbosity if marks.verbosity is not None else 0
+    if marks.exception is not None:
+        color_level = 8
+        if marks.exception == 0:
+            marks.long = 0
+        elif marks.exception == 1:
+            marks.long = 1
+        elif marks.exception >= 2:
+            marks.long = 2
+    else:
+        color_level = marks.verbosity if marks.verbosity is not None else 0
 
     if marks.divider is not None:
         from .console import get_console_width
@@ -144,10 +153,10 @@ def show(*args: Any, **kwargs: Any) -> None:
 
     exception_args = [arg for arg in args if isinstance(arg, BaseException)]
     if exception_args and color_level > 0:
-        expand_level = marks.show_locals if marks.show_locals is not None else 0
+        long_level = marks.long if marks.long is not None else 0
         
-        if expand_level >= 1:
-            show_locals = expand_level >= 2
+        if long_level >= 1:
+            show_locals = long_level >= 2
             for exc in exception_args:
                 formatted_tb = _format_rich_traceback(exc, show_locals=show_locals)
                 console.print(formatted_tb)

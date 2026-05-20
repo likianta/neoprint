@@ -21,39 +21,41 @@ class MarkType(Enum):
 class ParsedMarks:
     verbosity: Optional[int] = None
     divider: Optional[int] = None
-    expand: Optional[int] = None
+    exception: Optional[int] = None
     flush: Optional[int] = None
     index: Optional[int] = None
+    long: Optional[int] = None
     parent: Optional[int] = None
     rich: Optional[int] = None
     short: Optional[int] = None
     show_varnames: Optional[int] = None
     timer: Optional[int] = None
-    show_locals: Optional[int] = None
 
 
 class MarkupParser:
-    _mark_pattern = re.compile(r'^:(?:[dfilnprstv][0-9]?)+$')
-    _mark_token_pattern = re.compile(r'([dfilnprstv])([0-9]?)')
+    _mark_pattern = re.compile(r'^:(?:[deiflnprstv][0-9]?)+$')
+    _mark_token_pattern = re.compile(r'([deiflnprstv])([0-9]?)')
 
     _defaults: Dict[str, int] = {
         'd': 0,
+        'e': 1,
         'f': 0,
         'i': 2,
         'l': 1,
         'n': 1,
         'p': 1,
         'r': 0,
-        's': 0,
+        's': 1,
         't': 1,
         'v': 0,
     }
 
     _key_to_attr: Dict[str, str] = {
         'd': 'divider',
+        'e': 'exception',
         'f': 'flush',
         'i': 'index',
-        'l': 'show_locals',
+        'l': 'long',
         'n': 'show_varnames',
         'p': 'parent',
         'r': 'rich',

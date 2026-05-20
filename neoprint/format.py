@@ -27,7 +27,7 @@ def format(
 
     frame = inspect.currentframe()
     caller_frame = frame.f_back if frame is not None else None
-    
+
     if _caller_filepath is None or _caller_lineno is None:
         caller_filepath = (
             caller_frame.f_code.co_filename
@@ -60,7 +60,9 @@ def format(
                     scope_id = _caller_funcname
                 else:
                     scope_id = (
-                        caller_frame.f_code.co_name if caller_frame else '<module>'
+                        caller_frame.f_code.co_name
+                        if caller_frame
+                        else '<module>'
                     )
             index_value = counter.update_scoped(scope_id)
         elif marks.index == 3:

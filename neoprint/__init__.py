@@ -14,7 +14,6 @@ from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
 from .scope import get_current_scope, scope
 from .show import show
-from .util import strip_ansi
 
 
 __all__ = [
@@ -33,7 +32,6 @@ __all__ = [
     'get_current_scope',
     'scope',
     'show',
-    'strip_ansi',
     'util',
 ]
 

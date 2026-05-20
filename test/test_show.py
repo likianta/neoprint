@@ -113,19 +113,25 @@ class TestMarkupParser:
         marks = self.parser.parse(':t2')
         assert marks.timer == 2
 
-    def test_parse_expand(self):
+    def test_parse_long(self):
         marks = self.parser.parse(':l')
-        assert marks.expand == 0
+        assert marks.long == 1
 
         marks = self.parser.parse(':l1')
-        assert marks.expand == 1
+        assert marks.long == 1
+
+        marks = self.parser.parse(':l0')
+        assert marks.long == 0
 
     def test_parse_short(self):
         marks = self.parser.parse(':s')
-        assert marks.short == 0
+        assert marks.short == 1
 
         marks = self.parser.parse(':s1')
         assert marks.short == 1
+
+        marks = self.parser.parse(':s0')
+        assert marks.short == 0
 
     def test_parse_flush(self):
         marks = self.parser.parse(':f')
@@ -192,7 +198,7 @@ class TestConsoleFunctions:
 
     def test_strip_ansi(self):
         colored = np.color_text('hello', np.AnsiColor.RED)
-        stripped = np.strip_ansi(colored)
+        stripped = np.util.strip_ansi(colored)
         assert stripped == 'hello'
         assert '\033[' not in stripped
 
@@ -212,7 +218,7 @@ class TestShowFunction:
     def test_show_multiple_args_space_separated(self, capsys):
         np.show('a', 'b', 'c')
         captured = capsys.readouterr()
-        stripped = np.strip_ansi(captured.out)
+        stripped = np.util.strip_ansi(captured.out)
         assert 'a; b; c' in stripped
 
     def test_show_with_markup_first(self, capsys):

@@ -1,14 +1,15 @@
 import traceback
 from inspect import currentframe
-from typing import Any
+from typing import Any, List
 
 from . import console
 from .config import config
 from .console import AnsiStyle, LEVEL_COLORS
-from .format import format
+from .format import format, format_list
 from .formatter import formatter
 from .frame_info import FrameInfo, from_frame
 from .markup import MarkupParser, ParsedMarks
+from .text_object import TextObject
 
 
 def _get_caller_frame(extra_levels: int = 0) -> FrameInfo:
@@ -103,12 +104,34 @@ def show(*args: Any, **kwargs: Any) -> None:
 
     marks = _parser.parse(markup_str) if markup_str else ParsedMarks()
 
-    original_frame = _get_caller_frame(extra_levels)
-
-    if marks.parent is not None and marks.parent > 0:
-        frame = _get_caller_frame(extra_levels + marks.parent)
+    this_frame = currentframe()
+    
+    parent_frame = this_frame.f_back if this_frame else None
+    target_frame = None
+    
+    if this_frame:
+        target_frame = this_frame.f_back
+        for _ in range(extra_levels + 1):
+            if target_frame is not None:
+                target_frame = target_frame.f_back
+        
+        if marks.parent is not None and marks.parent > 0:
+            for _ in range(marks.parent):
+                if target_frame is not None:
+                    target_frame = target_frame.f_back
+    
+    original_frame_info = None
+    frame_info = None
+    
+    if target_frame is not None:
+        filepath = target_frame.f_code.co_filename
+        lineno = target_frame.f_lineno
+        funcname = target_frame.f_code.co_name
+        frame_info = FrameInfo(filepath, lineno, funcname)
+        original_frame_info = frame_info
     else:
-        frame = original_frame
+        original_frame_info = _get_caller_frame(extra_levels)
+        frame_info = original_frame_info
 
     if marks.exception is not None:
         color_level = 8
@@ -144,21 +167,21 @@ def show(*args: Any, **kwargs: Any) -> None:
         varnames = ()
         for funcname in funcnames:
             varnames = get_varnames_from_call(
-                original_frame.filepath, original_frame.lineno, funcname
+                original_frame_info.filepath, original_frame_info.lineno, funcname
             )
             if varnames:
                 break
         
-        frame.varnames = varnames if varnames else ()
+        frame_info.varnames = varnames if varnames else ()
 
     if not args:
         if marks.index is not None:
             format(
                 markup=markup_str,
                 color_code_scheme='ansi',
-                _caller_filepath=frame.filepath,
-                _caller_lineno=frame.lineno,
-                _caller_funcname=frame.funcname,
+                _caller_filepath=frame_info.filepath,
+                _caller_lineno=frame_info.lineno,
+                _caller_funcname=frame_info.funcname,
             )
         return
 
@@ -176,13 +199,13 @@ def show(*args: Any, **kwargs: Any) -> None:
             style = AnsiStyle.BOLD if color_level in (4, 6, 8) else AnsiStyle.RESET
 
             parts: list[str] = []
-            if frame and config.show_source:
+            if frame_info and config.show_source:
                 source_part = (
-                    f'{frame.filename}:{formatter._pad_lineno(frame.lineno)}'
+                    f'{frame_info.filename}:{formatter._pad_lineno(frame_info.lineno)}'
                 )
                 parts.append(source_part)
-            if frame and config.show_funcname:
-                funcname = frame.funcname
+            if frame_info and config.show_funcname:
+                funcname = frame_info.funcname
                 if not funcname.startswith('<'):
                     funcname = f'{funcname}()'
                 parts.append(funcname)
@@ -200,15 +223,18 @@ def show(*args: Any, **kwargs: Any) -> None:
 
                 console.print(full_output)
     else:
-        varnames_for_format = frame.varnames if hasattr(frame, 'varnames') else None
-        output = format(
+        varnames_for_format = frame_info.varnames if hasattr(frame_info, 'varnames') else None
+        text_objs: List[TextObject] = format_list(
             *args,
             markup=markup_str,
-            color_code_scheme='ansi',
-            _caller_filepath=frame.filepath,
-            _caller_lineno=frame.lineno,
-            _caller_funcname=frame.funcname,
+            _caller_filepath=frame_info.filepath,
+            _caller_lineno=frame_info.lineno,
+            _caller_funcname=frame_info.funcname,
             _varnames=varnames_for_format,
+        )
+
+        output = ''.join(
+            (t.render('ansi') for t in text_objs)
         )
 
         if marks.rich is not None:

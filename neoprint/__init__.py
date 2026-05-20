@@ -12,6 +12,7 @@ from .format import format
 from .formatter import formatter
 from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
+from .progress import Progress
 from .scope import get_current_scope, scope
 from .show import (
     show,
@@ -48,6 +49,7 @@ __all__ = [
     'FrameInfo',
     'MarkupParser',
     'ParsedMarks',
+    'Progress',
     'capture_output',
     'color_text',
     'config',

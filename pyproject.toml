@@ -1,6 +1,6 @@
 [project]
 name = "neoprint"
-version = "0.1.0a15"
+version = "0.1.0a17"
 description = "The artistic print for modern consoles."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -12,9 +12,10 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "faker>=40.8.0; python_version >= '3.12'",
     "loguru>=0.7.3",
     "pytest>=7.0.0",
-    "rich>=15.0.0",
+    "rich>=15.0.0; python_version >= '3.12'",
 ]
 
 [tool.hatch.build.targets.wheel]

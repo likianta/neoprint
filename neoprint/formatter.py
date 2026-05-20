@@ -293,6 +293,7 @@ class MessageFormatter:
         _caller_lineno: Optional[int] = None,
         _index_value: Optional[int] = None,
         _index: Optional[int] = None,
+        _varnames: Optional[Tuple[str, ...]] = None,
     ) -> str:
         from inspect import currentframe
         from .sourcemap import get_varnames_from_call
@@ -341,7 +342,7 @@ class MessageFormatter:
             and filepath
             and lineno
         ):
-            varnames = get_varnames_from_call(filepath, lineno, 'np.show')
+            varnames = _varnames if _varnames else get_varnames_from_call(filepath, lineno, 'np.show')
             if not varnames:
                 varnames = get_varnames_from_call(filepath, lineno, 'np.format')
             if not varnames:

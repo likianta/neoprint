@@ -29,6 +29,7 @@ class ParsedMarks:
     short: Optional[int] = None
     show_varnames: Optional[int] = None
     timer: Optional[int] = None
+    show_locals: Optional[int] = None
 
 
 class MarkupParser:
@@ -39,7 +40,7 @@ class MarkupParser:
         'd': 0,
         'f': 0,
         'i': 2,
-        'l': 0,
+        'l': 1,
         'n': 1,
         'p': 1,
         'r': 0,
@@ -52,7 +53,7 @@ class MarkupParser:
         'd': 'divider',
         'f': 'flush',
         'i': 'index',
-        'l': 'expand',
+        'l': 'show_locals',
         'n': 'show_varnames',
         'p': 'parent',
         'r': 'rich',

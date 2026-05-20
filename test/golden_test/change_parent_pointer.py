@@ -10,9 +10,13 @@ def foo():
 
 
 def bar():
-    # the index counter should follow parent scope by `:p`
     np.show(':p1i', 'AAA - 2nd')
     baz()
+    
+    name = 'Alice'
+    age = 20
+    city = 'New York'
+    np.show(name, age, city, ':np')
 
 
 def baz():
@@ -24,5 +28,6 @@ assert tuple(map(np.util.strip_ansi, np.debug.output)) == (
     'change_parent_pointer.py:7   | [1] AAA - 1st\n',
     'change_parent_pointer.py:8   | [2] AAA - 2nd\n',
     'change_parent_pointer.py:8   | [3] AAA - 3rd\n',
+    'change_parent_pointer.py:8   | name = "Alice"; age = 20; city = "New York"\n',
     'change_parent_pointer.py:9   | [4] AAA - 4th\n',
 )

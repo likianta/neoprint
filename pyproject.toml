@@ -1,6 +1,6 @@
 [project]
 name = "neoprint"
-version = "0.1.0a10"
+version = "0.1.0a12"
 description = "The artistic print for modern consoles."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -10,8 +10,12 @@ dependencies = []
 requires = ["hatchling>=1.29.0"]
 build-backend = "hatchling.build"
 
-[project.optional-dependencies]
-dev = ["pytest>=7.0.0"]
+[dependency-groups]
+dev = [
+    "loguru>=0.7.3",
+    "pytest>=7.0.0",
+    "rich>=15.0.0",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["neoprint"]

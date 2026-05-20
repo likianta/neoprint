@@ -16,6 +16,7 @@ def format(
     _caller_filepath: Optional[str] = None,
     _caller_lineno: Optional[int] = None,
     _caller_funcname: Optional[str] = None,
+    _varnames: Optional[tuple] = None,
 ) -> str:
     if args and isinstance(args[0], str) and args[0].startswith(':'):
         markup = args[0]
@@ -73,4 +74,5 @@ def format(
         _caller_lineno=caller_lineno,
         _index_value=index_value,
         _index=marks.index,
+        _varnames=_varnames,
     )

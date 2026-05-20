@@ -14,8 +14,7 @@ def main():
     np.show(123, 456, 'mixed types', True, None)
 
     print_divider('Verbosity Levels (:v0-:v8)')
-    np.show(':v0', 'DEBUG message (bright_black)')
-    np.show(':v1', 'INFO (negative) - magenta')
+    np.show(':v1', 'DEBUG message (bright_black)')
     np.show(':v2', 'INFO (positive) - blue')
     np.show(':v3', 'WEAK SUCCESS - dim green')
     np.show(':v4', 'SUCCESS - bright green')

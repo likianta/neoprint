@@ -91,7 +91,12 @@ def show(*args: Any, **kwargs: Any) -> None:
     markup_pos = 0  # 0=from kwarg, 1=from args[0], -1=from args[-1]
 
     if not markup_str:
-        if args and isinstance(args[0], str) and args[0].startswith(':'):
+        if (
+            args
+            and isinstance(args[0], str)
+            and args[0].startswith(':')
+            and _parser.is_valid_markup(args[0])
+        ):
             markup_str = args[0]
             args = args[1:]
             markup_pos = 1

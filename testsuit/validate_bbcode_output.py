@@ -12,7 +12,6 @@ def expected_bbcode_output(lineno: int, *body_parts):
         + '\n'
     )
 
-def validate_bbcode_output(dbg_index: int, lineno, expected_body_parts):
-    expected = expected_bbcode_output(lineno, *expected_body_parts)
+def validate_bbcode_output(dbg_index: int, lineno, expected: str):
     actual = np.util.ansi_to_bbcode(np.debugger.output[dbg_index])
     assert actual == expected, np.format(expected, actual, ':nlv8p')

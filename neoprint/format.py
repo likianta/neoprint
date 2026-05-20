@@ -18,12 +18,13 @@ def format(
     _caller_funcname: Optional[str] = None,
     _varnames: Optional[tuple] = None,
 ) -> str:
-    if args and isinstance(args[0], str) and args[0].startswith(':'):
-        markup = args[0]
-        args = args[1:]
-    elif args and isinstance(args[-1], str) and args[-1].startswith(':'):
-        markup = args[-1]
-        args = args[:-1]
+    if not markup:
+        if args and isinstance(args[0], str) and args[0].startswith(':') and _parser.is_valid_markup(args[0]):
+            markup = args[0]
+            args = args[1:]
+        elif args and isinstance(args[-1], str) and args[-1].startswith(':') and _parser.is_valid_markup(args[-1]):
+            markup = args[-1]
+            args = args[:-1]
 
     frame = inspect.currentframe()
     caller_frame = frame.f_back if frame is not None else None

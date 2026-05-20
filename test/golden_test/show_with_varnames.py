@@ -2,9 +2,7 @@ import neoprint as np
 
 
 def main() -> None:
-    np.config(show_source=False, show_funcname=False)
-    #   show_source=False: do not show `filepath:lineno` part.
-    #   show_funcname=False: do not show `funcname()` part.
+    np.config(show_source=False, show_funcname=False, debug_output=True)
 
     name = 'Alice'
     age = 20
@@ -22,6 +20,20 @@ def main() -> None:
         assert (
             cap.output[0] == '#2; name = "Alice"; age = 20; city = "New York"'
         )
+    
+    np.info('#3', name, age, city, 'OK', ':n')
+    assert np.util.ansi_to_bbcode(np.debugger.output[-1]) == (
+        '[cyan]#3[/]'
+        '[bright_black];[/] '
+        '[cyan]name = "Alice"[/]'
+        '[bright_black];[/] '
+        '[cyan]age = 20[/]'
+        '[bright_black];[/] '
+        '[cyan]city = "New York"[/]'
+        '[bright_black];[/] '
+        '[cyan]OK[/]'
+        '\n'
+    )
 
 
 if __name__ == '__main__':

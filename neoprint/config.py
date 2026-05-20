@@ -9,6 +9,7 @@ class Config:
     index_mode: int = 1
     sourcemap_alignment: str = 'left'
     separator: str = '  >  '
+    no_duplicate_marks_in_same_call: bool = False
 
     _instance: Optional['Config'] = None
 
@@ -36,6 +37,7 @@ class Config:
         self.index_mode = 1
         self.sourcemap_alignment = 'left'
         self.separator = '  >  '
+        self.no_duplicate_marks_in_same_call = False
 
 
 config = Config()

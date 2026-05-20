@@ -351,21 +351,16 @@ class MessageFormatter:
                 varnames = get_varnames_from_call(filepath, lineno, 'format')
 
             if varnames:
-                if len(varnames) < len(args):
-                    prefix_args = args[:-len(varnames)]
-                    suffix_args = args[-len(varnames):]
-                    body_parts = [str(a) for a in prefix_args]
-                    for name, value in zip(varnames, suffix_args):
+                body_parts = []
+                for i, arg in enumerate(args):
+                    if i < len(varnames) and varnames[i] is not None:
                         body_parts.append(
-                            '{} = {}'.format(name, self._format_value(value))
+                            '{} = {}'.format(varnames[i], self._format_value(arg))
                         )
-                else:
-                    for name, value in zip(varnames, args):
-                        body_parts.append(
-                            '{} = {}'.format(name, self._format_value(value))
-                        )
+                    else:
+                        body_parts.append(str(arg))
             else:
-                body_parts = [self._format_value(a) for a in args]
+                body_parts = [str(a) for a in args]
         else:
             body_parts = [str(a) for a in args]
 

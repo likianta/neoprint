@@ -131,13 +131,24 @@ def show(*args: Any, **kwargs: Any) -> None:
     if marks.show_varnames is not None and marks.show_varnames > 0 and args:
         from .sourcemap import get_varnames_from_call
 
-        varnames = get_varnames_from_call(
-            original_frame.filepath, original_frame.lineno, 'np.show'
-        )
-        if not varnames:
+        funcnames = [
+            'np.show', 'show',
+            'np.print', 'print',
+            'np.debug', 'debug',
+            'np.info', 'info',
+            'np.success', 'success',
+            'np.warning', 'warning',
+            'np.error', 'error',
+        ]
+        
+        varnames = ()
+        for funcname in funcnames:
             varnames = get_varnames_from_call(
-                original_frame.filepath, original_frame.lineno, 'show'
+                original_frame.filepath, original_frame.lineno, funcname
             )
+            if varnames:
+                break
+        
         frame.varnames = varnames if varnames else ()
 
     if not args:
@@ -206,25 +217,47 @@ def show(*args: Any, **kwargs: Any) -> None:
         console.print(output)
 
 
+def _combine_marks(default_mark: str, args: tuple, kwargs: dict) -> tuple:
+    user_mark = ''
+    
+    if 'markup' in kwargs:
+        user_mark = kwargs.pop('markup')
+    elif args and isinstance(args[0], str) and args[0].startswith(':') and _parser.is_valid_markup(args[0]):
+        user_mark = args[0]
+        args = args[1:]
+    elif args and isinstance(args[-1], str) and args[-1].startswith(':') and _parser.is_valid_markup(args[-1]):
+        user_mark = args[-1]
+        args = args[:-1]
+    
+    combined_mark = default_mark + user_mark
+    return (combined_mark,) + args, kwargs
+
+
 def print(*args: Any, **kwargs: Any) -> None:
+    args, kwargs = _combine_marks('', args, kwargs)
     show(*args, _extra_levels=1, **kwargs)
 
 
 def debug(*args: Any, **kwargs: Any) -> None:
-    show(':v1', *args, _extra_levels=1, **kwargs)
+    args, kwargs = _combine_marks(':v1', args, kwargs)
+    show(*args, _extra_levels=1, **kwargs)
 
 
 def info(*args: Any, **kwargs: Any) -> None:
-    show(':v2', *args, _extra_levels=1, **kwargs)
+    args, kwargs = _combine_marks(':v2', args, kwargs)
+    show(*args, _extra_levels=1, **kwargs)
 
 
 def success(*args: Any, **kwargs: Any) -> None:
-    show(':v4', *args, _extra_levels=1, **kwargs)
+    args, kwargs = _combine_marks(':v4', args, kwargs)
+    show(*args, _extra_levels=1, **kwargs)
 
 
 def warning(*args: Any, **kwargs: Any) -> None:
-    show(':v6', *args, _extra_levels=1, **kwargs)
+    args, kwargs = _combine_marks(':v6', args, kwargs)
+    show(*args, _extra_levels=1, **kwargs)
 
 
 def error(*args: Any, **kwargs: Any) -> None:
-    show(':v8', *args, _extra_levels=1, **kwargs)
+    args, kwargs = _combine_marks(':v8', args, kwargs)
+    show(*args, _extra_levels=1, **kwargs)

@@ -68,11 +68,24 @@ class MarkupParser:
         return bool(self._mark_pattern.match(text))
 
     def parse(self, markup: str) -> ParsedMarks:
+        from .config import config
+        
         marks = ParsedMarks()
+        seen_keys = set()
+        
         for match in self._mark_token_pattern.findall(markup) or []:
             key = match[0]
             value = int(match[1]) if match[1] else self._defaults.get(key, 0)
             attr = self._key_to_attr.get(key, key)
+            
+            if config.no_duplicate_marks_in_same_call:
+                if key in seen_keys:
+                    raise ValueError(
+                        f"Duplicate mark type '{key}' in markup '{markup}'. "
+                        f"Each mark type can only appear once."
+                    )
+                seen_keys.add(key)
+            
             setattr(marks, attr, value)
         return marks
 

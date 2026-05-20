@@ -133,7 +133,7 @@ class VarnamesAnalyzer(ast.NodeVisitor):
     def __init__(self, funcname: str, target_lineno: int) -> None:
         self.funcname = funcname
         self.target_lineno = target_lineno
-        self.varnames: List[str] = []
+        self.varnames: List[Optional[str]] = []
         self.found = False
 
     def visit_Call(self, node: ast.Call) -> None:
@@ -149,12 +149,14 @@ class VarnamesAnalyzer(ast.NodeVisitor):
                 for arg in node.args:
                     if isinstance(arg, ast.Name):
                         self.varnames.append(arg.id)
+                    else:
+                        self.varnames.append(None)
         self.generic_visit(node)
 
 
 def get_varnames_from_call(
     filepath: str, lineno: int, funcname: str = 'show'
-) -> Tuple[str, ...]:
+) -> Tuple[Optional[str], ...]:
     if not os.path.isfile(filepath):
         return ()
     tree = _parse_ast(filepath)

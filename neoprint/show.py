@@ -204,3 +204,27 @@ def show(*args: Any, **kwargs: Any) -> None:
             output = formatter.apply_rich_markup(output)
 
         console.print(output)
+
+
+def print(*args: Any, **kwargs: Any) -> None:
+    show(*args, _extra_levels=1, **kwargs)
+
+
+def debug(*args: Any, **kwargs: Any) -> None:
+    show(':v1', *args, _extra_levels=1, **kwargs)
+
+
+def info(*args: Any, **kwargs: Any) -> None:
+    show(':v2', *args, _extra_levels=1, **kwargs)
+
+
+def success(*args: Any, **kwargs: Any) -> None:
+    show(':v4', *args, _extra_levels=1, **kwargs)
+
+
+def warning(*args: Any, **kwargs: Any) -> None:
+    show(':v6', *args, _extra_levels=1, **kwargs)
+
+
+def error(*args: Any, **kwargs: Any) -> None:
+    show(':v8', *args, _extra_levels=1, **kwargs)

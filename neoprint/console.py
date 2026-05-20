@@ -2,13 +2,13 @@ import os
 import sys
 
 
-class _Debug:
+class _Debugger:
     def __init__(self):
         self.enabled = False
         self.output = []
 
 
-debug = _Debug()
+debugger = _Debugger()
 
 
 ANSI_ESCAPE = '\033['
@@ -92,8 +92,8 @@ def print(
     *args: object, sep: str = ' ', end: str = '\n', flush: bool = False
 ) -> None:
     output = sep.join(str(arg) for arg in args) + end
-    if debug.enabled:
-        debug.output.append(output)
+    if debugger.enabled:
+        debugger.output.append(output)
     try:
         sys.stdout.write(output)
         if flush:

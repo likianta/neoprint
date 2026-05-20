@@ -1,6 +1,6 @@
 import neoprint as np
 
-np.debug.enabled = True
+np.debugger.enabled = True
 
 
 def foo():
@@ -24,7 +24,7 @@ def baz():
 
 
 foo()
-assert tuple(map(np.util.strip_ansi, np.debug.output)) == (
+assert tuple(map(np.util.strip_ansi, np.debugger.output)) == (
     'change_parent_pointer.py:7   | [1] AAA - 1st\n',
     'change_parent_pointer.py:8   | [2] AAA - 2nd\n',
     'change_parent_pointer.py:8   | [3] AAA - 3rd\n',

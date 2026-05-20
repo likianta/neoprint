@@ -1,6 +1,6 @@
 import neoprint as np
 
-np.debug.enabled = True
+np.debugger.enabled = True
 
 np.show(':v0', 'NORMAL MESSAGE')
 np.show(':v1', 'DEBUG')
@@ -15,7 +15,7 @@ np.show(':v9', 'CRITICAL')
 
 
 def check(index: int, expected: str) -> None:
-    actual = np.debug.output[index]
+    actual = np.debugger.output[index]
     assert np.util.ansi_to_bbcode(actual) == expected, (index, expected, actual)
 
 

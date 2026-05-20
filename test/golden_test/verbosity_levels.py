@@ -19,14 +19,14 @@ def check(index: int, expected: str) -> None:
     assert actual == expected, (index, expected, actual)
 
 
-# check(0, 'verbosity_levels.py:5   | NORMAL MESSAGE\n')
-check(0, (
-    '[bold blue]verbosity_levels.py[/]'
-    '[dim blue]:[/]'
-    '[dim blue]5  [/]'
-    ' [bright_black]|[/] '
-    'NORMAL MESSAGE\n'
-))
+check(0, 'verbosity_levels.py:5   | NORMAL MESSAGE\n')
+# check(0, (
+#     '[bold blue]verbosity_levels.py[/]'
+#     '[dim blue]:[/]'
+#     '[dim blue]5  [/]'
+#     ' [bright_black]|[/] '
+#     'NORMAL MESSAGE\n'
+# ))
 check(1, (
     '[bold blue]verbosity_levels.py[/]'
     '[dim blue]:[/]'

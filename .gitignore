@@ -1,5 +1,6 @@
 /.idea/
 /dist/
 /human/
+/references/
 /*.py
 __pycache__/

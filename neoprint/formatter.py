@@ -58,9 +58,10 @@ class MessageFormatter:
             return text
         
         tag_parts = []
-        prefix = 'dim ' if style == AnsiStyle.DIM else ''
-        if prefix:
-            tag_parts.append(prefix.strip())
+        if style == AnsiStyle.DIM:
+            tag_parts.append('dim')
+        elif style == AnsiStyle.BOLD:
+            tag_parts.append('bold')
         
         if color:
             bbcode_color = self._ansi_to_bbcode.get(color, 'white')
@@ -458,6 +459,60 @@ class MessageFormatter:
                 funcname = '{}{}'.format(funcname, '()')
             func_part = color_func(funcname, self.FUNC_COLOR)
             parts.append(func_part)
+
+        # Handle divider mark: wrap body with box-drawing characters
+        if marks.divider:
+            from .console import get_console_width
+
+            div_char = '─'
+
+            visible_prefix = 0
+            if config.show_source and frame_info:
+                visible_prefix += len(frame_info.filename) + 1 + len(self._pad_lineno(frame_info.lineno))
+            if config.show_funcname and frame_info and not frame_info.funcname.startswith('<'):
+                visible_prefix += len(frame_info.funcname) + 2
+            if parts:
+                visible_prefix += 3
+            if _index is not None and _index_value is not None:
+                visible_prefix += len(str(_index_value)) + 3
+
+            total_width = get_console_width() - visible_prefix
+
+            if color_code_scheme == 'bbcode':
+                import re
+                visible_body = re.sub(r'\[/?\w+(?: [^\]]+)?\]', '', formatted_body)
+            elif color_code_scheme == 'ansi' and formatted_body:
+                from .util import strip_ansi
+                visible_body = strip_ansi(formatted_body)
+            else:
+                visible_body = formatted_body
+
+            remaining = total_width - len(visible_body) - 2
+            if remaining > 0:
+                if remaining % 2 != 0:
+                    remaining -= 1
+                half = remaining // 2
+            else:
+                half = 0
+
+            if formatted_body:
+                if has_verbosity_mark and color_level > 0:
+                    div_color = color
+                    div_style = style
+                    left_div = color_func(div_char * half, div_color, div_style)
+                    right_div = color_func(div_char * (remaining - half), div_color, div_style)
+                else:
+                    left_div = div_char * half
+                    right_div = div_char * (remaining - half)
+                formatted_body = left_div + ' ' + formatted_body + ' ' + right_div
+            else:
+                if has_verbosity_mark and color_level > 0:
+                    div_color = color
+                    div_style = style
+                else:
+                    div_color = AnsiColor.BRIGHT_BLACK
+                    div_style = ''
+                formatted_body = color_func(div_char * total_width, div_color, div_style)
 
         result = formatted_body
 

@@ -88,18 +88,22 @@ def _format_rich_traceback(exc: BaseException, show_locals: bool = False) -> str
 def show(*args: Any, **kwargs: Any) -> None:
     extra_levels = kwargs.pop('_extra_levels', 0)
     markup_str = kwargs.pop('markup', '')
+    markup_pos = 0  # 0=from kwarg, 1=from args[0], -1=from args[-1]
 
-    if args and isinstance(args[0], str) and args[0].startswith(':'):
-        markup_str = args[0]
-        args = args[1:]
-    elif (
-        args
-        and isinstance(args[-1], str)
-        and args[-1].startswith(':')
-        and _parser.is_valid_markup(args[-1])
-    ):
-        markup_str = args[-1]
-        args = args[:-1]
+    if not markup_str:
+        if args and isinstance(args[0], str) and args[0].startswith(':'):
+            markup_str = args[0]
+            args = args[1:]
+            markup_pos = 1
+        elif (
+            args
+            and isinstance(args[-1], str)
+            and args[-1].startswith(':')
+            and _parser.is_valid_markup(args[-1])
+        ):
+            markup_str = args[-1]
+            args = args[:-1]
+            markup_pos = -1
 
     marks = _parser.parse(markup_str) if markup_str else ParsedMarks()
 
@@ -120,13 +124,6 @@ def show(*args: Any, **kwargs: Any) -> None:
             marks.long = 2
     else:
         color_level = marks.verbosity if marks.verbosity is not None else 0
-
-    if marks.divider is not None:
-        from .console import get_console_width
-
-        width = get_console_width() - 4
-        divider = formatter.format_divider('-', width)
-        console.print(divider)
 
     if marks.show_varnames is not None and marks.show_varnames > 0 and args:
         from .sourcemap import get_varnames_from_call
@@ -149,17 +146,27 @@ def show(*args: Any, **kwargs: Any) -> None:
             if varnames:
                 break
         
+        if varnames and markup_pos != 0:
+            varnames_list = list(varnames)
+            if markup_pos == 1:
+                varnames_list.pop(0)
+            elif markup_pos == -1:
+                varnames_list.pop(-1)
+            varnames = tuple(varnames_list)
+
         frame.varnames = varnames if varnames else ()
 
     if not args:
-        if marks.index is not None:
-            format(
+        if marks.index is not None or (marks.divider is not None and marks.divider > 0):
+            output = format(
                 markup=markup_str,
                 color_code_scheme='ansi',
                 _caller_filepath=frame.filepath,
                 _caller_lineno=frame.lineno,
                 _caller_funcname=frame.funcname,
             )
+            if output:
+                console.print(output)
         return
 
     exception_args = [arg for arg in args if isinstance(arg, BaseException)]
@@ -230,7 +237,8 @@ def _combine_marks(default_mark: str, args: tuple, kwargs: dict) -> tuple:
         args = args[:-1]
     
     combined_mark = default_mark + user_mark
-    return (combined_mark,) + args, kwargs
+    kwargs['markup'] = combined_mark
+    return args, kwargs
 
 
 def print(*args: Any, **kwargs: Any) -> None:

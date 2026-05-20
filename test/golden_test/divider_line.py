@@ -32,7 +32,6 @@ assert output_0 == (
     '[bright_black]{}[/]'.format('─' * div_char_count)
     + '\n'
 )
-# assert len(np.util.strip_ansi(output_0)[:-1]) == console_width
 
 output_bbb = np.util.ansi_to_bbcode(np.debugger.output[2])
 assert '─ AAA[bright_black];[/] BBB ─' in output_bbb
@@ -48,6 +47,8 @@ assert (
 )
 
 output_hhh = np.util.strip_ansi(np.debugger.output[7])
+assert output_hhh.endswith('\n')
+assert np.console.get_console_width() - len(output_hhh[:-1]) in (0, 1)
 div_char_count = output_hhh.count('─')
 assert div_char_count % 2 == 0
 assert (

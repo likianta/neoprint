@@ -1,2 +1,2 @@
-from .validate_bbcode_output import expected_bbcode_output
+from .validate_bbcode_output import compose_bbcode_output
 from .validate_bbcode_output import validate_bbcode_output

@@ -12,8 +12,12 @@ from .markup import MarkupParser, ParsedMarks
 
 class Progress:
     _SPINNER_CHARS = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
-    _BAR_LENGTH = 20
+    _BAR_LENGTH = 40
     _MARKUP_PARSER = MarkupParser()
+    _debug_filled_char = '█'
+    _debug_empty_chars = '▁'
+    _filled_char = '─'
+    _empty_chars = '─'
 
     def __init__(
         self,
@@ -21,6 +25,7 @@ class Progress:
         indicator_style: Literal[
             'counter', 'digital', 'decimal', 'none'
         ] = 'counter',
+        bar_char: t.Optional[str] = None,
     ) -> None:
         self._total = total
         self.index = 0
@@ -28,6 +33,10 @@ class Progress:
         self._type_determined = False
         self._is_spinner = False
         self._spinner_index = 0
+        self._custom_bar_char = None
+        if bar_char is not None:
+            assert len(bar_char) == 1
+            self._custom_bar_char = bar_char
 
     @property
     def total(self) -> t.Optional[int]:
@@ -68,18 +77,28 @@ class Progress:
         if self._total is None:
             return ""
         
+        if self._custom_bar_char is not None:
+            filled_char = self._custom_bar_char
+            empty_chars = self._custom_bar_char
+        elif debugger.enabled:
+            filled_char = self._debug_filled_char
+            empty_chars = self._debug_empty_chars
+        else:
+            filled_char = self._filled_char
+            empty_chars = self._empty_chars
+        
         progress = min(self.index, self._total) / self._total
         filled = int(progress * self._BAR_LENGTH)
-        filled_chars = "█" * filled
-        empty_chars = "▁" * (self._BAR_LENGTH - filled)
+        filled_chars = filled_char * filled
+        empty_chars_str = empty_chars * (self._BAR_LENGTH - filled)
         
         if bar_color:
             result = color_text(filled_chars, bar_color)
-            if empty_chars:
-                result += color_text(empty_chars, AnsiColor.BRIGHT_BLACK)
+            if empty_chars_str:
+                result += color_text(empty_chars_str, AnsiColor.BRIGHT_BLACK)
             return result
         
-        return filled_chars + empty_chars
+        return filled_chars + empty_chars_str
 
     def _render_indicator(self, bar_color: str) -> str:
         if self._is_spinner:
@@ -185,7 +204,7 @@ class Progress:
         
         line = self._render(args, marks)
         
-        end = '\n' if debugger.enabled else '\r'
+        end = '\n' if debugger.enabled else '\033[K\r'
         print(line, end=end, flush=True)
 
     def __enter__(self) -> 'Progress':

@@ -235,6 +235,53 @@ class MessageFormatter:
         line = pattern * width
         return color_text(line, AnsiColor.YELLOW)
 
+    def _format_long(self, *args: Any) -> str:
+        inc = '  '
+
+        def _fmt(obj: Any, indent: int) -> str:
+            prefix = inc * indent
+
+            if isinstance(obj, str):
+                return f'"{obj}"'
+            elif isinstance(obj, list):
+                if not obj:
+                    return f'{prefix}[]'
+                items = []
+                for item in obj:
+                    items.append(f'{prefix}{inc}{_fmt(item, indent + 1)},')
+                return f'{prefix}[\n' + '\n'.join(items) + f'\n{prefix}]'
+            elif isinstance(obj, dict):
+                if not obj:
+                    return f'{prefix}{{}}'
+                items = []
+                for k, v in obj.items():
+                    key_str = _fmt(k, indent + 1)
+                    val_str = _fmt(v, indent + 1)
+                    items.append(f'{prefix}{inc}{key_str}: {val_str},')
+                return f'{prefix}{{\n' + '\n'.join(items) + f'\n{prefix}}}'
+            elif isinstance(obj, tuple):
+                if not obj:
+                    return f'{prefix}()'
+                items = []
+                for item in obj:
+                    items.append(f'{prefix}{inc}{_fmt(item, indent + 1)},')
+                return f'{prefix}(\n' + '\n'.join(items) + f'\n{prefix})'
+            elif isinstance(obj, set):
+                if not obj:
+                    return f'{prefix}set()'
+                items = []
+                for item in sorted(obj, key=str):
+                    items.append(f'{prefix}{inc}{_fmt(item, indent + 1)},')
+                return f'{prefix}{{\n' + '\n'.join(items) + f'\n{prefix}}}'
+            elif obj is None:
+                return 'None'
+            elif isinstance(obj, bool):
+                return 'True' if obj else 'False'
+            else:
+                return repr(obj)
+
+        return '\n'.join(_fmt(arg, indent=1) for arg in args)
+
     def apply_rich_markup(self, text: str) -> str:
         text = re.sub(
             r'\[(\w+)\](.+?)\[/\]',
@@ -459,6 +506,76 @@ class MessageFormatter:
                 funcname = '{}{}'.format(funcname, '()')
             func_part = color_func(funcname, self.FUNC_COLOR)
             parts.append(func_part)
+
+        if marks.long:
+            if (
+                marks.show_varnames is not None
+                and marks.show_varnames > 0
+                and filepath
+                and lineno
+                and varnames
+            ):
+                long_lines = []
+                for i, arg in enumerate(args):
+                    if i < len(varnames) and varnames[i] is not None:
+                        vn = varnames[i]
+                    else:
+                        vn = None
+
+                    arg_formatted = self._format_long(arg)
+                    arg_lines = arg_formatted.splitlines()
+
+                    if vn is not None:
+                        arg_lines[0] = '  {} = {}'.format(
+                            vn, arg_lines[0].lstrip()
+                        )
+                        if i < len(args) - 1:
+                            arg_lines[-1] = arg_lines[-1] + ','
+
+                    long_lines.extend(arg_lines)
+
+                long_body = '\n'.join(long_lines)
+            else:
+                long_body = self._format_long(*args)
+
+            if has_verbosity_mark and color_level > 0:
+                _long_style = AnsiStyle.DIM if color_level in (3, 5, 7) else ''
+                _long_lines = long_body.splitlines()
+                _colored_lines = []
+                for _line in _long_lines:
+                    _stripped = _line.lstrip()
+                    _indent = _line[:len(_line) - len(_stripped)]
+                    if color_level == 9:
+                        if color_code_scheme == 'bbcode':
+                            _colored = color_func(
+                                _stripped, AnsiColor.BRIGHT_WHITE,
+                                style='', bgcolor='41'
+                            )
+                        else:
+                            _colored = color_func(
+                                _stripped, AnsiColor.BRIGHT_WHITE, '41'
+                            )
+                    elif color:
+                        _colored = color_func(_stripped, color, _long_style)
+                    else:
+                        _colored = _stripped
+                    _colored_lines.append(_indent + _colored)
+                long_body = '\n'.join(_colored_lines)
+
+            result = long_body
+
+            if _index is not None and _index_value is not None:
+                index_str = color_func(
+                    '[{}]'.format(_index_value), self.INDEX_COLOR
+                )
+                result = index_str + ' ' + result
+
+            if parts:
+                head_sep_2 = ' ' + color_func('|', AnsiColor.BRIGHT_BLACK) + ' '
+                head_part = ''.join(parts) + head_sep_2
+                result = head_part + '\n' + result
+
+            return result
 
         # Handle divider mark: wrap body with box-drawing characters
         if marks.divider:

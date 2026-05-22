@@ -8,6 +8,24 @@ filenames_rev = filenames[::-1]
 np.show(':l', filenames)
 np.show(':nl', filenames, filenames_rev)
 np.show(':nlv6', filenames)
+np.show(':l2', 'installation done: v0.1.0 -> v0.2.0')
+np.show(
+    ':l2',
+    (
+        ('index', 'name', 'age', 'city'),
+        ('1', 'AAA', '20', 'New York'),
+        ('2', 'BBB', '24', 'Los Angeles'),
+        ('3', 'CCC', '28', 'Chicago'),
+    ),
+    {
+        'name': 'neoprint',
+        'version': '0.1.0',
+        'code': 0xFFFF,
+        'author': 'Likianta',
+    },
+    'AAA -> BBB',
+    'CCC: DDD -> EEE',
+)
 
 # ---
 
@@ -47,3 +65,23 @@ assert lines2[0] == (
 assert lines2[1] == '  [yellow]filenames = \\[[/]'
 assert lines2[2] == '    [yellow]"capture.py",[/]'
 assert lines2[-1] == '  [yellow]][/]'
+
+output3 = np.util.ansi_to_bbcode(np.debugger.output[3])
+assert output3 == (
+    '[bold blue]long_loose_expand_format.py[/]'
+    '[dim blue]:[/]'
+    '[dim blue]11 [/]'
+    ' [bright_black]|[/] '
+    'installation done: [red]v0.1.0[/] -> [green]v0.2.0[/]'
+    '\n'
+), output3
+
+output4 = np.util.strip_ansi(np.debugger.output[4])
+assert (
+    '''  | KEY     | VALUE    |
+  | ------- | -------- |
+  | name    | neoprint |
+  | version | 0.1.0    |
+  | code    | 65535    |
+  | author  | Likianta |'''
+) in output4, output4

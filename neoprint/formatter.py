@@ -1,9 +1,9 @@
 import re
 import time
-from typing import Any, List, Literal, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Sequence, Tuple
 
 from .config import config
-from .console import AnsiColor, AnsiStyle, color_text
+from .console import AnsiColor, AnsiStyle, CONSOLE_WIDTH, color_text
 from .console import LEVEL_COLORS as COLOR_MAP
 from .frame_info import FrameInfo
 from .markup import MarkupParser, ParsedMarks
@@ -282,6 +282,80 @@ class MessageFormatter:
 
         return '\n'.join(_fmt(arg, indent=1) for arg in args)
 
+    def _format_long_l2(self, *args: Any) -> str:
+        inc = '  '
+        parts = []
+        for arg in args:
+            formatted = self._try_format_special(arg)
+            if formatted is not None:
+                parts.append(formatted)
+            else:
+                parts.append(self._format_long(arg))
+        return '\n\n'.join(parts)
+
+    def _try_format_special(self, obj: Any) -> Optional[str]:
+        inc = '  '
+        if isinstance(obj, list) and len(obj) > 0:
+            if all(
+                isinstance(row, (list, tuple)) and len(row) > 0
+                and all(isinstance(item, str) for item in row)
+                for row in obj
+            ):
+                table = self._format_as_table(obj)
+                return '\n'.join(inc + line for line in table.splitlines())
+
+        if isinstance(obj, dict) and len(obj) > 0:
+            if all(isinstance(k, str) and isinstance(v, (str, bool, int, float)) for k, v in obj.items()):
+                table = self._format_as_kv_table(obj)
+                return '\n'.join(inc + line for line in table.splitlines())
+
+        if isinstance(obj, str):
+            m = re.match(r'^(.+): (.+?) -> (.+)$', obj)
+            if m:
+                return inc + '{}: {} -> {}'.format(
+                    m.group(1),
+                    color_text(m.group(2), AnsiColor.RED),
+                    color_text(m.group(3), AnsiColor.GREEN),
+                )
+            m = re.match(r'^(.+?) -> (.+)$', obj)
+            if m:
+                return inc + '{} -> {}'.format(
+                    color_text(m.group(1), AnsiColor.RED),
+                    color_text(m.group(2), AnsiColor.GREEN),
+                )
+
+        return None
+
+    @staticmethod
+    def _format_as_table(data: Sequence[Sequence[str]]) -> str:
+        col_widths = [
+            max(len(str(row[i])) for row in data)
+            for i in range(len(data[0]))
+        ]
+        lines = []
+        lines.append('| ' + ' | '.join(
+            str(item).ljust(w) for item, w in zip(data[0], col_widths)
+        ) + ' |')
+        lines.append('| ' + ' | '.join(
+            '-' * w for w in col_widths
+        ) + ' |')
+        for row in data[1:]:
+            lines.append('| ' + ' | '.join(
+                str(item).ljust(w) for item, w in zip(row, col_widths)
+            ) + ' |')
+        return '\n'.join(lines)
+
+    @staticmethod
+    def _format_as_kv_table(data: Dict[str, Any]) -> str:
+        key_width = max(len(k) for k in data.keys())
+        val_width = max(len(str(v)) for v in data.values())
+        lines = []
+        lines.append('| ' + 'KEY'.ljust(key_width) + ' | ' + 'VALUE'.ljust(val_width) + ' |')
+        lines.append('| ' + '-' * key_width + ' | ' + '-' * val_width + ' |')
+        for k, v in data.items():
+            lines.append('| ' + k.ljust(key_width) + ' | ' + str(v).ljust(val_width) + ' |')
+        return '\n'.join(lines)
+
     def apply_rich_markup(self, text: str) -> str:
         text = re.sub(
             r'\[(\w+)\](.+?)\[/\]',
@@ -508,7 +582,9 @@ class MessageFormatter:
             parts.append(func_part)
 
         if marks.long:
-            if (
+            if marks.long >= 2:
+                long_body = self._format_long_l2(*args)
+            elif (
                 marks.show_varnames is not None
                 and marks.show_varnames > 0
                 and filepath
@@ -538,7 +614,7 @@ class MessageFormatter:
             else:
                 long_body = self._format_long(*args)
 
-            if has_verbosity_mark and color_level > 0:
+            if marks.long == 1 and has_verbosity_mark and color_level > 0:
                 _long_style = AnsiStyle.DIM if color_level in (3, 5, 7) else ''
                 _long_lines = long_body.splitlines()
                 _colored_lines = []
@@ -573,7 +649,17 @@ class MessageFormatter:
             if parts:
                 head_sep_2 = ' ' + color_func('|', AnsiColor.BRIGHT_BLACK) + ' '
                 head_part = ''.join(parts) + head_sep_2
-                result = head_part + '\n' + result
+                _plain_result = re.sub(r'\033\[[0-9;]*m', '', result)
+                _plain_lines = _plain_result.splitlines()
+                if len(_plain_lines) == 1:
+                    _plain_head = re.sub(r'\033\[[0-9;]*m', '', head_part)
+                    if len(_plain_head) + len(_plain_lines[0].lstrip()) <= CONSOLE_WIDTH:
+                        _colored_result_lines = result.splitlines()
+                        result = head_part + _colored_result_lines[0].lstrip()
+                    else:
+                        result = head_part + '\n' + result
+                else:
+                    result = head_part + '\n' + result
 
             return result
 
@@ -596,7 +682,6 @@ class MessageFormatter:
             total_width = get_console_width() - visible_prefix
 
             if color_code_scheme == 'bbcode':
-                import re
                 visible_body = re.sub(r'\[/?\w+(?: [^\]]+)?\]', '', formatted_body)
             elif color_code_scheme == 'ansi' and formatted_body:
                 from .util import strip_ansi

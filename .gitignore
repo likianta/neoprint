@@ -1,6 +1,7 @@
 /.idea/
 /dist/
 /human/
+/neoprint_ai/
 /references/
 /*.py
 __pycache__/

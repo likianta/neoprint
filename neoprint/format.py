@@ -1,84 +1,126 @@
-import inspect
-from typing import Any, Optional
+import typing as tp
+from inspect import currentframe
+from . import text_object as to
+from .config import config
+from .console import dprint  # noqa
+from .frame_info import FrameInfo
+from .markup import Mark
+from .markup import markup_analyzer
 
-from .formatter import formatter
-from .markup import MarkupParser, ParsedMarks
-from .scope import counter
+
+class T:  # Typehint
+    Args = tp.Tuple[tp.Any, ...]
+    FlushScheme = int
+    #   0: no flush
+    #   1: instant flush
+    #   2: instant flush and drain
+    #   3: wait for flush
+    Marks = tp.Dict[str, tp.Any]
+    Markup = str
+    MarkupPos = int  # -1, 0, 1
 
 
-_parser = MarkupParser()
+def format_list(
+    *args,
+    markup: tp.Optional[T.Markup] = None,
+    _elevate_parent_level: int = 0,
+    _mark_position: int = 0,
+) -> tp.List[to.TextObject]:
+    this_frame: FrameInfo = FrameInfo(currentframe())  # type: ignore
+    parent_frame: FrameInfo = this_frame.get_parent(1 + _elevate_parent_level)
+    caller_frame: FrameInfo = parent_frame
 
-
-def format(
-    *args: Any,
-    markup: str = '',
-    color_code_scheme: str = 'none',
-    _caller_filepath: Optional[str] = None,
-    _caller_lineno: Optional[int] = None,
-    _caller_funcname: Optional[str] = None,
-    _varnames: Optional[tuple] = None,
-) -> str:
-    if not markup:
-        if args and isinstance(args[0], str) and args[0].startswith(':') and _parser.is_valid_markup(args[0]):
-            markup = args[0]
-            args = args[1:]
-        elif args and isinstance(args[-1], str) and args[-1].startswith(':') and _parser.is_valid_markup(args[-1]):
-            markup = args[-1]
-            args = args[:-1]
-
-    frame = inspect.currentframe()
-    caller_frame = frame.f_back if frame is not None else None
-
-    if _caller_filepath is None or _caller_lineno is None:
-        caller_filepath = (
-            caller_frame.f_code.co_filename
-            if caller_frame is not None
-            else None
-        )
-        caller_lineno = (
-            caller_frame.f_lineno if caller_frame is not None else None
-        )
+    if markup is None:
+        args, markpos, markup = extract_markup_from_arguments(args)
     else:
-        caller_filepath = _caller_filepath
-        caller_lineno = _caller_lineno
+        markpos = _mark_position
+    # dprint(args, markup, args[-1], markup_analyzer.is_valid_markup(args[-1]))
+    marks = markup_analyzer.analyze2(markup, parent_frame)
+    if marks['p']:
+        caller_frame = parent_frame.get_parent(marks['p'])
+        assert caller_frame
 
-    marks = _parser.parse(markup) if markup else ParsedMarks()
+    # --------------------------------------------------------------------------
 
-    index_value = None
-    if marks.index is not None:
-        if marks.index == 0:
-            counter.reset_all()
-            index_value = None
-        elif marks.index == 1:
-            line_key = f'{caller_filepath}:{caller_lineno}'
-            index_value = counter.update_line(line_key)
-        elif marks.index == 2:
-            current_scope = counter.get_current_scope()
-            if current_scope:
-                scope_id = current_scope
-            else:
-                if _caller_funcname is not None:
-                    scope_id = _caller_funcname
-                else:
-                    scope_id = (
-                        caller_frame.f_code.co_name
-                        if caller_frame
-                        else '<module>'
-                    )
-            index_value = counter.update_scoped(scope_id)
-        elif marks.index == 3:
-            index_value = counter.update_global()
+    result = []
 
-    return formatter.format(
-        *args,
-        markup=markup,
-        color_code_scheme=color_code_scheme,
-        _caller_filepath=caller_filepath,
-        _caller_lineno=caller_lineno,
-        _index_value=index_value,
-        _index=marks.index,
-        _varnames=_varnames,
-    )
+    # head part
+    head_parts = []
+    if config.show_source:
+        head_parts.append(to.Source(caller_frame))
+    if config.show_funcname:
+        head_parts.append(to.Space())
+        head_parts.append(to.FuncnameSeparator())
+        head_parts.append(to.Space())
+        ...  # TODO
+    if head_parts:
+        head_parts.append(to.Space())
+        head_parts.append(to.BodySeparator())
+        head_parts.append(to.Space())
+    result.extend(head_parts)
+
+    # --------------------------------------------------------------------------
+
+    # body part
+    body_parts = []
+    if marks['i']:
+        body_parts.append(to.Index(marks['i']))
+        body_parts.append(to.Space())
+
+    if marks['n']:
+        varnames = parent_frame.varnames
+        if markpos:
+            varnames = varnames[1:] if markpos == 1 else varnames[:-1]
+        assert len(varnames) == len(args), (varnames, args)
+    else:
+        varnames = (None,) * len(args)
+
+    for name, arg in zip(varnames, args):
+        if name is None:
+            body_parts.append(to.Text(arg))
+        else:
+            body_parts.append(to.NamedVariable(name, arg))
+        body_parts.append(to.InBodySeparator())
+        body_parts.append(to.Space())
+    body_parts = body_parts[:-2]
+
+    if marks['v']:
+        global_color, global_style = marks['v']
+        for part in body_parts:
+            if part.editable:
+                part.color = global_color
+                part.style = global_style
+
+    if marks['d']:
+        insertion_index = 2 if marks['i'] else 0
+        a, b = body_parts[:insertion_index], body_parts[insertion_index:]
+        body_parts = a + [
+            to.DividerLine(
+                head_parts, b, bold=marks['d'] == Mark.THICK_DIVIDER_LINE
+            )
+        ]
+
+    result.extend(body_parts)
+
+    return result
 
 
-__all__ = ['format']
+def extract_markup_from_arguments(
+    args: T.Args,
+) -> tp.Tuple[T.Args, int, T.Markup]:
+    if (
+        len(args) > 0
+        and isinstance(args[0], str)
+        and args[0].startswith(':')
+        and markup_analyzer.is_valid_markup(args[0])
+    ):
+        return args[1:], 1, args[0]
+    elif (
+        len(args) > 1
+        and isinstance(args[-1], str)
+        and args[-1].startswith(':')
+        and markup_analyzer.is_valid_markup(args[-1])
+    ):
+        return args[:-1], -1, args[-1]
+    else:
+        return args, 0, ''

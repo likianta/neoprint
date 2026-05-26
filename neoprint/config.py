@@ -1,43 +1,108 @@
-from typing import Any, Dict, Optional
+import sys
+import typing as t
+from rich.traceback import Traceback
+from sys import excepthook as _default_excepthook
+from .console import console
 
 
-class Config:
-    show_source: bool = True
-    show_funcname: bool = False
-    show_varnames: bool = False
-    show_index: bool = False
-    index_mode: int = 1
-    sourcemap_alignment: str = 'left'
-    separator: str = '  >  '
-    no_duplicate_marks_in_same_call: bool = False
-
-    _instance: Optional['Config'] = None
-
-    def __new__(cls) -> 'Config':
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-    def __call__(self, **kwargs: Any) -> None:
-        self.update(**kwargs)
-
-    def update(self, **kwargs: Any) -> None:
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {k: getattr(self, k) for k in dir(self) if not k.startswith('_')}
-
+class LoggingConfig:
+    clear_unfinished_stream: bool
+    console_width: t.Optional[int]
+    path_style: t.Literal['filename', 'relpath']
+    #   'relpath' (default): show relative path.
+    #       for external libraries, will show `[lib_name]/relpath:lineno`
+    #   'filename': show only filename.
+    #       for external libraries, will show `[lib_name]/filename:lineno`
+    rich_traceback: bool
+    separator: str
+    show_funcname: bool
+    show_source: bool
+    #   attach source file path and line number info prefixed to the log -
+    #   messages.
+    #   True example:
+    #       'main.py:10  >>  hello world'
+    #   False example:
+    #       'hello world'
+    show_traceback_locals: bool
+    show_varnames: bool
+    #   show both variable names and values. (magic reflection)
+    #   example:
+    #       a, b = 1, 2
+    #       logger.log(a, b, a + b)
+    #       # enabled: 'main.py:11  >>  a = 1; b = 2; a + b = 3'
+    #       # disabled: 'main.py:11  >>  1, 2, 3'
+    show_verbosity_tag: bool
+    #   example: print(':v8', 'some error happens')
+    #   enabled: (red text) '[ERROR] some error happens'
+    #   disabled: (red text) 'some error happens'
+    sourcemap_alignment: t.Literal['left', 'right']
+    subthreaded: bool
+    #   run lk logger in separate thread.
+    
+    _preset_conf = {
+        'clear_unfinished_stream': False,
+        'console_width'          : None,
+        'path_style'             : 'relpath',
+        'rich_traceback'         : True,
+        'separator'              : ';   ',
+        'show_funcname'          : False,
+        'show_source'            : True,
+        'show_traceback_locals'  : False,
+        'show_varnames'          : False,
+        'show_verbosity_tag'     : False,
+        'sourcemap_alignment'    : 'left',
+        'subthreaded'            : False,  # TODO
+    }
+    
+    def __init__(self, **kwargs) -> None:
+        for k, v in self._preset_conf.items():
+            self._apply(k, kwargs.get(k, v))
+    
+    def to_dict(self) -> t.Dict[str, t.Any]:
+        return {k: getattr(self, k) for k in self._preset_conf}
+    
+    def update(self, **kwargs) -> None:
+        for k, v in kwargs.items():
+            if k in self._preset_conf and v != getattr(self, k, None):
+                self._apply(k, v)
+    
     def reset(self) -> None:
-        self.show_source = True
-        self.show_funcname = True
-        self.show_varnames = False
-        self.show_index = False
-        self.index_mode = 1
-        self.sourcemap_alignment = 'left'
-        self.separator = '  >  '
-        self.no_duplicate_marks_in_same_call = False
+        for k, v in self._preset_conf.items():
+            if v != getattr(self, k, None):
+                self._apply(k, v)  # type: ignore
+    
+    def _apply(self, key: str, val: t.Union[bool, int, str]) -> None:
+        setattr(self, key, val)
+        if key == 'console_width':
+            if val and isinstance(val, int):
+                console.width = val
+        elif key == 'rich_traceback':
+            if val:
+                sys.excepthook = self._custom_excepthook
+            else:
+                sys.excepthook = _default_excepthook
+    
+    def _custom_excepthook(self, type_, value, traceback) -> None:
+        # print(':r', '[red dim]drain out message queue[/]')
+        # from .logger import logger
+        # if hasattr(logger, '_stop_running'):
+        #     logger._stop_running()  # noqa
+        if type_ is KeyboardInterrupt:
+            print(':r', '[red dim]KeyboardInterrupt[/]')
+            sys.exit(0)
+        else:
+            # https://rich.readthedocs.io/en/stable/traceback.html
+            # dprint(getattr(self, 'show_traceback_locals'))
+            console.print(
+                Traceback.from_exception(
+                    type_, value, traceback,
+                    show_locals=getattr(self, 'show_traceback_locals'),
+                    locals_hide_dunder=True,
+                    locals_hide_sunder=True,
+                    # word_wrap=True,
+                ),
+                soft_wrap=False,  # fixed line wrap problem.
+            )
 
 
-config = Config()
+config = LoggingConfig()

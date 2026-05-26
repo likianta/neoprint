@@ -1,148 +1,75 @@
 import inspect
-import os
-from dataclasses import dataclass
-from typing import List, Optional, Tuple
+import typing as tp
+from functools import cache
+from functools import cached_property
+from textwrap import dedent
+from types import FrameType
+from . import sourcemap
 
-from .sourcemap import get_source_lines, get_varnames
 
-
-@dataclass
 class FrameInfo:
-    filepath: str
-    lineno: int
-    funcname: str
-    code_context: Optional[str] = None
-    _varnames: Optional[Tuple[str, ...]] = None
-
-    @property
-    def id(self) -> str:
-        return self.filepath + ':' + str(self.lineno)
-    
-    @property
-    def frame_id(self) -> str:
-        return self.filepath + ':' + str(self.lineno)
-    
-    @staticmethod
-    def from_frame(frame) -> 'FrameInfo':
-        code = frame.f_code
-        filepath = frame.f_globals.get('__file__', code.co_filename)
-        if filepath.startswith('<') and filepath.endswith('>'):
-            filepath = '<' + filepath[1:-1] + '@' + str(id(frame)) + '>'
-        else:
-            import os
-            filepath = os.path.abspath(filepath)
-        funcname = code.co_name
-        lineno = frame.f_lineno
-        code_context = None
-        try:
-            import inspect
-            info = inspect.getframeinfo(frame)
-            if info.code_context:
-                code_context = info.code_context[0].strip()
-        except Exception:
-            pass
-        return FrameInfo(
-            filepath=filepath,
-            lineno=lineno,
-            funcname=funcname,
-            code_context=code_context,
+    def __init__(self, frame: FrameType) -> None:
+        self._frame = frame
+        self.function_name = frame.f_code.co_name
+        self.package_name = frame.f_globals['__name__'].split('.', 1)[0]
+        self.file_path = (
+            frame.f_globals.get('__file__', frame.f_code.co_filename)
+            #   note:
+            #   - path may be "<string>", "<unknown>" etc.
+            #   - path may be "<ipython-input-10-5abb16185f48>" in ipython
+            #   environment.
+            #   - `co_filename` may be a relative python in python 3.8.
+            #   - path may not exist.
+        ).replace('\\', '/')
+        self.file_name = (
+            self.file_path
+            if self.file_path[0] == '<'
+            else self.file_path.rsplit('/', 1)[-1]
         )
+        self.line_number = frame.f_lineno
+
+    def __str__(self) -> str:
+        return self.info
+
+    @cached_property
+    def id(self) -> str:
+        return f'{self.file_path}:{self.line_number}'
+
+    @cached_property
+    def indentation(self) -> int:
+        # https://stackoverflow.com/a/39172552
+        if x := inspect.getframeinfo(self._frame).code_context:
+            ctx = x[0]
+            return len(ctx) - len(ctx.lstrip())
+        return 0
+
+    @cached_property
+    def info(self) -> str:
+        return dedent(
+            f"""
+            <FrameInfo object
+                filepath: {self.file_path}
+                lineno: {self.line_number}
+                funcname: {self.function_name}
+            >
+            """
+        ).rstrip()
 
     @property
-    def filename(self) -> str:
-        return os.path.basename(self.filepath)
+    def parent(self) -> 'FrameInfo':
+        return self.get_parent(1)
 
-    @property
-    def relpath(self) -> str:
-        return self.filepath
+    @cached_property
+    def varnames(self) -> tp.Sequence[tp.Optional[str]]:
+        return sourcemap.get_varnames(self.file_path, self.line_number)
 
-    @property
-    def source_line(self) -> str:
-        try:
-            lines = get_source_lines(self.filepath, self.lineno)
-            if lines:
-                return lines[0].strip()
-        except Exception:
-            pass
-        return ''
+    # @cache
+    # def collect_varnames(self) -> tp.Sequence[tp.Optional[str]]:
+    #     return sourcemap.get_varnames(self.file_path, self.line_number)
 
-    @property
-    def varnames(self) -> Tuple[str, ...]:
-        if self._varnames is not None:
-            return self._varnames
-        try:
-            return get_varnames(self.filepath, self.lineno)
-        except Exception:
-            return ()
-
-    @varnames.setter
-    def varnames(self, value: Tuple[str, ...]) -> None:
-        self._varnames = value
-
-    def get_parent(self, level: int = 1) -> Optional['FrameInfo']:
-        try:
-            frame = inspect.currentframe()
-            for _ in range(level + 1):
-                if frame is None:
-                    return None
-                frame = frame.f_back
-            if frame is None:
-                return None
-            return from_frame(frame)
-        except Exception:
-            return None
-
-
-def from_frame(frame) -> FrameInfo:
-    code = frame.f_code
-    filepath = frame.f_globals.get('__file__', code.co_filename)
-    if filepath.startswith('<') and filepath.endswith('>'):
-        filepath = '<' + filepath[1:-1] + '@' + str(id(frame)) + '>'
-    else:
-        filepath = os.path.abspath(filepath)
-    funcname = code.co_name
-    lineno = frame.f_lineno
-    code_context = None
-    try:
-        info = inspect.getframeinfo(frame)
-        if info.code_context:
-            code_context = info.code_context[0].strip()
-    except Exception:
-        pass
-    return FrameInfo(
-        filepath=filepath,
-        lineno=lineno,
-        funcname=funcname,
-        code_context=code_context,
-    )
-
-
-def get_caller_frame(extra_levels: int = 0) -> Optional[FrameInfo]:
-    try:
-        frame = inspect.currentframe()
-        if frame is None:
-            return None
-        levels = 2 + extra_levels
-        for _ in range(levels):
-            frame = frame.f_back
-            if frame is None:
-                return None
-        return from_frame(frame)
-    except Exception:
-        return None
-
-
-def get_call_stack(limit: int = 10) -> List[FrameInfo]:
-    frames = []
-    try:
-        frame = inspect.currentframe()
-        if frame is None:
-            return frames
-        for _ in range(limit):
-            frame = frame.f_back
-            if frame is None:
-                break
-            frames.append(from_frame(frame))
-    except Exception:
-        pass
-    return frames
+    @cache
+    def get_parent(self, traceback_level: int = 1) -> 'FrameInfo':
+        frame = self._frame
+        for _ in range(traceback_level):
+            frame = frame.f_back  # type: ignore
+        return FrameInfo(frame)  # type: ignore

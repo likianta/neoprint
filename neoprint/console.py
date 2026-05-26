@@ -1,123 +1,70 @@
+import builtins
 import os
 import sys
+import typing as tp
+from inspect import currentframe
+from rich.pretty import pprint
+
+_stdout = sys.stdout
+
+
+class Console:
+    def __init__(self) -> None:
+        self.width = self.get_console_width()
+
+    def get_console_width(self) -> int:
+        if hasattr(sys.stdout, 'columns'):
+            columns = sys.stdout.columns
+            if columns:
+                return int(columns)  # type: ignore
+        if hasattr(os, 'get_terminal_size'):
+            try:
+                size = os.get_terminal_size()
+                if size.columns > 0:
+                    return int(size.columns)
+            except OSError:
+                pass
+        fallback = os.environ.get('COLUMNS', '')
+        if fallback.isdigit():
+            return int(fallback)
+        return 80
+
+    def print(self, text: str, end: str = '\n', flush: bool = False) -> None:
+        if debugger.enabled:
+            debugger.output.append(text)
+        _stdout.write(text + end)
+        if flush:
+            _stdout.flush()
 
 
 class _Debugger:
-    def __init__(self):
+    def __init__(self) -> None:
         self.enabled = False
         self.output = []
 
+    def print(self, *args) -> None:
+        from .frame_info import FrameInfo
 
+        frame = FrameInfo(currentframe().f_back)
+        pprint(
+            ('[debug]:{}:{}'.format(frame.file_name, frame.line_number), *args)
+        )
+
+
+console = Console()
+# CONSOLE_WIDTH = console.width
 debugger = _Debugger()
 
+std_print = tp.cast(tp.Callable, builtins.print)
+con_print = console.print
+# con_error = partial(console.print_exception, word_wrap=True)
+dbg_print = debugger.print
+# non_print = NothingPrinter()
 
-ANSI_ESCAPE = '\033['
-ANSI_RESET = ANSI_ESCAPE + '0m'
+# alias
+bprint = std_print
+cprint = con_print
+dprint = dbg_print
 
-
-class AnsiColor:
-    BLACK = '30'
-    RED = '31'
-    GREEN = '32'
-    YELLOW = '33'
-    BLUE = '34'
-    MAGENTA = '35'
-    CYAN = '36'
-    WHITE = '37'
-    DEFAULT = '39'
-
-    BRIGHT_BLACK = '90'
-    BRIGHT_RED = '91'
-    BRIGHT_GREEN = '92'
-    BRIGHT_YELLOW = '93'
-    BRIGHT_BLUE = '94'
-    BRIGHT_MAGENTA = '95'
-    BRIGHT_CYAN = '96'
-    BRIGHT_WHITE = '97'
-
-
-class AnsiStyle:
-    RESET = '0'
-    BOLD = '1'
-    DIM = '2'
-    ITALIC = '3'
-    UNDERLINE = '4'
-
-
-LEVEL_COLORS = {
-    0: '',
-    1: AnsiColor.BRIGHT_BLACK,
-    2: AnsiColor.CYAN,
-    3: AnsiColor.GREEN,
-    4: AnsiColor.BRIGHT_GREEN,
-    5: AnsiColor.YELLOW,
-    6: AnsiColor.BRIGHT_YELLOW,
-    7: AnsiColor.RED,
-    8: AnsiColor.BRIGHT_RED,
-    9: AnsiColor.BRIGHT_WHITE,
-}
-
-
-def _apply_style(color: str, style: str = '') -> str:
-    # 如果 style 看起来像背景色代码（40-47），那么我们需要处理它
-    codes = []
-    codes.append('0')  # 重置
-    
-    # 处理 style：如果 style 是数字（比如 '1' 表示粗体，或者 '41' 表示红色背景）
-    if style:
-        style_parts = style.split(';')
-        for part in style_parts:
-            if part.strip():
-                codes.append(part.strip())
-    
-    # 处理 color：添加颜色代码
-    if color:
-        codes.append(color)
-    
-    # 组合所有代码
-    code_str = ';'.join(codes)
-    return ANSI_ESCAPE + code_str + 'm'
-
-
-def color_text(text: str, color: str, style: str = '') -> str:
-    return _apply_style(color, style) + text + ANSI_RESET
-
-
-def get_console_width() -> int:
-    if hasattr(sys.stdout, 'columns'):
-        columns = sys.stdout.columns
-        if columns:
-            return int(columns)  # type: ignore
-    if hasattr(os, 'get_terminal_size'):
-        try:
-            size = os.get_terminal_size()
-            if size.columns > 0:
-                return int(size.columns)
-        except OSError:
-            pass
-    fallback = os.environ.get('COLUMNS', '')
-    if fallback.isdigit():
-        return int(fallback)
-    return 80
-
-
-CONSOLE_WIDTH = get_console_width()
-
-
-def print(
-    *args: object, sep: str = ' ', end: str = '\n', flush: bool = False
-) -> None:
-    output = sep.join(str(arg) for arg in args) + end
-    if debugger.enabled:
-        debugger.output.append(output)
-    try:
-        sys.stdout.write(output)
-        if flush:
-            sys.stdout.flush()
-    except IOError:
-        pass
-
-
-def clear_line() -> None:
-    sys.stdout.write('\r' + ANSI_ESCAPE + 'K' + ANSI_RESET)
-    sys.stdout.flush()
+# default alias
+# print = con_print

@@ -1,9 +1,18 @@
 import re
+import rich.box
+import rich.jupyter
+import rich.markdown
+import rich.table
+import rich.text
 import textwrap
 import typing as t
-from objprint import objstr
+from functools import cache
+from types import FunctionType
+from .config import config
 from .console import console
 from .console import dprint  # noqa
+from .console import legacy_rich_console
+from .console import rich_console
 from .frame_info import FrameInfo
 from .path_glob import path_glob
 from .render import T
@@ -27,8 +36,11 @@ class TextObject:
 class TextObjectGroup(TextObject):
     editable: bool = True
     _color: T.Color = 'default'
+    _objs: t.List[TextObject]
     _style: T.Style = ''
-    _objs: t.List[TextObject] = []
+
+    def __init__(self) -> None:
+        self._objs = []
 
     @property
     def color(self) -> T.Color:
@@ -51,6 +63,11 @@ class TextObjectGroup(TextObject):
         for x in self._objs:
             if x.editable:
                 x.style = value
+
+    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+        return ''.join(
+            x.render(color_code_scheme=color_code_scheme) for x in self._objs
+        )
 
 
 # ------------------------------------------------------------------------------
@@ -116,102 +133,14 @@ class DividerLine(TextObject):
             )
 
 
-class ExpandedObject(TextObjectGroup):
-    @classmethod
-    def check_expandable(cls, obj: TextObject) -> bool:
-        return isinstance(obj, (RenderableObject, NamedVariable))
-
-    def __init__(
-        self,
-        obj: t.Union['RenderableObject', 'NamedVariable'],
-        guide_lines: bool = False,
-    ) -> None:
-        self._color = 'default'
-        self._style = ''
-        self._objs = []
-        for line in self._expand_lines(obj._origin, indent=2):
-            self._objs.append(RenderableObject(line))
-            self._objs.append(LineBreak())
-        if isinstance(obj, NamedVariable):
-            self._objs[0] = NamedVariable(
-                obj._name,
-                self._objs[0]._origin.lstrip(),  # type: ignore
-                _quote_string=False,
-            )
-            self._objs.insert(0, Space(2))
-
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
-        return ''.join(
-            x.render(color_code_scheme=color_code_scheme) for x in self._objs
-        )
-
-    def _expand_lines(self, element: t.Any, indent: int = 0) -> t.Iterator[str]:
-        def wrap(text: str) -> str:
-            return ' ' * indent + text
-
-        if element:
-            if isinstance(element, dict):
-                yield wrap('{')
-                for k, v in element.items():
-                    v2 = tuple(self._expand_lines(v, indent + 4))
-                    if len(v2) == 0:
-                        raise Exception
-                    elif len(v2) == 1:
-                        v3 = v2[0].lstrip() + ','
-                    else:
-                        v3 = '(\n{}\n{}),'.format(
-                            '\n'.join(v2), ' ' * (indent + 2)
-                        )
-                    yield '{}{}: {}'.format(
-                        ' ' * (indent + 2),
-                        '"{}"'.format(k) if isinstance(k, str) else str(k),
-                        v3,
-                    )
-                yield wrap('}')
-            elif isinstance(element, list):
-                yield wrap('[')
-                for each in element:
-                    for x in self._expand_lines(each, indent + 2):
-                        yield x + ','
-                yield wrap(']')
-            elif isinstance(element, str):
-                yield wrap(self._quote_string(element))
-            elif isinstance(element, tuple):
-                yield wrap('(')
-                for each in element:
-                    for x in self._expand_lines(each, indent + 2):
-                        yield x + ','
-                yield wrap(')')
-            elif isinstance(element, (set, frozenset)):
-                yield wrap('{')
-                for each in sorted(element):
-                    for x in self._expand_lines(each, indent + 2):
-                        yield x + ','
-                yield wrap('}')
-            else:
-                text = str(element)
-                if '\n' in text:
-                    yield textwrap.indent(text, ' ' * indent)
-                else:
-                    yield wrap(text)
-        else:
-            yield wrap(
-                self._quote_string(element)
-                if isinstance(element, str)
-                else str(element)
-            )
-
-    def _quote_string(self, s: str) -> str:
-        return NamedVariable.quote_string(s)
-
-
 class ExpandedObjectGroup(TextObjectGroup):
     def __init__(
         self,
         body_parts: t.Sequence[TextObject],
         before_body_parts: t.Sequence[TextObject],
     ) -> None:
-        self._objs = [LineBreak()]
+        super().__init__()
+        self._objs.append(LineBreak())
         i = 0
         while i < len(body_parts):
             element = body_parts[i]
@@ -225,24 +154,34 @@ class ExpandedObjectGroup(TextObjectGroup):
 
         can_be_single_line = True
         available_space = console.width - sum(len(x) for x in before_body_parts)
-        for x in self._objs:
-            for _ in x.render(color_code_scheme='none'):
-                available_space -= 1
-                if available_space < 0:
-                    can_be_single_line = False
-                    break
-            if not can_be_single_line:
+        for x in self._objs[1:]:
+            if isinstance(x, ExpandedObject):
+                text = x.render_compact()
+            else:
+                text = x.render(color_code_scheme='none')
+            available_space -= len(text)
+            if available_space <= 0:
+                can_be_single_line = False
                 break
         self._single_line = can_be_single_line
 
     def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
-        out = ''.join(
-            x.render(color_code_scheme=color_code_scheme)
-            for x in self._objs
-        )
         if self._single_line:
-            out = out.replace('\n', ' ')
-        return out
+            return ''.join(
+                (
+                    ''
+                    if isinstance(x, LineBreak)
+                    else x.render_compact(color_code_scheme=color_code_scheme)
+                    if isinstance(x, ExpandedObject)
+                    else x.render(color_code_scheme=color_code_scheme)
+                    for x in self._objs[1:]
+                )
+            )
+        else:
+            return ''.join(
+                x.render(color_code_scheme=color_code_scheme)
+                for x in self._objs
+            )
 
 
 FuncnameSeparator = BodySeparator
@@ -336,10 +275,18 @@ class RenderableObject(TextObject):
 
 
 class RichObject(TextObject):
-    def __init__(self, obj: t.Any) -> None:
+    def __init__(self, obj: rich.jupyter.JupyterMixin) -> None:
         self._obj = obj
+        self.editable = False
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str: ...
+    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+        # https://chatgpt.com/share/6a16a585-0e00-8320-97ee-5fc2b572690e
+        if color_code_scheme == 'none':
+            return legacy_rich_console.capture_output(self._obj)
+        elif color_code_scheme == 'ansi':
+            return rich_console.capture_output(self._obj)
+        else:
+            raise NotImplementedError
 
 
 class Source(TextObject):
@@ -407,13 +354,13 @@ class Space(TextObject):
         return ' ' * self._length
 
 
-class SpecialExpandedObject(TextObject):
+class SpecialExpandedObject(TextObjectGroup):
     @classmethod
     def check_expandable(cls, obj: TextObject) -> bool:
         if isinstance(obj, (RenderableObject, NamedVariable)):
             origin = obj._origin
             if isinstance(origin, str):
-                return True
+                return bool(re.fullmatch(r'(?:[^:]+: )?.*? -> .+', origin))
             elif isinstance(origin, dict):
                 if len(origin) > 1 and all(
                     (isinstance(k, str) for k in origin.keys())
@@ -446,17 +393,221 @@ class SpecialExpandedObject(TextObject):
     def __init__(
         self, obj: t.Union['RenderableObject', 'NamedVariable']
     ) -> None:
-        self._data = []
+        super().__init__()
         origin = obj._origin
         if isinstance(origin, str):
-            if m := re.fullmatch(r'(\w+:) (\w+) -> (\w+)', origin):
-                if m.group(1):
-                    self._data.append(RenderableObject(m.group(1)))
-                    self._data.append(Space())
-                self._data.append(RenderableObject(m.group(2), color='red'))
-                self._data.append(Space())
-                self._data.append(RenderableObject('->'))
-                self._data.append(Space())
-                self._data.append(RenderableObject(m.group(3), color='green'))
+            a, b, c = ('', *origin.split(' -> '))
+            if ':' in b:
+                a, b = b.split(':', 1)
+            if a:
+                self._objs.append(RenderableObject(a))
+                self._objs.append(Space())
+            assert b
+            self._objs.append(RenderableObject(b, color='red'))
+            self._objs.append(Space())
+            self._objs.append(RenderableObject('->'))
+            self._objs.append(Space())
+            assert c
+            self._objs.append(RenderableObject(c, color='green'))
+        elif isinstance(origin, dict):  # kv table
+            table = rich.table.Table(
+                'KEY', 'VALUE', header_style='yellow', box=rich.box.ROUNDED
+            )
+            for k, v in origin.items():
+                table.add_row(str(k), str(v))
+            self._objs.append(RichObject(table))
+        else:  # isinstance(origin, (list, tuple))
+            table = None
+            for i, row in enumerate(origin):
+                if i == 0:
+                    table = rich.table.Table(
+                        *row, header_style='yellow', box=rich.box.ROUNDED
+                    )
+                else:
+                    table.add_row(*map(str, row))  # type: ignore
+            assert table
+            self._objs.append(RichObject(table))
+
+
+Text = RenderableObject
+
+# ---
+
+
+class ExpandedObject(TextObjectGroup):
+    class Indent(Space):
+        def __init__(self, level: int) -> None:
+            super().__init__(level * config.multiline_indent)
+
+    class OptionalText(Text):
+        pass
+
+    class Separator(TextObject):
+        def render(
+            self,
+            compact: bool = False,
+            color_code_scheme: T.CodeScheme = 'none',
+        ) -> str:
+            return render(
+                (';', self.color, 'dim'),
+                (' ' if compact else '\n',),
+                code_scheme=color_code_scheme,
+            )
+
+    @classmethod
+    def check_expandable(cls, obj: TextObject) -> bool:
+        return isinstance(obj, (RenderableObject, NamedVariable))
+
+    def __init__(
+        self,
+        obj: t.Union['RenderableObject', 'NamedVariable'],
+        guide_lines: bool = False,
+    ) -> None:
+        super().__init__()
+        self._origin = obj._origin
+
+        self._comma = Text(',')
+        self._line_break = LineBreak()
+        self._sep = ExpandedObject.Separator()
+
+        self._objs.extend(self._expand_lines(obj._origin, 1))
+        self._objs.pop()  # remove last LineBreak
+        if isinstance(obj, NamedVariable):
+            self._objs[1] = NamedVariable(
+                obj._name,
+                self._objs[1]._origin,  # type: ignore
+                _quote_string=False,
+            )
+
+    def render_compact(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+        return (
+            ''.join(
+                (
+                    ''
+                    if x is self._line_break
+                    or isinstance(
+                        x, (ExpandedObject.Indent, ExpandedObject.OptionalText)
+                    )
+                    else x.render(
+                        compact=True, color_code_scheme=color_code_scheme
+                    )
+                    if x is self._sep
+                    else x.render(color_code_scheme=color_code_scheme)
+                    for x in self._objs
+                )
+            )
+            .replace(',)', ')')
+            .replace(',]', ']')
+            .replace(',}', '}')
+        )
+
+    def _expand_lines(
+        self, element: t.Any, _level: int = 0
+    ) -> t.Iterator[TextObject]:
+        def row(*args):
+            yield self._indent(_level)
+            yield from args
+            yield self._line_break
+
+        if element is None:
+            yield from row(Text('None', 'magenta'))
+        elif isinstance(element, FunctionType):
+            yield from row(Text('<function {}>'.format(element.__name__)))
+        elif isinstance(element, bool):
+            yield from row(Text(str(element), 'green' if element else 'red'))
+        elif isinstance(element, str):
+            yield from row(Text(self._quote_string(element)))
+        elif isinstance(element, (dict, frozenset, list, set, tuple)):
+            if element:
+                if isinstance(element, dict):
+                    yield from row(Text('{'))
+                    for k, v in element.items():
+                        yield self._indent(_level + 1)
+                        yield Text(self._quote_string(k))
+                        yield Text(': ')
+
+                        v2 = tuple(self._expand_lines(v, _level + 1))
+                        #   Tuple[_Indent, TextObject, ..., LineBreak]
+                        if len(v2) == 0 or len(v2) == 1:
+                            raise Exception
+                        if v2[1]._origin in ('(', '[', '{'):  # type: ignore
+                            yield from v2[1:]
+                            yield self._comma
+                            yield ExpandedObject.OptionalText(' ')
+                            yield self._line_break
+                        else:
+                            if (
+                                len(v2) == 3 and '\n' not in v2[1]._origin  # type: ignore
+                            ):
+                                yield v2[1]
+                                yield self._comma
+                                yield ExpandedObject.OptionalText(' ')
+                            else:
+                                yield ExpandedObject.OptionalText('(')
+                                yield self._line_break
+                                yield from v2
+                                yield from row(
+                                    ExpandedObject.OptionalText('),')
+                                )
+                    yield from row(Text('}'))
+                else:
+                    yield from row(
+                        Text(
+                            '['
+                            if isinstance(element, list)
+                            else '('
+                            if isinstance(element, tuple)
+                            else '{'
+                        )
+                    )
+                    for each in element:
+                        x = tuple(self._expand_lines(each, _level + 1))
+                        #   Tuple[_Indent, TextObject, ..., LineBreak]
+                        yield from x[:-1]
+                        yield self._comma
+                        yield ExpandedObject.OptionalText(' ')
+                        yield x[-1]
+                    yield from row(
+                        Text(
+                            ']'
+                            if isinstance(element, list)
+                            else ')'
+                            if isinstance(element, tuple)
+                            else '}'
+                        )
+                    )
             else:
-                ...
+                yield from row(Text(str(element)))
+        elif isinstance(element, (float, int)):
+            yield from row(Text(str(element)))
+        else:  # it's an object!
+            # ref: `[lib]objprint/objprint.py:ObjPrint:_objstr`.
+            if element.__class__.__str__ is object.__str__:
+                yield from row(
+                    Text(
+                        '<{} id={}>'.format(
+                            element.__class__.__name__, id(element)
+                        )
+                    )
+                )
+            else:
+                text = str(element)
+                yield from row(
+                    Text(
+                        textwrap.indent(text, ' ' * _level)
+                        if '\n' in text
+                        else text
+                    )
+                )
+
+    @cache
+    def _indent(self, level: int) -> Indent:
+        return ExpandedObject.Indent(level)
+
+    def _quote_string(self, s: t.Any) -> str:
+        return NamedVariable.quote_string(s) if isinstance(s, str) else str(s)
+
+
+class Markdown(RichObject):
+    def __init__(self, text: str) -> None:
+        super().__init__(rich.markdown.Markdown(textwrap.dedent(text)))

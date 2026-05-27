@@ -3,6 +3,7 @@ import os
 import sys
 import typing as tp
 from inspect import currentframe
+from rich.console import Console as RichConsole
 from rich.pretty import pprint
 
 _stdout = sys.stdout
@@ -37,6 +38,29 @@ class Console:
             _stdout.flush()
 
 
+class _LegacyRichConsole(RichConsole):
+    def __init__(self) -> None:
+        # https://github.com/Textualize/rich/issues/2622
+        super().__init__(
+            color_system='standard' if os.name == 'nt' else 'auto',
+            legacy_windows=True,
+        )
+
+    def capture_output(self, *args, **kwargs) -> str:
+        with self.capture() as cap:
+            self.print(*args, **kwargs)
+        return cap.get()
+
+
+class _ModernRichConsole(_LegacyRichConsole):
+    def __init__(self) -> None:
+        RichConsole.__init__(
+            self,
+            color_system='standard' if os.name == 'nt' else 'auto',
+            legacy_windows=False,  # make sure ansi color is used
+        )
+
+
 class _Debugger:
     def __init__(self) -> None:
         self.enabled = False
@@ -53,6 +77,8 @@ class _Debugger:
 
 console = Console()
 # CONSOLE_WIDTH = console.width
+rich_console = _ModernRichConsole()
+legacy_rich_console = _LegacyRichConsole()
 debugger = _Debugger()
 
 std_print = tp.cast(tp.Callable, builtins.print)

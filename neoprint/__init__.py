@@ -11,5 +11,7 @@ from .show import info
 from .show import show
 from .show import success
 from .show import warning
+from .text_object import Markdown
+from .text_object import RichObject
 
 __version__ = '0.1.0'

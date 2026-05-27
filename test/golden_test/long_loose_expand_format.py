@@ -11,7 +11,11 @@ def main():
     filenames_rev = filenames[::-1]
     np.show(':l', filenames)
     np.show(':nl', filenames, filenames_rev)
-    np.show(':nlv6', filenames)
+    np.show(':nlv6', filenames, filenames_rev)
+
+    # shrink into single line
+    np.show(':lv2', {'name': 'Alice', 'age': 20, 'city': 'New York'})
+
     # np.show(':l2', 'installation done: v0.1.0 -> v0.2.0')
     # np.show(
     #     ':l2',

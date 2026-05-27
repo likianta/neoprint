@@ -3,18 +3,21 @@ import typing as t
 from rich.traceback import Traceback
 from sys import excepthook as _default_excepthook
 from .console import console
+from .console import rich_console
+from .console import debugger
 
 
-class LoggingConfig:
+class _Config:
     clear_unfinished_stream: bool
-    console_width: t.Optional[int]
-    path_style: t.Literal['filename', 'relpath']
+    console_width: int
+    debug_output: bool
+    multiline_indent: int
+    path_style: t.Literal['filename', 'relpath'] = 'filename'
     #   'relpath' (default): show relative path.
     #       for external libraries, will show `[lib_name]/relpath:lineno`
     #   'filename': show only filename.
     #       for external libraries, will show `[lib_name]/filename:lineno`
     rich_traceback: bool
-    separator: str
     show_funcname: bool
     show_source: bool
     #   attach source file path and line number info prefixed to the log -
@@ -35,68 +38,76 @@ class LoggingConfig:
     #   example: print(':v8', 'some error happens')
     #   enabled: (red text) '[ERROR] some error happens'
     #   disabled: (red text) 'some error happens'
-    sourcemap_alignment: t.Literal['left', 'right']
+    sourcemap_alignment: t.Literal['left', 'right'] = 'left'
     subthreaded: bool
     #   run lk logger in separate thread.
-    
-    _preset_conf = {
+
+    _preset_conf: t.Dict[str, t.Union[bool, int, str]] = {
         'clear_unfinished_stream': False,
-        'console_width'          : None,
-        'path_style'             : 'relpath',
-        'rich_traceback'         : True,
-        'separator'              : ';   ',
-        'show_funcname'          : False,
-        'show_source'            : True,
-        'show_traceback_locals'  : False,
-        'show_varnames'          : False,
-        'show_verbosity_tag'     : False,
-        'sourcemap_alignment'    : 'left',
-        'subthreaded'            : False,  # TODO
+        'console_width': console.width,
+        'debug_output': False,
+        'multiline_indent': 2,
+        'path_style': 'relpath',
+        'rich_traceback': False,
+        'show_funcname': False,
+        'show_source': True,
+        'show_traceback_locals': False,
+        'show_varnames': False,
+        'show_verbosity_tag': False,
+        'sourcemap_alignment': 'left',
+        'subthreaded': False,
     }
-    
-    def __init__(self, **kwargs) -> None:
+
+    def __init__(self) -> None:
         for k, v in self._preset_conf.items():
-            self._apply(k, kwargs.get(k, v))
-    
-    def to_dict(self) -> t.Dict[str, t.Any]:
-        return {k: getattr(self, k) for k in self._preset_conf}
-    
-    def update(self, **kwargs) -> None:
+            setattr(self, k, v)
+
+    def __call__(self, **kwargs) -> None:
         for k, v in kwargs.items():
-            if k in self._preset_conf and v != getattr(self, k, None):
-                self._apply(k, v)
-    
+            assert hasattr(self, k), k
+            self._apply(k, v)
+
     def reset(self) -> None:
         for k, v in self._preset_conf.items():
-            if v != getattr(self, k, None):
-                self._apply(k, v)  # type: ignore
-    
+            if getattr(self, k, None) != v:  # if None type, always skip it.
+                # assert v is not None
+                self._apply(k, v)
+
     def _apply(self, key: str, val: t.Union[bool, int, str]) -> None:
         setattr(self, key, val)
         if key == 'console_width':
-            if val and isinstance(val, int):
-                console.width = val
+            assert isinstance(val, int)
+            console.width = val
+        elif key == 'debug_output':
+            assert isinstance(val, bool)
+            debugger.enabled = val
         elif key == 'rich_traceback':
+            # assert isinstance(val, bool)
             if val:
                 sys.excepthook = self._custom_excepthook
             else:
                 sys.excepthook = _default_excepthook
-    
+
     def _custom_excepthook(self, type_, value, traceback) -> None:
         # print(':r', '[red dim]drain out message queue[/]')
         # from .logger import logger
         # if hasattr(logger, '_stop_running'):
         #     logger._stop_running()  # noqa
         if type_ is KeyboardInterrupt:
-            print(':r', '[red dim]KeyboardInterrupt[/]')
+            # fmt: off
+            from .show import show
+            show(':v7', 'KeyboardInterrupt')
             sys.exit(0)
+            # fmt: on
         else:
             # https://rich.readthedocs.io/en/stable/traceback.html
             # dprint(getattr(self, 'show_traceback_locals'))
-            console.print(
+            rich_console.print(
                 Traceback.from_exception(
-                    type_, value, traceback,
-                    show_locals=getattr(self, 'show_traceback_locals'),
+                    type_,
+                    value,
+                    traceback,
+                    show_locals=self.show_traceback_locals,
                     locals_hide_dunder=True,
                     locals_hide_sunder=True,
                     # word_wrap=True,
@@ -105,4 +116,4 @@ class LoggingConfig:
             )
 
 
-config = LoggingConfig()
+config = _Config()

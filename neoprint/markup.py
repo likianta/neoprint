@@ -1,6 +1,5 @@
+import re
 import typing as tp
-from re import compile as compile_regex
-from time import time
 from .config import config
 from .frame_info import FrameInfo
 from .scope import counter
@@ -8,7 +7,6 @@ from .scope import timer
 
 
 class T:
-    Markup = str
     Marks = tp.TypedDict(
         'Marks',
         {
@@ -26,11 +24,17 @@ class T:
         },
         total=False,
     )
+    Markup = str
 
 
 class Mark:
     """
-    description: (the asterisk symbol mark means default entry)
+    turn digital values into descriptive values.
+
+    usage: see `./format.py:format_list`.
+
+    description:
+        (the asterisk symbol on the left means default entry)
             d0  do not show divider line
         *   d1  default divider line
             d2  bold divider line
@@ -49,9 +53,10 @@ class Mark:
             i3  global index
             l0  no expand object
         *   l1  long / loose / expanded (multiple lines) format
-            l2  expand special object
+            l2  expand object in tailored format
             n0  do not show varnames
         *   n1  show varnames
+            n2  show varnames and expressions                  *(not supported)*
             p0  self layer
         *   p1  parent layer
             p2  grandparent layer                       *(be careful using p2+)*
@@ -79,9 +84,9 @@ class Mark:
             v8  error / failure (red)
             v9  critical, fatal error (white on red)           *(not supported)*
 
-    trick to remember `v*`:
-        v2/4/6/8 are accent colors.
-        v1/3/5/7 are dimmed colors.
+        trick to remember `v*`:
+            v2/4/6/8 are accent colors.
+            v1/3/5/7 are dimmed colors.
     """
 
     NO_DIVIDER_LINE = 0  # :d0
@@ -105,16 +110,16 @@ class Mark:
     GLOBAL_INDEX = 3  # :i3
 
     NO_EXPAND_FORMAT = 0  # :l0
-    EXPAND = 1  # :l1
-    SPECIAL_EXPAND = 2  # :l2
+    EXPAND_FORMAT = 1  # :l1
+    SPECIAL_EXPAND_FORMAT = 2  # :l2
 
     NO_VARNAMES = 0  # :n0
     SHOW_VARNAMES = 1  # :n1
 
     SELF_LAYER = 0  # :p0
     PARENT_LAYER = 1  # :p1
-    GRANDPARENT_LAYER = 2  # :p2
-    GREAT_GRANDPARENT_LAYER = 3  # :p3
+    GRAND_PARENT_LAYER = 2  # :p2
+    GREAT_GRAND_PARENT_LAYER = 3  # :p3
     ...  # :p4+
 
     NO_RICH_FORMAT = 0  # :r0
@@ -145,8 +150,8 @@ class Mark:
 
 
 class MarkupAnalyzer:
-    _mark_pattern_0 = compile_regex(r'^:(?:[defilnprstv][0-9]?)+$')
-    _mark_pattern_1 = compile_regex(r'\w\d?')
+    _mark_pattern_0 = re.compile(r'^:(?:[defilnprstv][0-9]?)+$')
+    _mark_pattern_1 = re.compile(r'\w\d?')
 
     def is_valid_markup(self, text: str) -> bool:
         return bool(self._mark_pattern_0.match(text))

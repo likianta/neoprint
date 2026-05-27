@@ -62,10 +62,12 @@ def format_list(
     # --------------------------------------------------------------------------
 
     # body part
+    before_body_parts = []
     body_parts = []
+
     if marks['i']:
-        body_parts.append(to.Index(marks['i']))
-        body_parts.append(to.Space())
+        before_body_parts.append(to.Index(marks['i']))
+        before_body_parts.append(to.Space())
 
     if marks['n']:
         varnames = parent_frame.varnames
@@ -77,29 +79,45 @@ def format_list(
 
     for name, arg in zip(varnames, args):
         if name is None:
-            body_parts.append(to.Text(arg))
+            body_parts.append(to.RenderableObject(arg))
         else:
             body_parts.append(to.NamedVariable(name, arg))
         body_parts.append(to.InBodySeparator())
         body_parts.append(to.Space())
     body_parts = body_parts[:-2]
 
+    if marks['l']:
+        if marks['l'] == Mark.EXPAND_FORMAT:
+            body_parts = [
+                to.ExpandedObject(x)
+                if to.ExpandedObject.check_expandable(x)
+                else x
+                for x in body_parts
+            ]
+        else:  # Mark.SPECIAL_EXPAND_FORMAT
+            ...
+        body_parts = [
+            to.ExpandedObjectGroup(body_parts, head_parts + before_body_parts)
+        ]
+
     if marks['v']:
         global_color, global_style = marks['v']
         for part in body_parts:
             if part.editable:
+                # dprint(part, global_color, global_style)
                 part.color = global_color
                 part.style = global_style
 
     if marks['d']:
-        insertion_index = 2 if marks['i'] else 0
-        a, b = body_parts[:insertion_index], body_parts[insertion_index:]
-        body_parts = a + [
+        body_parts = [
             to.DividerLine(
-                head_parts, b, bold=marks['d'] == Mark.THICK_DIVIDER_LINE
+                head_parts,
+                body_parts,
+                bold=marks['d'] == Mark.THICK_DIVIDER_LINE,
             )
         ]
 
+    result.extend(before_body_parts)
     result.extend(body_parts)
 
     return result

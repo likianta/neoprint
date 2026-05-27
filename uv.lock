@@ -598,9 +598,10 @@ wheels = [
 
 [[package]]
 name = "neoprint"
-version = "0.1.0a23"
+version = "0.1.0a24"
 source = { editable = "." }
 dependencies = [
+    { name = "objprint" },
     { name = "rich" },
 ]
 
@@ -612,6 +613,7 @@ ext = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "argsense" },
     { name = "faker", marker = "python_full_version >= '3.12'" },
     { name = "ipython", marker = "python_full_version >= '3.12'" },
     { name = "lk-utils" },
@@ -621,6 +623,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "objprint", specifier = ">=0.3.0" },
     { name = "rich", specifier = ">=14.0.0" },
     { name = "svg-ultralight", marker = "extra == 'ext'", specifier = ">=0.34.0" },
 ]
@@ -628,11 +631,21 @@ provides-extras = ["ext"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "argsense", specifier = ">=1.2.0a5", index = "http://localhost:2191/" },
     { name = "faker", marker = "python_full_version >= '3.12'", specifier = ">=40.8.0" },
     { name = "ipython", marker = "python_full_version >= '3.12'", specifier = ">=9.13.0" },
     { name = "lk-utils", specifier = ">=3.6.0b11", index = "http://localhost:2191/" },
     { name = "rich", specifier = ">=15.0.0" },
     { name = "svg-ultralight", marker = "python_full_version >= '3.12'", specifier = ">=0.34.0" },
+]
+
+[[package]]
+name = "objprint"
+version = "0.3.0"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/81/b8/c10e96120f1585824a1992655334b49da3924edfb364e84a26cc0ecdb89b/objprint-0.3.0.tar.gz", hash = "sha256:b5d83f9d62db5b95353bb42959106e1cd43010dcaa3eed1ad8d7d0b2df9b2d5a", size = 47481, upload-time = "2024-11-09T00:05:16.73Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/ec/af/572825252f16f36eeecbc8e3b721913d2640d69b984fdb8907aa8b4b0975/objprint-0.3.0-py3-none-any.whl", hash = "sha256:489083bfc8baf0526f8fd6af74673799511532636f0ce4141133255ded773405", size = 41619, upload-time = "2024-11-09T00:05:14.852Z" },
 ]
 
 [[package]]

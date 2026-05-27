@@ -8,7 +8,7 @@ from .format import format_list
 
 def show(*args, markup: tp.Optional[str] = None) -> None:
     result = format_list(*args, markup=markup, _elevate_parent_level=1)
-    dprint(args, result)
+    # dprint(args, result)
     console.print(''.join(p.render(color_code_scheme='ansi') for p in result))
 
 

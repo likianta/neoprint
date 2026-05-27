@@ -1,12 +1,13 @@
 [project]
 name = "neoprint"
-version = "0.1.0a23"
+version = "0.1.0a24"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
+    "objprint>=0.3.0",
     "rich>=14.0.0",
     # "rich>=15.0.0",
 ]
@@ -17,6 +18,7 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
+    "argsense>=1.2.0a5",
     "faker>=40.8.0; python_version >= '3.12'",
     "ipython>=9.13.0; python_version >= '3.12'",
     "lk-utils>=3.6.0b11",
@@ -48,6 +50,7 @@ line-length = 80
 
 [tool.ruff.format]
 quote-style = "single"
+skip-magic-trailing-comma = true
 
 [tool.ruff.lint.isort]
 force-single-line = true
@@ -74,4 +77,5 @@ url = "http://localhost:2191/"
 # explicit = true
 
 [tool.uv.sources]
+argsense = { index = "likianta" }
 lk-utils = { index = "likianta" }

@@ -3,6 +3,7 @@ from .console import bprint
 from .console import bprint as print
 from .console import console
 from .console import debugger
+from .format import format
 from .format import format_list
 from .show import debug
 from .show import error

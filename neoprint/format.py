@@ -35,7 +35,7 @@ def format_list(
     else:
         markpos = _mark_position
     # dprint(args, markup, args[-1], markup_analyzer.is_valid_markup(args[-1]))
-    marks = markup_analyzer.analyze2(markup, parent_frame)
+    marks = markup_analyzer.analyze(markup, parent_frame)
     if marks['p']:
         caller_frame = parent_frame.get_parent(marks['p'])
         assert caller_frame
@@ -103,6 +103,17 @@ def format_list(
     result.extend(body_parts)
 
     return result
+
+
+def format(*args, markup: tp.Optional[str] = None) -> str:
+    if markup is None:
+        args, markpos, markup = extract_markup_from_arguments(args)
+    else:
+        markpos, markup = 0, markup
+    result = format_list(
+        *args, markup=markup, _elevate_parent_level=1, _mark_position=markpos
+    )
+    return ''.join(p.render(color_code_scheme='none') for p in result)
 
 
 def extract_markup_from_arguments(

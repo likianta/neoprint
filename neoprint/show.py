@@ -22,7 +22,7 @@ def _show_alias(
         markpos, markup = 0, _verbosity + markup.lstrip(':')
     result = format_list(
         *args, markup=markup, _elevate_parent_level=1, _mark_position=markpos
-    )  # 1 or 2?
+    )
     console.print(''.join(p.render(color_code_scheme='ansi') for p in result))
 
 

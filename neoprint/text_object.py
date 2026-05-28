@@ -143,6 +143,16 @@ class ExpandedObjectGroup(TextObjectGroup):
                 self._objs.append(element)
                 self._objs.append(LineBreak())
                 i += 2
+            elif isinstance(element, SpecialExpandedObject):
+                self._objs.append(element)
+                if i + 1 < len(body_parts):
+                    assert isinstance(body_parts[i + 1], InBodySeparator)
+                    assert isinstance(body_parts[i + 2], Space)
+                    # self._objs.append(Space())
+                    self._objs.append(LineBreak())
+                    i += 3
+                else:
+                    i += 1
             else:
                 self._objs.append(element)
                 i += 1
@@ -248,42 +258,23 @@ class NamedVariable(TextObject):
             return '"' + s.replace('"', '\\"') + '"'
 
 
-class RenderableObject(TextObject):
-    def __init__(
-        self, obj: t.Any, color: T.Color = 'default', style: T.Style = ''
-    ) -> None:
-        self._origin = obj
-        self._text = str(obj)
-        self.color = color
-        self.style = style
-
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
-        color = self.color
-        if color == 'default':
-            if self._origin is True:
-                color = 'green'
-            elif self._origin is False:
-                color = 'red'
-            elif self._origin is None:
-                color = 'magenta'
-        return render(
-            (self._text, color, self.style), code_scheme=color_code_scheme
-        )
-
-
 class RichObject(TextObject):
-    def __init__(self, obj: rich.jupyter.JupyterMixin) -> None:
+    def __init__(self, obj: rich.jupyter.JupyterMixin, indent: int = 0) -> None:
         self._obj = obj
+        self._indent = indent
         self.editable = False
 
     def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
         # https://chatgpt.com/share/6a16a585-0e00-8320-97ee-5fc2b572690e
         if color_code_scheme == 'none':
-            return legacy_rich_console.capture_output(self._obj)
+            out = legacy_rich_console.capture_output(self._obj).rstrip()
         elif color_code_scheme == 'ansi':
-            return rich_console.capture_output(self._obj)
+            out = rich_console.capture_output(self._obj).rstrip()
         else:
             raise NotImplementedError
+        if self._indent:
+            out = textwrap.indent(out, ' ' * self._indent)
+        return out
 
 
 class Source(TextObject):
@@ -354,7 +345,7 @@ class Space(TextObject):
 class SpecialExpandedObject(TextObjectGroup):
     @classmethod
     def check_expandable(cls, obj: TextObject) -> bool:
-        if isinstance(obj, (RenderableObject, NamedVariable)):
+        if isinstance(obj, (Text, NamedVariable)):
             origin = obj._origin
             if isinstance(origin, str):
                 return bool(re.fullmatch(r'(?:[^:]+: )?.*? -> .+', origin))
@@ -364,32 +355,39 @@ class SpecialExpandedObject(TextObjectGroup):
                 ):
                     return True
             elif isinstance(origin, (list, tuple)):
+                # table spec:
+                # - the form is `Sequence[header_row, *body_rows]`
+                # - header_row is a sequence of strings
+                # - body_rows are sequences of strings, ints, floats, or bools
+                # - header_row length >= the longest body_row length
                 if (
-                    len(origin) > 1
+                    len(origin) >= 2
                     and all(
                         (
                             (
-                                isinstance(x, (list, tuple))
-                                and len(x) > 0
+                                isinstance(row, (list, tuple))
+                                and len(row) > 0
                                 and all(
                                     (
-                                        isinstance(y, (str, int, float, bool))
-                                        for y in x
+                                        isinstance(
+                                            cell, (str, int, float, bool)
+                                        )
+                                        for cell in row
                                     )
                                 )
                             )
-                            for x in origin
+                            for row in origin
                         )
                     )
-                    and all((isinstance(x, str) for x in origin[0]))
-                    and len(origin[0]) > max((len(x) for x in origin[1:]))
+                    and all(
+                        (isinstance(head_cell, str) for head_cell in origin[0])
+                    )
+                    and len(origin[0]) >= max((len(row) for row in origin[1:]))
                 ):
                     return True
         return False
 
-    def __init__(
-        self, obj: t.Union['RenderableObject', 'NamedVariable']
-    ) -> None:
+    def __init__(self, obj: t.Union['Text', 'NamedVariable']) -> None:
         super().__init__()
         origin = obj._origin
         if isinstance(origin, str):
@@ -397,22 +395,23 @@ class SpecialExpandedObject(TextObjectGroup):
             if ':' in b:
                 a, b = b.split(':', 1)
             if a:
-                self._objs.append(RenderableObject(a))
-                self._objs.append(Space())
+                self._objs.append(Text(a + ': '))
             assert b
-            self._objs.append(RenderableObject(b, color='red'))
+            self._objs.append(Text(b, color='red'))
+            self._objs[-1].editable = False
             self._objs.append(Space())
-            self._objs.append(RenderableObject('->'))
+            self._objs.append(Text('->'))
             self._objs.append(Space())
             assert c
-            self._objs.append(RenderableObject(c, color='green'))
+            self._objs.append(Text(c, color='green'))
+            self._objs[-1].editable = False
         elif isinstance(origin, dict):  # kv table
             table = rich.table.Table(
                 'KEY', 'VALUE', header_style='yellow', box=rich.box.ROUNDED
             )
             for k, v in origin.items():
                 table.add_row(str(k), str(v))
-            self._objs.append(RichObject(table))
+            self._objs.append(RichObject(table, indent=config.multiline_indent))
         else:  # isinstance(origin, (list, tuple))
             table = None
             for i, row in enumerate(origin):
@@ -423,10 +422,39 @@ class SpecialExpandedObject(TextObjectGroup):
                 else:
                     table.add_row(*map(str, row))  # type: ignore
             assert table
-            self._objs.append(RichObject(table))
+            self._objs.append(RichObject(table, indent=config.multiline_indent))
+
+    # def render(
+    #     self, color_code_scheme: T.CodeScheme = 'none', compact: bool = False
+    # ) -> str:
+    #     if compact:
+    #         ...
+    #     else:
+    #         return super().render(color_code_scheme)
 
 
-Text = RenderableObject
+class Text(TextObject):
+    def __init__(
+        self, obj: t.Any, color: T.Color = 'default', style: T.Style = ''
+    ) -> None:
+        self._origin = obj
+        self._text = str(obj)
+        self.color = color
+        self.style = style
+
+    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+        color = self.color
+        if color == 'default':
+            if self._origin is True:
+                color = 'green'
+            elif self._origin is False:
+                color = 'red'
+            elif self._origin is None:
+                color = 'magenta'
+        return render(
+            (self._text, color, self.style), code_scheme=color_code_scheme
+        )
+
 
 # ------------------------------------------------------------------------------
 
@@ -453,13 +481,9 @@ class ExpandedObject(TextObjectGroup):
 
     @classmethod
     def check_expandable(cls, obj: TextObject) -> bool:
-        return isinstance(obj, (RenderableObject, NamedVariable))
+        return isinstance(obj, (Text, NamedVariable))
 
-    def __init__(
-        self,
-        obj: t.Union['RenderableObject', 'NamedVariable'],
-        guide_lines: bool = False,
-    ) -> None:
+    def __init__(self, obj: t.Union['Text', 'NamedVariable']) -> None:
         super().__init__()
         self._origin = obj._origin
 

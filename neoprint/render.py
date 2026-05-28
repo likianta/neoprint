@@ -25,8 +25,9 @@ class T:
     Style = t.Literal['', 'bold', 'dim', 'italic', 'underline']
 
 
-ANSI_ESCAPE = '\033['
-ANSI_RESET = ANSI_ESCAPE + '0m'
+# https://chatgpt.com/share/6a17de0b-a134-8321-93d4-3dfdf1e5204d
+ANSI_ESCAPE = '\033'
+ANSI_RESET = ANSI_ESCAPE + '[0m'
 ANSI_COLORS = {
     'black': '30',
     'red': '31',
@@ -57,9 +58,7 @@ ANSI_STYLES = {
 
 def render(
     *args: t.Union[
-        t.Tuple[str],
-        t.Tuple[str, T.Color],
-        t.Tuple[str, T.Color, T.Style],
+        t.Tuple[str], t.Tuple[str, T.Color], t.Tuple[str, T.Color, T.Style]
     ],
     code_scheme: T.CodeScheme = 'none',
 ) -> str:
@@ -85,17 +84,21 @@ def render(
             if code_scheme == 'ansi':
                 if element[2] == '':
                     result.append(
-                        '{}0;{}m{}'.format(
-                            ANSI_ESCAPE, ANSI_COLORS[element[1]], element[0]
+                        '{}[{}m{}{}'.format(
+                            ANSI_ESCAPE,
+                            ANSI_COLORS[element[1]],
+                            element[0],
+                            ANSI_RESET,
                         )
                     )
                 else:
                     result.append(
-                        '{}0;{};{}m{}'.format(
+                        '{}[{};{}m{}{}'.format(
                             ANSI_ESCAPE,
                             ANSI_STYLES[element[2]],
                             ANSI_COLORS[element[1]],
                             element[0],
+                            ANSI_RESET,
                         )
                     )
             else:

@@ -4,9 +4,11 @@ from argsense import cli
 from objprint import op
 from faker import Faker
 
+fk = Faker()
+
 
 @cli
-def main():
+def main() -> None:
     filenames = os.listdir('neoprint')
     filenames_rev = filenames[::-1]
     np.show(':l', filenames)
@@ -15,6 +17,27 @@ def main():
 
     # shrink into single line
     np.show(':lv2', {'name': 'Alice', 'age': 20, 'city': 'New York'})
+    np.show(':l2', 'upgrade done: v0.1.0 -> v0.2.0')
+
+    # partial change element color in `:l2`
+    np.show(':l2v2', 'upgrade done: v0.1.0 -> v0.2.0')  # cyan
+    np.show(':l2v5', 'upgrade done: v0.1.0 -> v0.2.0')  # dim yellow
+
+    # `:l2` table
+    np.expand2({'name': 'Alice', 'age': 20, 'city': 'New York'})
+    np.expand2(
+        'mixed forms',
+        {'name': 'Alice', 'age': 20, 'city': 'New York'},
+        {'name': 'Bob', 'age': 24, 'city': 'Los Angeles'},
+    )
+    np.expand2(
+        (
+            ('index', 'name', 'phone_number', 'description'),
+            ('1', fk.name(), fk.phone_number(), fk.sentence()),
+            ('2', fk.name(), fk.phone_number(), fk.sentence()),
+            ('3', fk.name(), fk.phone_number(), fk.sentence()),
+        )
+    )
 
     # np.show(':l2', 'installation done: v0.1.0 -> v0.2.0')
     # np.show(

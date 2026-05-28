@@ -68,7 +68,7 @@ def format_list(
 
     for name, arg in zip(varnames, args):
         if name is None:
-            body_parts.append(to.RenderableObject(arg))
+            body_parts.append(to.Text(arg))
         else:
             body_parts.append(to.NamedVariable(name, arg))
         body_parts.append(to.InBodySeparator())
@@ -84,7 +84,14 @@ def format_list(
                 for x in body_parts
             ]
         else:  # Mark.SPECIAL_EXPAND_FORMAT
-            ...
+            body_parts = [
+                to.SpecialExpandedObject(x)
+                if to.SpecialExpandedObject.check_expandable(x)
+                else to.ExpandedObject(x)
+                if to.ExpandedObject.check_expandable(x)
+                else x
+                for x in body_parts
+            ]
         body_parts = [
             to.ExpandedObjectGroup(body_parts, head_parts + before_body_parts)
         ]

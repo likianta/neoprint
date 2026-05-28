@@ -156,7 +156,7 @@ class ExpandedObjectGroup(TextObjectGroup):
         available_space = console.width - sum(len(x) for x in before_body_parts)
         for x in self._objs[1:]:
             if isinstance(x, ExpandedObject):
-                text = x.render_compact()
+                text = x.render(color_code_scheme='none', compact=True)
             else:
                 text = x.render(color_code_scheme='none')
             available_space -= len(text)
@@ -171,7 +171,9 @@ class ExpandedObjectGroup(TextObjectGroup):
                 (
                     ''
                     if isinstance(x, LineBreak)
-                    else x.render_compact(color_code_scheme=color_code_scheme)
+                    else x.render(
+                        color_code_scheme=color_code_scheme, compact=True
+                    )
                     if isinstance(x, ExpandedObject)
                     else x.render(color_code_scheme=color_code_scheme)
                     for x in self._objs[1:]
@@ -431,7 +433,7 @@ class SpecialExpandedObject(TextObjectGroup):
 
 Text = RenderableObject
 
-# ---
+# ------------------------------------------------------------------------------
 
 
 class ExpandedObject(TextObjectGroup):
@@ -479,27 +481,39 @@ class ExpandedObject(TextObjectGroup):
                 _quote_string=False,
             )
 
-    def render_compact(self, color_code_scheme: T.CodeScheme = 'none') -> str:
-        return (
-            ''.join(
-                (
-                    ''
-                    if x is self._line_break
-                    or isinstance(
-                        x, (ExpandedObject.Indent, ExpandedObject.OptionalText)
-                    )
-                    else x.render(
-                        compact=True, color_code_scheme=color_code_scheme
-                    )
-                    if x is self._sep
-                    else x.render(color_code_scheme=color_code_scheme)
-                    for x in self._objs
-                )
-            )
-            .replace(',)', ')')
-            .replace(',]', ']')
-            .replace(',}', '}')
-        )
+    def render(
+        self, color_code_scheme: T.CodeScheme = 'none', compact: bool = False
+    ) -> str:
+        if compact:
+            x = self._pretty_format(self._origin)
+            if x.editable:
+                x.color = self._color
+                x.style = self._style
+            return x.render(color_code_scheme=color_code_scheme)
+        else:
+            return super().render(color_code_scheme=color_code_scheme)
+
+    # def render_compact(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    #     return (
+    #         ''.join(
+    #             (
+    #                 ''
+    #                 if x is self._line_break
+    #                 or isinstance(
+    #                     x, (ExpandedObject.Indent, ExpandedObject.OptionalText)
+    #                 )
+    #                 else x.render(
+    #                     compact=True, color_code_scheme=color_code_scheme
+    #                 )
+    #                 if x is self._sep
+    #                 else x.render(color_code_scheme=color_code_scheme)
+    #                 for x in self._objs
+    #             )
+    #         )
+    #         .replace(',)', ')')
+    #         .replace(',]', ']')
+    #         .replace(',}', '}')
+    #     )
 
     def _expand_lines(
         self, element: t.Any, _level: int = 0
@@ -603,6 +617,36 @@ class ExpandedObject(TextObjectGroup):
     @cache
     def _indent(self, level: int) -> Indent:
         return ExpandedObject.Indent(level)
+
+    def _pretty_format(self, element: t.Any) -> TextObject:
+        """
+        a "single-line" version of `_expand_lines`.
+        """
+        if element is None:
+            return Text('None', 'magenta')
+        elif isinstance(element, FunctionType):
+            return Text('<function {}>'.format(element.__name__))
+        elif isinstance(element, bool):
+            return Text(str(element), 'green' if element else 'red')
+        elif isinstance(element, str):
+            return Text(self._quote_string(element))
+        elif isinstance(
+            element, (dict, float, frozenset, int, list, set, tuple)
+        ):
+            return Text(str(element))
+        else:  # an object
+            # ref: `[lib]objprint/objprint.py:ObjPrint:_objstr`.
+            if element.__class__.__str__ is object.__str__:
+                return Text(
+                    '<{} id={}>'.format(element.__class__.__name__, id(element))
+                )
+            else:
+                text = str(element)
+                return Text(
+                    textwrap.dedent(text).replace('\n', ' ')
+                    if '\n' in text
+                    else text
+                )
 
     def _quote_string(self, s: t.Any) -> str:
         return NamedVariable.quote_string(s) if isinstance(s, str) else str(s)

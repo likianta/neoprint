@@ -179,7 +179,7 @@ class ExpandedObjectGroup(TextObjectGroup):
                     else x.render(
                         color_code_scheme=color_code_scheme, compact=True
                     )
-                    if isinstance(x, ExpandedObject)
+                    if isinstance(x, (ExpandedObject, SpecialExpandedObject))
                     else x.render(color_code_scheme=color_code_scheme)
                     for x in self._objs[1:]
                 )
@@ -259,22 +259,18 @@ class NamedVariable(TextObject):
 
 
 class RichObject(TextObject):
-    def __init__(self, obj: rich.jupyter.JupyterMixin, indent: int = 0) -> None:
+    def __init__(self, obj: rich.jupyter.JupyterMixin) -> None:
         self._obj = obj
-        self._indent = indent
         self.editable = False
 
     def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
         # https://chatgpt.com/share/6a16a585-0e00-8320-97ee-5fc2b572690e
         if color_code_scheme == 'none':
-            out = legacy_rich_console.capture_output(self._obj).rstrip()
+            return legacy_rich_console.capture_output(self._obj).rstrip()
         elif color_code_scheme == 'ansi':
-            out = rich_console.capture_output(self._obj).rstrip()
+            return rich_console.capture_output(self._obj).rstrip()
         else:
             raise NotImplementedError
-        if self._indent:
-            out = textwrap.indent(out, ' ' * self._indent)
-        return out
 
 
 class Source(TextObject):
@@ -343,6 +339,8 @@ class Space(TextObject):
 
 
 class SpecialExpandedObject(TextObjectGroup):
+    _form_type: t.Literal['transform', 'kv_table', 'table']
+
     @classmethod
     def check_expandable(cls, obj: TextObject) -> bool:
         if isinstance(obj, (Text, NamedVariable)):
@@ -391,6 +389,7 @@ class SpecialExpandedObject(TextObjectGroup):
         super().__init__()
         origin = obj._origin
         if isinstance(origin, str):
+            self._form_type = 'transform'
             a, b, c = ('', *origin.split(' -> '))
             if ':' in b:
                 a, b = b.split(':', 1)
@@ -406,13 +405,15 @@ class SpecialExpandedObject(TextObjectGroup):
             self._objs.append(Text(c, color='green'))
             self._objs[-1].editable = False
         elif isinstance(origin, dict):  # kv table
+            self._form_type = 'kv_table'
             table = rich.table.Table(
                 'KEY', 'VALUE', header_style='yellow', box=rich.box.ROUNDED
             )
             for k, v in origin.items():
                 table.add_row(str(k), str(v))
-            self._objs.append(RichObject(table, indent=config.multiline_indent))
+            self._objs.append(RichObject(table))
         else:  # isinstance(origin, (list, tuple))
+            self._form_type = 'table'
             table = None
             for i, row in enumerate(origin):
                 if i == 0:
@@ -422,15 +423,25 @@ class SpecialExpandedObject(TextObjectGroup):
                 else:
                     table.add_row(*map(str, row))  # type: ignore
             assert table
-            self._objs.append(RichObject(table, indent=config.multiline_indent))
+            self._objs.append(RichObject(table))
 
-    # def render(
-    #     self, color_code_scheme: T.CodeScheme = 'none', compact: bool = False
-    # ) -> str:
-    #     if compact:
-    #         ...
-    #     else:
-    #         return super().render(color_code_scheme)
+    def render(
+        self, color_code_scheme: T.CodeScheme = 'none', compact: bool = False
+    ) -> str:
+        if compact:
+            if self._form_type == 'transform':
+                return super().render(color_code_scheme)
+            else:
+                assert len(self._objs) == 1
+                return self._objs[0].render(color_code_scheme)
+        else:
+            indent = config.multiline_indent
+            if self._form_type == 'transform':
+                return ' ' * indent + super().render(color_code_scheme)
+            else:
+                return textwrap.indent(
+                    self._objs[0].render(color_code_scheme), ' ' * indent
+                )
 
 
 class Text(TextObject):

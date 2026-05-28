@@ -38,25 +38,23 @@ def main() -> None:
             ('3', fk.name(), fk.phone_number(), fk.sentence()),
         )
     )
-
-    # np.show(':l2', 'installation done: v0.1.0 -> v0.2.0')
-    # np.show(
-    #     ':l2',
-    #     (
-    #         ('index', 'name', 'age', 'city'),
-    #         ('1', 'AAA', '20', 'New York'),
-    #         ('2', 'BBB', '24', 'Los Angeles'),
-    #         ('3', 'CCC', '28', 'Chicago'),
-    #     ),
-    #     {
-    #         'name': 'neoprint',
-    #         'version': '0.1.0',
-    #         'code': 0xFFFF,
-    #         'author': 'Likianta',
-    #     },
-    #     'AAA -> BBB',
-    #     'CCC: DDD -> EEE',
-    # )
+    np.show(
+        ':l2',
+        (
+            ('index', 'name', 'age', 'city'),
+            ('1', 'AAA', '20', 'New York'),
+            ('2', 'BBB', '24', 'Los Angeles'),
+            ('3', 'CCC', '28', 'Chicago'),
+        ),
+        {
+            'name': 'neoprint',
+            'version': '0.1.0',
+            'code': 0xFFFF,
+            'author': 'Likianta',
+        },
+        'AAA -> BBB',
+        'CCC: DDD -> EEE',
+    )
 
     # ---
 

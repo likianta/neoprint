@@ -598,10 +598,9 @@ wheels = [
 
 [[package]]
 name = "neoprint"
-version = "0.1.0a24"
+version = "0.1.0a25"
 source = { editable = "." }
 dependencies = [
-    { name = "objprint" },
     { name = "rich" },
 ]
 
@@ -617,13 +616,13 @@ dev = [
     { name = "faker", marker = "python_full_version >= '3.12'" },
     { name = "ipython", marker = "python_full_version >= '3.12'" },
     { name = "lk-utils" },
+    { name = "objprint" },
     { name = "rich" },
     { name = "svg-ultralight", version = "0.99.0", source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }, marker = "python_full_version >= '3.12'" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "objprint", specifier = ">=0.3.0" },
     { name = "rich", specifier = ">=14.0.0" },
     { name = "svg-ultralight", marker = "extra == 'ext'", specifier = ">=0.34.0" },
 ]
@@ -635,6 +634,7 @@ dev = [
     { name = "faker", marker = "python_full_version >= '3.12'", specifier = ">=40.8.0" },
     { name = "ipython", marker = "python_full_version >= '3.12'", specifier = ">=9.13.0" },
     { name = "lk-utils", specifier = ">=3.6.0b11", index = "http://localhost:2191/" },
+    { name = "objprint", specifier = ">=0.3.0" },
     { name = "rich", specifier = ">=15.0.0" },
     { name = "svg-ultralight", marker = "python_full_version >= '3.12'", specifier = ">=0.34.0" },
 ]

@@ -12,7 +12,12 @@ from .progress import Spinner
 from .progress import progress
 from .progress import spinner
 from .show import debug
+from .show import divider
 from .show import error
+from .show import exception
+from .show import expand
+from .show import expand2
+from .show import index
 from .show import info
 from .show import show
 from .show import show as print

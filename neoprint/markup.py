@@ -39,8 +39,8 @@ class Mark:
         *   d1  default divider line
             d2  bold divider line
             e0  show error in plain format
-        *   e1  show error with red color
-            e2  show exception traceback panel
+            e1  show error with red color
+        *   e2  show exception traceback panel
             e3  show exception traceback with locals
             e4  enter pdb                                      *(not supported)*
             f0  no flush
@@ -237,7 +237,7 @@ class MarkupAnalyzer:
     def extract(self, markup: T.Markup) -> T.Marks:
         defaults = {
             'd': 1,
-            'e': 1,
+            'e': 2,
             'f': 1,
             'i': 2,
             'l': 1,

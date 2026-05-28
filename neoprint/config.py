@@ -4,7 +4,7 @@ from rich.traceback import Traceback
 from sys import excepthook as _default_excepthook
 from .console import console
 from .console import rich_console
-from .console import debugger
+from .debugger import debugger
 
 
 class _Config:

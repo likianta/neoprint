@@ -2,9 +2,8 @@ import builtins
 import os
 import sys
 import typing as tp
-from inspect import currentframe
 from rich.console import Console as RichConsole
-from rich.pretty import pprint
+from .debugger import debugger
 
 _stdout = sys.stdout
 
@@ -61,25 +60,10 @@ class _ModernRichConsole(_LegacyRichConsole):
         )
 
 
-class _Debugger:
-    def __init__(self) -> None:
-        self.enabled = False
-        self.output = []
-
-    def print(self, *args) -> None:
-        from .frame_info import FrameInfo
-
-        frame = FrameInfo(currentframe().f_back)
-        pprint(
-            ('[debug]:{}:{}'.format(frame.file_name, frame.line_number), *args)
-        )
-
-
 console = Console()
 # CONSOLE_WIDTH = console.width
 rich_console = _ModernRichConsole()
 legacy_rich_console = _LegacyRichConsole()
-debugger = _Debugger()
 
 std_print = tp.cast(tp.Callable, builtins.print)
 con_print = console.print

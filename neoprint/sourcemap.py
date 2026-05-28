@@ -1,7 +1,6 @@
 import ast
 import typing as tp
 from functools import cache
-from .console import dprint  # noqa
 
 
 class VarnamesAnalyzer(ast.NodeVisitor):

@@ -8,6 +8,14 @@ from . import sourcemap
 
 
 class FrameInfo:
+    @classmethod
+    def this_place(cls) -> 'FrameInfo':
+        return cls(inspect.currentframe().f_back)  # type: ignore
+
+    @classmethod
+    def parent_place(cls) -> 'FrameInfo':
+        return cls(inspect.currentframe().f_back.f_back)  # type: ignore
+
     def __init__(self, frame: FrameType) -> None:
         self._frame = frame
         self.function_name = frame.f_code.co_name

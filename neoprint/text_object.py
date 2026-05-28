@@ -83,54 +83,49 @@ class BodySeparator(TextObject):
         )
 
 
-class DividerLine(TextObject):
-    def __init__(self, head, body, bold: bool = False) -> None:
-        self._head = head
-        self._body = body
+class DividerLine(TextObjectGroup):
+    def __init__(
+        self,
+        body_parts: t.Sequence[TextObject],
+        before_body_parts: t.Sequence[TextObject],
+        bold: bool = False,
+    ) -> None:
+        super().__init__()
         self._div_char = '█' if bold else '─'
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
-        body_space = console.width - sum(len(x) for x in self._head)
-        if self._body:
-            spare_space = body_space - sum(len(x) for x in self._body) - 2
+        body_space = console.width - sum(map(len, before_body_parts))
+        if body_parts:
+            spare_space = body_space - sum(map(len, body_parts)) - 2
+            #   `-2` for space around `body_parts`.
             assert spare_space >= 2
+            #   spare_space should be at least 2 -- one for the left part of
+            #   divchar, another for the right.
             left_part_space = spare_space // 2
             right_part_space = (
                 left_part_space if spare_space % 2 == 0 else left_part_space + 1
             )
-            return ''.join(
+            self._objs.extend(
                 (
-                    render(
-                        (
-                            self._div_char * left_part_space,
-                            self.color,
-                            self.style,
-                        ),
-                        (' ',),
-                        code_scheme=color_code_scheme,
-                    ),
-                    *(
-                        x.render(code_scheme=color_code_scheme)
-                        for x in self._body
-                    ),
-                    render(
-                        (' ',),
-                        (
-                            self._div_char * right_part_space,
-                            self.color,
-                            self.style,
-                        ),
-                        code_scheme=color_code_scheme,
-                    ),
+                    Text(self._div_char * left_part_space),
+                    Space(),
+                    *body_parts,
+                    Space(),
+                    Text(self._div_char * right_part_space),
                 )
             )
         else:
-            spare_space = body_space
-            assert spare_space > 0
-            return render(
-                (self._div_char * spare_space, self.color, 'dim'),
-                code_scheme=color_code_scheme,
-            )
+            assert body_space > 0
+            self._objs.append(Text(self._div_char * body_space, style='dim'))
+
+        self._full_dimmed_line = not body_parts
+
+    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+        if self._full_dimmed_line:
+            assert len(self._objs) == 1
+            self._objs[0].style = 'dim'  # make sure the line is dimmed.
+            return self._objs[0].render(color_code_scheme=color_code_scheme)
+        else:
+            return super().render(color_code_scheme=color_code_scheme)
 
 
 class ExpandedObjectGroup(TextObjectGroup):

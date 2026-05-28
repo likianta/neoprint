@@ -45,18 +45,7 @@ def format_list(
     result = []
 
     # head part
-    head_parts = []
-    if config.show_source:
-        head_parts.append(to.Source(caller_frame))
-    if config.show_funcname:
-        head_parts.append(to.Space())
-        head_parts.append(to.FuncnameSeparator())
-        head_parts.append(to.Space())
-        ...  # TODO
-    if head_parts:
-        head_parts.append(to.Space())
-        head_parts.append(to.BodySeparator())
-        head_parts.append(to.Space())
+    head_parts = get_head_parts(caller_frame)
     result.extend(head_parts)
 
     # --------------------------------------------------------------------------
@@ -111,8 +100,8 @@ def format_list(
     if marks['d']:
         body_parts = [
             to.DividerLine(
-                head_parts,
                 body_parts,
+                head_parts + before_body_parts,
                 bold=marks['d'] == Mark.THICK_DIVIDER_LINE,
             )
         ]
@@ -134,6 +123,9 @@ def format(*args, markup: tp.Optional[str] = None) -> str:
     return ''.join(p.render(color_code_scheme='none') for p in result)
 
 
+# ------------------------------------------------------------------------------
+
+
 def extract_markup_from_arguments(
     args: T.Args,
 ) -> tp.Tuple[T.Args, int, T.Markup]:
@@ -153,3 +145,20 @@ def extract_markup_from_arguments(
         return args[:-1], -1, args[-1]
     else:
         return args, 0, ''
+
+
+def get_head_parts(frame: FrameInfo) -> tp.List[to.TextObject]:
+    out = []
+    if config.show_source:
+        out.append(to.Source(frame))
+        out.append(to.Space())
+    if config.show_funcname:
+        if out:
+            out.append(to.FuncnameSeparator())
+            out.append(to.Space())
+        out.append(...)  # TODO
+    if out:
+        out.append(to.Space())
+        out.append(to.BodySeparator())
+        out.append(to.Space())
+    return out

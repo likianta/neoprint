@@ -5,7 +5,14 @@ from time import sleep
 
 fk = faker.Faker()
 
+np.show(':d', 'colorful items')
 with np.Progress(100, 'none') as prog:
     for _ in range(100):
-        prog.update(fk.sentence(), choice((':v2', ':v4', ':v6', ':v8')))
+        prog.update(
+            np.Text(
+                fk.sentence(),
+                choice(('blue', 'cyan', 'green', 'yellow', 'red')),
+                choice(('', '', '', '', '', 'dim', 'dim')),
+            )
+        )
         sleep(0.03)

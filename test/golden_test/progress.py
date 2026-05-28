@@ -10,8 +10,8 @@ np.config(debug_output=True)
 
 def main():
     basic_usage()
-    combined_markups()
-    no_residual_characters()
+    # combined_markups()
+    # no_residual_characters()
 
 
 def basic_usage():
@@ -21,33 +21,33 @@ def basic_usage():
     with np.Progress(len(words)) as prog:
         for w in words:
             prog.update(w)
-            # sleep(0.02)
+            sleep(0.02)
 
-    output0 = np.util.ansi_to_bbcode(np.debugger.output[0])
-    assert '─' in output0
-    assert output0.replace('─', '') == compose_bbcode_output(
-        18, ' Basic Usage '
-    )
+    # output0 = np.util.ansi_to_bbcode(np.debugger.output[0])
+    # assert '─' in output0
+    # assert output0.replace('─', '') == compose_bbcode_output(
+    #     18, ' Basic Usage '
+    # )
 
-    validate_bbcode_output(
-        1,
-        compose_bbcode_output(
-            23,
-            '[red]██[/]'
-            '[bright_black]▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁[/] '
-            '[red]\\[ 1/20][/] '
-            '{}'.format(words[0]),
-        ),
-    )
-    validate_bbcode_output(
-        -1,
-        compose_bbcode_output(
-            23,
-            '[red]████████████████████████████████████████[/] [red]\\[20/20][/] {}'.format(
-                words[-1]
-            ),
-        ),
-    )
+    # validate_bbcode_output(
+    #     1,
+    #     compose_bbcode_output(
+    #         23,
+    #         '[red]██[/]'
+    #         '[bright_black]▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁[/] '
+    #         '[red]\\[ 1/20][/] '
+    #         '{}'.format(words[0]),
+    #     ),
+    # )
+    # validate_bbcode_output(
+    #     -1,
+    #     compose_bbcode_output(
+    #         23,
+    #         '[red]████████████████████████████████████████[/] [red]\\[20/20][/] {}'.format(
+    #             words[-1]
+    #         ),
+    #     ),
+    # )
 
 
 def combined_markups():

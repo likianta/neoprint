@@ -61,6 +61,8 @@ class _Config:
     def __init__(self) -> None:
         for k, v in self._preset_conf.items():
             setattr(self, k, v)
+        assert self.rich_traceback
+        sys.excepthook = self._custom_excepthook
 
     def __call__(self, **kwargs) -> None:
         for k, v in kwargs.items():

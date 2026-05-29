@@ -162,6 +162,12 @@ class MarkupAnalyzer:
         marks = self.postfill(self.extract(markup))
         out: tp.Dict[str, tp.Any] = self.postfill({})  # type: ignore
 
+        # find conflicting marks
+        if marks['d']:
+            assert not marks['l']
+        elif marks['l']:
+            assert not marks['d']
+
         if marks['d']:
             out['d'] = marks['d']
             marks['l'] = 0

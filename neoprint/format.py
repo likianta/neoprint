@@ -96,14 +96,6 @@ def format_list(
             to.ExpandedObjectGroup(body_parts, head_parts + before_body_parts)
         ]
 
-    if marks['v']:
-        global_color, global_style = marks['v']
-        for part in body_parts:
-            if part.editable:
-                # dprint(part, global_color, global_style)
-                part.color = global_color
-                part.style = global_style
-
     if marks['d']:
         body_parts = [
             to.DividerLine(
@@ -112,6 +104,14 @@ def format_list(
                 bold=marks['d'] == Mark.THICK_DIVIDER_LINE,
             )
         ]
+
+    if marks['v']:
+        global_color, global_style = marks['v']
+        for part in body_parts:
+            if part.editable:
+                # dprint(part, global_color, global_style)
+                part.color = global_color
+                part.style = global_style
 
     result.extend(before_body_parts)
     result.extend(body_parts)

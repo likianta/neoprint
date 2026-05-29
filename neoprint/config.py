@@ -48,7 +48,7 @@ class _Config:
         'debug_output': False,
         'multiline_indent': 2,
         'path_style': 'relpath',
-        'rich_traceback': False,
+        'rich_traceback': True,
         'show_funcname': False,
         'show_source': True,
         'show_traceback_locals': False,

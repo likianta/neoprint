@@ -87,13 +87,13 @@ class DividerLine(TextObjectGroup):
     def __init__(
         self,
         body_parts: t.Sequence[TextObject],
-        before_body_parts: t.Sequence[TextObject],
+        non_body_parts: t.Sequence[TextObject],
         bold: bool = False,
     ) -> None:
         super().__init__()
         self._div_char = '█' if bold else '─'
 
-        body_space = console.width - sum(map(len, before_body_parts))
+        body_space = console.width - sum(map(len, non_body_parts))
         if body_parts:
             spare_space = body_space - sum(map(len, body_parts)) - 2
             #   `-2` for space around `body_parts`.
@@ -132,7 +132,7 @@ class ExpandedObjectGroup(TextObjectGroup):
     def __init__(
         self,
         body_parts: t.Sequence[TextObject],
-        before_body_parts: t.Sequence[TextObject],
+        non_body_parts: t.Sequence[TextObject],
     ) -> None:
         super().__init__()
         self._objs.append(LineBreak())
@@ -158,7 +158,7 @@ class ExpandedObjectGroup(TextObjectGroup):
                 i += 1
 
         can_be_single_line = True
-        available_space = console.width - sum(len(x) for x in before_body_parts)
+        available_space = console.width - sum(len(x) for x in non_body_parts)
         for x in self._objs[1:]:
             if isinstance(x, ExpandedObject):
                 text = x.render(color_code_scheme='none', compact=True)
@@ -275,10 +275,13 @@ class RichObject(TextObject):
 
 class Source(TextObject):
     def __init__(self, frame: FrameInfo) -> None:
-        self._fname = frame.file_name
-        self._pname = '[{}]'.format(frame.package_name)
         self._path = frame.file_path
-        self._lineno = self._pad_lineno(frame.line_number)
+        self._pname = '[{}]'.format(frame.package_name)
+        self._fname = frame.file_name
+        if config.sourcemap_alignment == 'left':
+            self._lineno = self._pad_lineno(frame.line_number)
+        else:
+            self._lineno = str(frame.line_number)
 
     def render(
         self,
@@ -310,17 +313,17 @@ class Source(TextObject):
         if path_glob.is_external_path(self._path):
             return render(
                 (self._pname, 'magenta'),
-                (':', 'blue'),
-                (self._fname, 'blue'),
                 (':', 'blue', 'dim'),
-                (self._lineno, 'blue', 'dim'),
+                (self._fname, 'blue'),
+                (':', 'green', 'dim'),
+                (self._lineno, 'green'),
                 code_scheme=color_code_scheme,
             )
         else:
             return render(
                 (self._fname, 'blue'),
-                (':', 'blue', 'dim'),
-                (self._lineno, 'blue', 'dim'),
+                (':', 'green', 'dim'),
+                (self._lineno, 'green'),
                 code_scheme=color_code_scheme,
             )
 

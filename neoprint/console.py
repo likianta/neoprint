@@ -46,6 +46,7 @@ class _LegacyRichConsole(RichConsole):
         )
 
     def capture_output(self, *args, **kwargs) -> str:
+        # https://chatgpt.com/share/6a16a585-0e00-8320-97ee-5fc2b572690e
         with self.capture() as cap:
             self.print(*args, **kwargs)
         return cap.get()

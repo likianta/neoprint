@@ -1,15 +1,17 @@
 import neoprint as np
 
 
-def main():
-    np.show(':i0')
+def main() -> None:
+    np.show(':d2', 'Start')
+
     np.show(':d', 'Basic Usage')
     np.show('Hello, World!')
     np.show('Multiple', 'arguments', 'are', 'semicolon-separated')
-    np.show(123, 456, 'mixed types', True, None)
+    np.show(123, 456, 'mixed types', True, False, None)
 
     np.show(':d', 'Verbosity Levels (:v0-:v8)')
-    np.show(':v1', 'DEBUG message (bright_black)')
+    np.show(':v0', 'Normal text')
+    np.show(':v1', 'DEBUG message - dim default')
     np.show(':v2', 'INFO - cyan')
     np.show(':v3', 'WEAK SUCCESS - dim green')
     np.show(':v4', 'SUCCESS - bright green')
@@ -61,9 +63,9 @@ def main():
     np.show(name, age, city, markup=':n')
 
     np.show(':d', 'Combined Markups')
-    np.show(':v4i', 'success with scope index')
-    np.show(':v6i1', 'warning with line index')
-    np.show(':v4i3', 'success with global index')
+    np.show(name, age, city, markup=':nv2')
+
+    np.show(':d2v7', 'End')
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ from .progress import ProgressItem
 from .progress import Spinner
 from .progress import progress
 from .progress import spinner
+from .scope import scope
 from .show import debug
 from .show import divider
 from .show import error

@@ -1,0 +1,18 @@
+body {
+  font-family: 
+    "HarmonyOS Sans SC",
+    "Noto Sans SC",
+    "Microsoft YaHei UI",
+    "PingFang SC",
+    sans-serif;
+}
+
+code, pre {
+  font-family: 
+    "JetBrains Mono",
+    "HarmonyOS Sans SC",
+    "Noto Sans SC",
+    "Microsoft YaHei UI",
+    "PingFang SC",
+    monospace;
+}

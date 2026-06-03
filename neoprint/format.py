@@ -75,7 +75,11 @@ def format_list(
         body_parts.append(to.Space())
     body_parts = body_parts[:-2]
 
-    if marks['l']:
+    if marks['l'] or marks['r']:
+        # there are three cases:
+        #   l1 and r*: expand object
+        #   l2 or r2: special expand object
+        #   l0 and r1: bbcode object
         if marks['l'] == Mark.EXPAND_FORMAT:
             body_parts = [
                 to.ExpandedObject(x)
@@ -83,7 +87,10 @@ def format_list(
                 else x
                 for x in body_parts
             ]
-        else:  # Mark.SPECIAL_EXPAND_FORMAT
+        elif (
+            marks['l'] == Mark.SPECIAL_EXPAND_FORMAT
+            or marks['r'] == Mark.RICH_OBJECT
+        ):
             body_parts = [
                 to.SpecialExpandedObject(x)
                 if to.SpecialExpandedObject.check_expandable(x)
@@ -92,6 +99,10 @@ def format_list(
                 else x
                 for x in body_parts
             ]
+        elif marks['r'] == Mark.RICH_FORMAT:
+            raise NotImplementedError  # TODO
+        else:
+            raise Exception('unreachable case')
         body_parts = [
             to.ExpandedObjectGroup(body_parts, head_parts + before_body_parts)
         ]

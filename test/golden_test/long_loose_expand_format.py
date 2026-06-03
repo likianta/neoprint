@@ -19,6 +19,13 @@ def main() -> None:
     np.show(':lv2', {'name': 'Alice', 'age': 20, 'city': 'New York'})
     np.show(':l2', 'upgrade done: v0.1.0 -> v0.2.0')
 
+    # mixed markups
+    ch = 0
+    # single line
+    np.show(':nlv2', ch, {'name': 'Alice', 'age': 20, 'city': 'New York'})
+    # multi lines
+    np.show(':nlv2', ch, {fk.word(): fk.sentence() for _ in range(5)})
+
     # partial change element color in `:l2`
     np.show(':l2v2', 'upgrade done: v0.1.0 -> v0.2.0')  # cyan
     np.show(':l2v5', 'upgrade done: v0.1.0 -> v0.2.0')  # dim yellow

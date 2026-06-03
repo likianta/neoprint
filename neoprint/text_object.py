@@ -578,7 +578,7 @@ class ExpandedObject(TextObjectGroup):
                         if len(v2) == 0 or len(v2) == 1:
                             raise Exception
                         if v2[1]._origin in ('(', '[', '{'):  # type: ignore
-                            yield from v2[1:]
+                            yield from v2[1:-1]
                             yield self._comma
                             yield ExpandedObject.OptionalText(' ')
                             yield self._line_break
@@ -589,6 +589,7 @@ class ExpandedObject(TextObjectGroup):
                                 yield v2[1]
                                 yield self._comma
                                 yield ExpandedObject.OptionalText(' ')
+                                yield self._line_break
                             else:
                                 yield ExpandedObject.OptionalText('(')
                                 yield self._line_break

@@ -100,7 +100,7 @@ def format_list(
                 for x in body_parts
             ]
         elif marks['r'] == Mark.RICH_FORMAT:
-            raise NotImplementedError  # TODO
+            ...  # TODO
         else:
             raise Exception('unreachable case')
         body_parts = [

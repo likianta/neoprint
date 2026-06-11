@@ -1,7 +1,10 @@
+import os
 import sys
 import typing as t
-from rich.traceback import Traceback
 from sys import excepthook as _default_excepthook
+
+from rich.traceback import Traceback
+
 from .console import console
 from .console import rich_console
 from .debugger import debugger
@@ -11,6 +14,9 @@ class _Config:
     clear_unfinished_stream: bool
     console_width: int
     debug_output: bool
+    disable_varnames: bool
+    #   if source code is obfuscated, disable parsing varnames.
+    #   this is usually used with `pyportable-crypto` library.
     multiline_indent: int
     path_style: t.Literal['filename', 'relpath'] = 'filename'
     #   'relpath' (default): show relative path.
@@ -46,6 +52,7 @@ class _Config:
         'clear_unfinished_stream': False,
         'console_width': console.width,
         'debug_output': False,
+        'disable_varnames': os.getenv('NEOPRINT_DISABLE_VARNAMES') == '1',
         'multiline_indent': 2,
         'path_style': 'relpath',
         'rich_traceback': True,
@@ -83,6 +90,8 @@ class _Config:
         elif key == 'debug_output':
             assert isinstance(val, bool)
             debugger.enabled = val
+        elif key == 'disable_varnames':
+            os.environ['NEOPRINT_DISABLE_VARNAMES'] = '1' if val else '0'
         elif key == 'rich_traceback':
             # assert isinstance(val, bool)
             if val:

@@ -1,6 +1,6 @@
 [project]
 name = "neoprint"
-version = "0.1.0a26"
+version = "0.1.0a36"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
@@ -55,7 +55,8 @@ skip-magic-trailing-comma = true
 
 [tool.ruff.lint.isort]
 force-single-line = true
-no-sections = true
+# no-sections = true
+relative-imports-order = "closest-to-furthest"
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403"]

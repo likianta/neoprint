@@ -1,5 +1,6 @@
 import re
 import typing as tp
+
 from .config import config
 from .frame_info import FrameInfo
 from .scope import counter
@@ -203,13 +204,16 @@ class MarkupAnalyzer:
 
         out['l'] = marks['l']
 
-        if marks['n'] == -1:
-            if config.show_varnames and not marks['s']:
-                out['n'] = Mark.SHOW_VARNAMES
-            else:
-                out['n'] = Mark.NO_VARNAMES
+        if config.disable_varnames:
+            out['n'] = Mark.NO_VARNAMES
         else:
-            out['n'] = marks['n']
+            if marks['n'] == -1:
+                if config.show_varnames and not marks['s']:
+                    out['n'] = Mark.SHOW_VARNAMES
+                else:
+                    out['n'] = Mark.NO_VARNAMES
+            else:
+                out['n'] = marks['n']
 
         out['p'] = marks['p']
         out['r'] = marks['r']

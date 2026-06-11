@@ -1,9 +1,11 @@
-import typing as t
+import typing as tp
+
+from .config import config
 
 
 class T:
-    CodeScheme = t.Literal['ansi', 'bbcode', 'none']
-    Color = t.Literal[
+    CodeScheme = tp.Literal['ansi', 'bbcode', 'none']
+    Color = tp.Literal[
         # '',
         'black',
         'blue',
@@ -22,7 +24,7 @@ class T:
         'white',
         'yellow',
     ]
-    Style = t.Literal['', 'bold', 'dim', 'italic', 'underline']
+    Style = tp.Literal['', 'bold', 'dim', 'italic', 'underline']
 
 
 # https://chatgpt.com/share/6a17de0b-a134-8321-93d4-3dfdf1e5204d
@@ -57,8 +59,8 @@ ANSI_STYLES = {
 
 
 def render(
-    *args: t.Union[
-        t.Tuple[str], t.Tuple[str, T.Color], t.Tuple[str, T.Color, T.Style]
+    *args: tp.Union[
+        tp.Tuple[str], tp.Tuple[str, T.Color], tp.Tuple[str, T.Color, T.Style]
     ],
     code_scheme: T.CodeScheme = 'none',
 ) -> str:
@@ -69,9 +71,9 @@ def render(
             (text, color): e.g. ('hello', 'red')
             (text, color, style): e.g. ('hello', 'red', 'bold')
     """
-    result: t.List[str] = []
+    result: tp.List[str] = []
     for element in args:
-        if code_scheme == 'none' or len(element) == 1:
+        if code_scheme == 'none' or config.legacy_windows or len(element) == 1:
             result.append(element[0])
         else:
             element += ('',)

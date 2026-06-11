@@ -1,6 +1,6 @@
 import os
 import sys
-import typing as t
+import typing as tp
 from sys import excepthook as _default_excepthook
 
 from rich.traceback import Traceback
@@ -17,8 +17,10 @@ class _Config:
     disable_varnames: bool
     #   if source code is obfuscated, disable parsing varnames.
     #   this is usually used with `pyportable-crypto` library.
+    legacy_windows: bool
+    #   if true, decrease console color effect.
     multiline_indent: int
-    path_style: t.Literal['filename', 'relpath'] = 'filename'
+    path_style: tp.Literal['filename', 'relpath'] = 'filename'
     #   'relpath' (default): show relative path.
     #       for external libraries, will show `[lib_name]/relpath:lineno`
     #   'filename': show only filename.
@@ -44,15 +46,16 @@ class _Config:
     #   example: print(':v8', 'some error happens')
     #   enabled: (red text) '[ERROR] some error happens'
     #   disabled: (red text) 'some error happens'
-    sourcemap_alignment: t.Literal['left', 'right'] = 'left'
+    sourcemap_alignment: tp.Literal['left', 'right'] = 'left'
     subthreaded: bool
     #   run lk logger in separate thread.
 
-    _preset_conf: t.Dict[str, t.Union[bool, int, str]] = {
+    _preset_conf: tp.Dict[str, tp.Union[bool, int, str]] = {
         'clear_unfinished_stream': False,
         'console_width': console.width,
         'debug_output': False,
         'disable_varnames': os.getenv('NEOPRINT_DISABLE_VARNAMES') == '1',
+        'legacy_windows': os.getenv('NEOPRINT_LEGACY_WINDOWS') == '1',
         'multiline_indent': 2,
         'path_style': 'relpath',
         'rich_traceback': True,
@@ -82,7 +85,7 @@ class _Config:
                 # assert v is not None
                 self._apply(k, v)
 
-    def _apply(self, key: str, val: t.Union[bool, int, str]) -> None:
+    def _apply(self, key: str, val: tp.Union[bool, int, str]) -> None:
         setattr(self, key, val)
         if key == 'console_width':
             assert isinstance(val, int)
@@ -92,6 +95,8 @@ class _Config:
             debugger.enabled = val
         elif key == 'disable_varnames':
             os.environ['NEOPRINT_DISABLE_VARNAMES'] = '1' if val else '0'
+        elif key == 'legacy_windows':
+            os.environ['NEOPRINT_LEGACY_WINDOWS'] = '1' if val else '0'
         elif key == 'rich_traceback':
             # assert isinstance(val, bool)
             if val:

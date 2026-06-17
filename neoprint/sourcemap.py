@@ -1,6 +1,6 @@
 import ast
+import os
 import typing as tp
-from functools import cache
 
 
 class VarnamesAnalyzer(ast.NodeVisitor):
@@ -54,11 +54,19 @@ def get_varnames(
     return ()
 
 
-@cache
+_cache = {}
+
+
 def _parse_ast(filepath: str) -> tp.Optional[ast.AST]:
-    with open(filepath, 'r', encoding='utf-8') as f:
-        source = f.read()
-    try:
-        return ast.parse(source)
-    except SyntaxError:
-        return None
+    time = os.stat(filepath).st_mtime
+    if (key := (filepath, time)) in _cache:
+        return _cache[key]
+    else:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            source = f.read()
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:
+            tree = None
+        _cache[key] = tree
+        return tree

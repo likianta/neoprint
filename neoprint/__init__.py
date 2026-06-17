@@ -6,6 +6,7 @@ from .console import console
 from .debugger import debugger
 from .format import format
 from .format import format_list
+from .frame_info import FrameInfo
 from .progress import Progress
 from .progress import ProgressItem
 from .progress import Spinner

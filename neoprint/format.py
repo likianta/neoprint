@@ -1,5 +1,6 @@
 import typing as tp
 from inspect import currentframe
+
 from . import text_object as to
 from .config import config
 from .console import dprint  # noqa
@@ -62,7 +63,13 @@ def format_list(
         varnames = parent_frame.varnames
         if markpos:
             varnames = varnames[1:] if markpos == 1 else varnames[:-1]
-        assert len(varnames) == len(args), (varnames, args)
+        # assert len(varnames) == len(args), (varnames, args)
+        if len(varnames) != len(args):
+            # this may because user has modified the source code after call.
+            # we should refresh the AST to get new varnames.
+            parent_frame.refresh()
+            varnames = parent_frame.varnames
+            assert len(varnames) == len(args), (varnames, args)
     else:
         varnames = (None,) * len(args)
 

@@ -1,13 +1,12 @@
 [project]
 name = "neoprint"
-version = "0.1.0a38"
+version = "0.1.0a39"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-    # "objprint>=0.3.0",
     "rich>=14.0.0",
     # "rich>=15.0.0",
 ]
@@ -18,23 +17,23 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "argsense>=1.2.0a5",
+    "argsense>=1.2.0a6",
     "faker>=40.8.0; python_version >= '3.12'",
     "ipython>=9.13.0; python_version >= '3.12'",
-    "lk-utils>=3.6.0b11",
+    "lk-utils>=3.6.0b14",
     # "loguru>=0.7.3",
     "objprint>=0.3.0",
     "rich>=15.0.0",
-    "svg-ultralight>=0.34.0; python_version >= '3.12'",
+    # "svg-ultralight>=0.34.0; python_version >= '3.12'",
 ]
 
-[project.optional-dependencies]
-ext = [
-    # "html2image>=2.0.4",
-    # "pycairo>=1.27.0",
-    # "selenium>=4.27.1",
-    "svg-ultralight>=0.34.0",
-]
+# [project.optional-dependencies]
+# ext = [
+#     # "html2image>=2.0.4",
+#     # "pycairo>=1.27.0",
+#     # "selenium>=4.27.1",
+#     "svg-ultralight>=0.34.0",
+# ]
 
 # [project.scripts]
 # ...
@@ -55,7 +54,6 @@ skip-magic-trailing-comma = true
 
 [tool.ruff.lint.isort]
 force-single-line = true
-# no-sections = true
 relative-imports-order = "closest-to-furthest"
 
 [tool.ruff.lint.per-file-ignores]

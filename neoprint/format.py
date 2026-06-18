@@ -25,28 +25,63 @@ def format_list(
     *args,
     markup: tp.Optional[T.Markup] = None,
     _elevate_parent_level: int = 0,
+    _frame: tp.Optional[FrameInfo] = None,
     _mark_position: int = 0,
 ) -> tp.List[to.TextObject]:
-    this_frame: FrameInfo = FrameInfo(currentframe())  # type: ignore
-    parent_frame: FrameInfo = this_frame.get_parent(1 + _elevate_parent_level)
-    caller_frame: FrameInfo = parent_frame
+    """
+    frame relationship:
+        this_frame: frame to this function.
+        foreign_frame: frame to first call of foreign function.
+            for example:
+                1.
+                    # aaa.py
+                    import neoprint as np  # ln1
+                    np.format_list(...)  # ln2
+                    # foreign_frame is `aaa.py:2`
+                2. 
+                    # neoprint/show.py
+                    def show(...):
+                        x = format_list(
+                            ..., _frame=FrameInfo(currentframe().f_back)
+                        )
+                        # foreign_frame is the one who is calling `show(...)`.
+        target_frame: frame to the most proper place.
+            if ':p' markup is not used, target_frame is foreign_frame.
+            if ':p' markup is set, target_frame = `foreign_frame.f_back_to_:p`.
+        
+        how does caller make foreign_frame:
+            caller can set _frame directly, or set _elevate_parent_level.
+            the following are same:
+                def foo():
+                    format_list(..., _frame=FrameInfo(currentframe().f_back))
+                def bar():
+                    format_list(..., _elevate_parent_level=1)
+            if both params are set, _frame will be used.
+    """
+    if _frame is None:
+        this_frame = FrameInfo(currentframe())  # type: ignore
+        foreign_frame = this_frame.get_parent(1 + _elevate_parent_level)
+    else:
+        foreign_frame = _frame
+    target_frame = foreign_frame
 
     if markup is None:
         args, markpos, markup = extract_markup_from_arguments(args)
     else:
         markpos = _mark_position
     # dprint(args, markup, args[-1], markup_analyzer.is_valid_markup(args[-1]))
-    marks = markup_analyzer.analyze(markup, parent_frame)
+    marks = markup_analyzer.analyze(markup, foreign_frame)
+    
     if marks['p']:
-        caller_frame = parent_frame.get_parent(marks['p'])
-        assert caller_frame
+        target_frame = foreign_frame.get_parent(marks['p'])
+        assert target_frame
 
     # --------------------------------------------------------------------------
 
     result = []
 
     # head part
-    head_parts = get_head_parts(caller_frame)
+    head_parts = get_head_parts(target_frame)
     result.extend(head_parts)
 
     # --------------------------------------------------------------------------
@@ -60,15 +95,15 @@ def format_list(
         before_body_parts.append(to.Space())
 
     if marks['n']:
-        varnames = parent_frame.varnames
+        varnames = foreign_frame.varnames
         if markpos:
             varnames = varnames[1:] if markpos == 1 else varnames[:-1]
         # assert len(varnames) == len(args), (varnames, args)
         if len(varnames) != len(args):
             # this may because user has modified the source code after call.
             # we should refresh the AST to get new varnames.
-            parent_frame.refresh()
-            varnames = parent_frame.varnames
+            foreign_frame.refresh()
+            varnames = foreign_frame.varnames
             assert len(varnames) == len(args), (varnames, args)
     else:
         varnames = (None,) * len(args)

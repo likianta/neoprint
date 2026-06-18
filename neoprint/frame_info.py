@@ -93,3 +93,8 @@ class FrameInfo:
         )
         self.line_number = frame.f_lineno
         self._varnames = None
+
+
+def get_last_frame() -> FrameInfo:
+    frame = inspect.currentframe().f_back.f_back  # type: ignore
+    return FrameInfo(frame)  # type: ignore

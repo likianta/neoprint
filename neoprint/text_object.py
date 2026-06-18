@@ -14,7 +14,7 @@ from .console import dprint  # noqa
 from .console import legacy_rich_console
 from .console import rich_console
 from .frame_info import FrameInfo
-from .path_glob import path_glob
+from .path_scope import path_glob
 from .render import T
 from .render import render
 

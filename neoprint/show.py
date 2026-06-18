@@ -1,13 +1,21 @@
 import typing as tp
 from functools import partial
-from .console import dprint  # noqa
+
 from .console import console
+from .console import dprint  # noqa
 from .format import extract_markup_from_arguments
 from .format import format_list
+from .frame_info import FrameInfo
 
 
-def show(*args, markup: tp.Optional[str] = None) -> None:
-    result = format_list(*args, markup=markup, _elevate_parent_level=1)
+def show(
+    *args,
+    markup: tp.Optional[str] = None,
+    _frame: tp.Optional[FrameInfo] = None,
+) -> None:
+    result = format_list(
+        *args, markup=markup, _frame=_frame, _elevate_parent_level=1
+    )
     # dprint(args, result)
     console.print(''.join(p.render(color_code_scheme='ansi') for p in result))
 

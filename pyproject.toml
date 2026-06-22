@@ -1,14 +1,13 @@
 [project]
 name = "neoprint"
-version = "0.1.0a40"
+version = "0.1.0"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
-readme = "README.md"
+# readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "rich>=14.0.0",
-    # "rich>=15.0.0",
 ]
 
 [build-system]
@@ -20,7 +19,7 @@ dev = [
     "argsense>=1.2.0a6",
     "faker>=40.8.0; python_version >= '3.12'",
     "ipython>=9.13.0; python_version >= '3.12'",
-    "lk-utils>=3.6.0b14",
+    "lk-utils>=3.6.0b16",
     # "loguru>=0.7.3",
     "objprint>=0.3.0",
     "rich>=15.0.0",

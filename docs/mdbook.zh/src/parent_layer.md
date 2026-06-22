@@ -61,4 +61,4 @@ lib.borrow_book('Stray Birds')
 #   bbb.py:10  | borrowed "Stray Birds"
 ```
 
-这方便我们查阅信息, 更好地理解信息, 以及调试代码.
+这方便我们在调试时去追踪调用者的位置.

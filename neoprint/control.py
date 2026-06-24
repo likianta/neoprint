@@ -15,6 +15,11 @@ def setup(scope: str = 'this_package') -> None:
         setattr(builtins, 'print', _variable_print)
 
 
+def unload() -> None:
+    if getattr(builtins, 'print') is not bprint:
+        setattr(builtins, 'print', bprint)
+
+
 def _variable_print(*args, **kwargs) -> None:
     frame = get_last_frame()
     if frame.package_name in effected_packages:

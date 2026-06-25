@@ -5,7 +5,7 @@ from .console import console
 from .console import dprint  # noqa
 from .format import extract_markup_from_arguments
 from .format import format_list
-from .frame_info import FrameInfo
+from .frame import FrameInfo
 
 
 def show(

@@ -2,7 +2,9 @@ import builtins
 import os
 import sys
 import typing as tp
+
 from rich.console import Console as RichConsole
+
 from .debugger import debugger
 
 _stdout = sys.stdout

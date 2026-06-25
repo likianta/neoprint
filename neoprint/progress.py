@@ -4,7 +4,7 @@ from .config import config
 from .console import console
 from .debugger import debugger
 from .format import get_head_parts
-from .frame_info import FrameInfo
+from .frame import FrameInfo
 
 
 class Progress:

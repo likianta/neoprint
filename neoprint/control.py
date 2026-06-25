@@ -1,7 +1,7 @@
 import builtins
 
 from .console import bprint
-from .frame_info import get_last_frame
+from .frame import get_last_frame
 from .show import show
 
 effected_packages = set()

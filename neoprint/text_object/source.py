@@ -1,7 +1,7 @@
 from .base import T
 from .base import TextObject
 from ..config import config
-from ..frame_info import FrameInfo
+from ..frame import FrameInfo
 from ..path_scope import path_glob
 from ..render import render
 

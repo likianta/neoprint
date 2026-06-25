@@ -1,6 +1,6 @@
 from inspect import currentframe
+
 from rich.pretty import pprint
-from .frame_info import FrameInfo
 
 
 class _Debugger:
@@ -9,9 +9,14 @@ class _Debugger:
         self.output = []
 
     def print(self, *args) -> None:
+        from .frame import FrameInfo
+
         frame = FrameInfo(currentframe().f_back)  # type: ignore
         pprint(
-            ('[debug]:{}:{}'.format(frame.file_name, frame.line_number), *args)
+            (
+                '[npdebug]:{}:{}'.format(frame.file_name, frame.line_number),
+                *args,
+            )
         )
 
 

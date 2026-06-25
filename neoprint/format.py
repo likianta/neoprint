@@ -4,7 +4,7 @@ from inspect import currentframe
 from . import text_object as to
 from .config import config
 from .console import dprint  # noqa
-from .frame_info import FrameInfo
+from .frame import FrameInfo
 from .markup import Mark
 from .markup import markup_analyzer
 

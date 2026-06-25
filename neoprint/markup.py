@@ -2,7 +2,7 @@ import re
 import typing as tp
 
 from .config import config
-from .frame_info import FrameInfo
+from .frame import FrameInfo
 from .scope import counter
 from .scope import timer
 

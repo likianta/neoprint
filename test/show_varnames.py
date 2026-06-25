@@ -1,5 +1,6 @@
+from pprint import pprint  # noqa
+
 import neoprint as np
-from pprint import pprint
 
 
 def main() -> None:
@@ -12,10 +13,10 @@ def main() -> None:
 
     np.show('#1', name, age, city, ':n')
     # should print '#1; name = "Alice"; age = 20; city = "New York"'
+    np.show('#2', name, age, city, ':nv')
+    np.show('#3', name, len(name), ':n')
 
-    np.show('#2', name, len(name), ':n')
-
-    pprint([np.util.strip_ansi_code(x) for x in np.debugger.output])
+    # pprint([np.util.strip_ansi_code(x) for x in np.debugger.output])
 
 
 if __name__ == '__main__':

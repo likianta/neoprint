@@ -30,40 +30,35 @@ def format_list(
 ) -> tp.List[to.TextObject]:
     """
     frame relationship:
-        this_frame: frame to this function.
-        foreign_frame: frame to first call of foreign function.
-            for example:
-                1.
-                    # aaa.py
-                    import neoprint as np  # ln1
-                    np.format_list(...)  # ln2
-                    # foreign_frame is `aaa.py:2`
-                2. 
-                    # neoprint/show.py
-                    def show(...):
-                        x = format_list(
-                            ..., _frame=FrameInfo(currentframe().f_back)
-                        )
-                        # foreign_frame is the one who is calling `show(...)`.
-        target_frame: frame to the most proper place.
-            if ':p' markup is not used, target_frame is foreign_frame.
-            if ':p' markup is set, target_frame = `foreign_frame.f_back_to_:p`.
-        
-        how does caller make foreign_frame:
-            caller can set _frame directly, or set _elevate_parent_level.
-            the following are same:
-                def foo():
-                    format_list(..., _frame=FrameInfo(currentframe().f_back))
-                def bar():
-                    format_list(..., _elevate_parent_level=1)
-            if both params are set, _frame will be used.
+        illustration:
+            # 1. example.py (an external module out of neoprint)
+            import neoprint as np
+            def foo():
+                bar()
+            def bar():
+                np.show('hello')
+                np.show('world', ':p')
+
+            # 2. neoprint/show.py
+            def show(...):
+                x = format_list(..., _elevate_parent_level=1)
+                ...
+
+            # 3. neoprint/format.py
+            def format_list(...):
+                ...
+
+        this_frame: points to `format_list(...)`.
+        foreign_frame: points to `bar(...)`.
+        target_frame: points to `bar(...)` if ':p' is not used. ('hello'-case)
+        target_frame: points to `foo(...)` if ':p' is used. ('world'-case)
     """
     if _frame is None:
         this_frame = FrameInfo(currentframe())  # type: ignore
         foreign_frame = this_frame.get_parent(1 + _elevate_parent_level)
     else:
         foreign_frame = _frame
-    target_frame = foreign_frame
+    target_frame = foreign_frame  # to be determined later.
 
     if markup is None:
         args, markpos, markup = extract_markup_from_arguments(args)

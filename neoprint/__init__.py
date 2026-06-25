@@ -1,4 +1,5 @@
 from . import text_object
+from . import util
 from .config import config
 from .console import bprint
 from .console import console
@@ -7,7 +8,7 @@ from .control import unload
 from .debugger import debugger
 from .format import format
 from .format import format_list
-from .frame_info import FrameInfo
+from .frame import FrameInfo
 from .progress import Progress
 from .progress import ProgressItem
 from .progress import Spinner
@@ -31,4 +32,4 @@ from .text_object import Markdown
 from .text_object import RichObject
 from .text_object import Text
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'

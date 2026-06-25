@@ -1,8 +1,17 @@
 import ast
 import os
 import typing as tp
+from collections import namedtuple
 
 from .console import dprint  # noqa
+
+
+class T:
+    CachedData = namedtuple('CachedData', ('file', 'time', 'source', 'tree'))
+    CachedFiles = tp.Dict[str, CachedData]
+
+
+_cache: T.CachedFiles = {}
 
 
 class VarnamesAnalyzer(ast.NodeVisitor):
@@ -23,14 +32,9 @@ class VarnamesAnalyzer(ast.NodeVisitor):
             )
         )
         self._target_lineno = lineno
-        self._source_lines = source.splitlines()
+        self._source = source
         self.varnames: tp.List[tp.Optional[str]] = []
         self.found = False
-
-    def _get_node_source(self, node: ast.AST) -> str:
-        source = '\n'.join(self._source_lines)
-        result = ast.get_source_segment(source, node)
-        return result if result else ''
 
     def visit_Call(self, node: ast.Call) -> None:
         if node.lineno == self._target_lineno:
@@ -47,14 +51,16 @@ class VarnamesAnalyzer(ast.NodeVisitor):
                     if isinstance(arg, ast.Name):
                         self.varnames.append(arg.id)
                     elif isinstance(arg, ast.Call):
-                        try:
-                            source_text = self._get_node_source(arg)
-                            self.varnames.append(source_text)
-                        except (AttributeError, IndexError):
+                        if x := self._reveal_source_of_call(arg):
+                            self.varnames.append(x)
+                        else:
                             self.varnames.append(None)
                     else:
                         self.varnames.append(None)
         self.generic_visit(node)
+
+    def _reveal_source_of_call(self, node: ast.Call) -> str:
+        return ast.get_source_segment(self._source, node) or ''
 
 
 def get_varnames(
@@ -65,28 +71,25 @@ def get_varnames(
     issue. currently, only `./frame.py:FrameInfo:varnames` and
     `./format.py : format_list : if len(varnames) != len(args) ...` use this.
     """
-    source, tree = _parse_ast(filepath)
-    if tree:
-        analyzer = VarnamesAnalyzer(funcname, lineno, source)
-        analyzer.visit(tree)
+    data = _parse_ast(filepath)
+    if data.tree:
+        analyzer = VarnamesAnalyzer(funcname, lineno, data.source)
+        analyzer.visit(data.tree)
         if analyzer.found:
             return analyzer.varnames
     return ()
 
 
-_cache = {}  # {(filepath, time): (str, ast.AST | None), ...}
-
-
-def _parse_ast(filepath: str) -> tp.Tuple[str, tp.Optional[ast.AST]]:
-    time = os.stat(filepath).st_mtime
-    if (key := (filepath, time)) in _cache:
-        return _cache[key]
-    else:
+def _parse_ast(filepath: str) -> T.CachedData:
+    mtime = os.stat(filepath).st_mtime
+    if filepath not in _cache or _cache[filepath].time != mtime:
         with open(filepath, 'r', encoding='utf-8') as f:
             source = f.read()
         try:
             tree = ast.parse(source)
         except SyntaxError:
             tree = None
-        _cache[key] = (source, tree)
-        return source, tree
+        _cache[filepath] = T.CachedData(
+            file=filepath, time=mtime, source=source, tree=tree
+        )
+    return _cache[filepath]

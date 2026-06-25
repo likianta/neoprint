@@ -1,6 +1,6 @@
 [project]
 name = "neoprint"
-version = "0.1.1"
+version = "0.1.2b0"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"

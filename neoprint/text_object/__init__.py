@@ -1,5 +1,6 @@
 from .base import TextObject
 from .base import TextObjectGroup
+from .bbcode_text import BBCodeText
 from .divider_line import DividerLine
 from .expanded_object import ExpandedObject
 from .expanded_object import ExpandedObjectGroup

@@ -37,12 +37,12 @@ class ExpandedObject(TextObjectGroup):
         def render(
             self,
             compact: bool = False,
-            color_code_scheme: T.CodeScheme = 'none',
+            color_code_scheme: T.ColorCodeScheme = 'plain',
         ) -> str:
             return render(
                 (';', self.color, 'dim'),
                 (' ' if compact else '\n',),
-                code_scheme=color_code_scheme,
+                color_code_scheme=color_code_scheme,
             )
 
     @classmethod
@@ -67,7 +67,9 @@ class ExpandedObject(TextObjectGroup):
             )
 
     def render(
-        self, color_code_scheme: T.CodeScheme = 'none', compact: bool = False
+        self,
+        color_code_scheme: T.ColorCodeScheme = 'plain',
+        compact: bool = False,
     ) -> str:
         if compact:
             x = self._pretty_format(self._origin)
@@ -271,7 +273,7 @@ class ExpandedObjectGroup(TextObjectGroup):
         available_space = console.width - sum(len(x) for x in non_body_parts)
         for x in self._objs[1:]:
             if isinstance(x, ExpandedObject):
-                text = x.render(color_code_scheme='none', compact=True)
+                text = x.render(color_code_scheme='plain', compact=True)
             else:
                 text = x.render(color_code_scheme='none')
             available_space -= len(text)
@@ -280,7 +282,7 @@ class ExpandedObjectGroup(TextObjectGroup):
                 break
         self._single_line = can_be_single_line
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         if self._single_line:
             return ''.join(
                 (
@@ -389,7 +391,9 @@ class SpecialExpandedObject(TextObjectGroup):
             self._objs.append(RichObject(table))
 
     def render(
-        self, color_code_scheme: T.CodeScheme = 'none', compact: bool = False
+        self,
+        color_code_scheme: T.ColorCodeScheme = 'plain',
+        compact: bool = False,
     ) -> str:
         if compact:
             if self._form_type == 'transform':

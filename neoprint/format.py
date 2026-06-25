@@ -117,7 +117,15 @@ def format_list(
         body_parts.append(to.Space())
     body_parts = body_parts[:-2]
 
-    if marks['l'] or marks['r']:
+    if marks['r'] == Mark.RICH_FORMAT:
+        body_parts = [
+            to.BBCodeText(str(x)) if isinstance(x, to.Text) else x
+            for x in body_parts
+        ]
+    elif marks['r'] == Mark.RICH_OBJECT:
+        ...
+
+    if marks['l']:
         # there are three cases:
         #   l1 and r*: expand object
         #   l2 or r2: special expand object
@@ -141,8 +149,6 @@ def format_list(
                 else x
                 for x in body_parts
             ]
-        elif marks['r'] == Mark.RICH_FORMAT:
-            ...  # TODO
         else:
             raise Exception('unreachable case')
         body_parts = [

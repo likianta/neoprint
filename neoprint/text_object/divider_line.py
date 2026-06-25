@@ -44,7 +44,7 @@ class DividerLine(TextObjectGroup):
 
         self._full_dimmed_line = not body_parts
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         if self._full_dimmed_line:
             assert len(self._objs) == 1
             self._objs[0].style = 'dim'  # make sure the line is dimmed.

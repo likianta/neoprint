@@ -29,8 +29,8 @@
 ## 代码风格
 
 - 优先使用 `format` 而不是 `f-string`.
-- 代码使用全英文, 不要有中文注释.
-- 不需要在入口脚本的顶部添加 `sys.path.append(...)`. 因为我们已经设置好了 `PYTHONPATH=.;src;lib;.venv/Lib/site-packages`.
+- 代码中使用全英文, 不要有中文注释.
+- 不需要在入口脚本的顶部添加 `sys.path.append(...)`. 因为我们已经设置好了环境变量 `PYTHONPATH=.;src;lib;.venv/Lib/site-packages`.
 - 每行代码不超过 80 字符 (见 `pyproject.toml:[tool.ruff]:line-length`).
 - 每当完成修改后, 使用 `ty check`, `ruff check`, `ruff format` 等命令检查代码风格.
 

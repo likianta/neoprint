@@ -48,7 +48,7 @@ class TextObjectGroup(TextObject):
             if x.editable:
                 x.style = value
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         return ''.join(
             x.render(color_code_scheme=color_code_scheme) for x in self._objs
         )

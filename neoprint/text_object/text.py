@@ -17,7 +17,7 @@ class Text(TextObject):
     def __str__(self) -> str:
         return self._text
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         color = self.color
         if color == 'default':
             if self._origin is True:
@@ -27,5 +27,5 @@ class Text(TextObject):
             elif self._origin is None:
                 color = 'magenta'
         return render(
-            (self._text, color, self.style), code_scheme=color_code_scheme
+            (self._text, color, self.style), color_code_scheme=color_code_scheme
         )

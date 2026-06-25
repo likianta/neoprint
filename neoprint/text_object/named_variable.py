@@ -17,7 +17,7 @@ class NamedVariable(TextObject):
             else str(value)
         )
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         color1 = self.color
         color2 = self.color
         if color2 == 'default':
@@ -30,7 +30,7 @@ class NamedVariable(TextObject):
         return render(
             (self._name + ' = ', color1, 'dim'),
             (self._value, color2, self.style),
-            code_scheme=color_code_scheme,
+            color_code_scheme=color_code_scheme,
         )
 
     @staticmethod

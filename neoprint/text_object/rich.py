@@ -14,9 +14,9 @@ class RichObject(TextObject):
         self._obj = obj
         self.editable = False
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         # https://chatgpt.com/share/6a16a585-0e00-8320-97ee-5fc2b572690e
-        if color_code_scheme == 'none':
+        if color_code_scheme == 'plain':
             return legacy_rich_console.capture_output(self._obj).rstrip()
         elif color_code_scheme == 'ansi':
             return rich_console.capture_output(self._obj).rstrip()

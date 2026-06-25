@@ -20,7 +20,7 @@ class Source(TextObject):
         self,
         name_format='filename:lineno',
         external_name_format='[libname]:filename:lineno',
-        color_code_scheme: T.CodeScheme = 'none',
+        color_code_scheme: T.ColorCodeScheme = 'plain',
     ) -> str:
         """
         name_style:
@@ -50,14 +50,14 @@ class Source(TextObject):
                 (self._fname, 'blue'),
                 (':', 'green', 'dim'),
                 (self._lineno, 'green'),
-                code_scheme=color_code_scheme,
+                color_code_scheme=color_code_scheme,
             )
         else:
             return render(
                 (self._fname, 'blue'),
                 (':', 'green', 'dim'),
                 (self._lineno, 'green'),
-                code_scheme=color_code_scheme,
+                color_code_scheme=color_code_scheme,
             )
 
     def _pad_lineno(self, number: int, width: int = 3) -> str:

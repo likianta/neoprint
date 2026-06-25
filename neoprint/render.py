@@ -168,11 +168,25 @@ def translate(bbcode_text: str) -> tp.Iterator[tp.Tuple[str, T.Color, T.Style]]:
                     new_color = stack[-1][0]
                     new_style = stack[-1][1]
                     valid_tag = True
+
+                    c_to_color = dict(
+                        zip(ANSI_COLORS.keys(), ANSI_COLORS.keys())
+                    )
+                    s_to_style = {
+                        'bold': 'bold',
+                        'dim': 'dim',
+                        'italic': 'italic',
+                        'underline': 'underline',
+                        'b': 'bold',
+                        'i': 'italic',
+                        'u': 'underline',
+                    }
+
                     for part in tag.split():
-                        if part in ANSI_COLORS:
-                            new_color = part
-                        elif part in ANSI_STYLES:
-                            new_style = part
+                        if part in c_to_color:
+                            new_color = c_to_color[part]
+                        elif part in s_to_style:
+                            new_style = s_to_style[part]
                         else:
                             # when invalid part found, we treat the tag as plain
                             # text.

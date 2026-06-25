@@ -8,6 +8,6 @@ class Index(TextObject):
         self._text = '[{}]'.format(index)
         self.editable = False
 
-    def render(self, color_code_scheme: T.CodeScheme = 'none') -> str:
-        return render((self._text, 'red'), code_scheme=color_code_scheme)
+    def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
+        return render((self._text, 'red'), color_code_scheme=color_code_scheme)
 

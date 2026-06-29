@@ -14,6 +14,7 @@ class _Config:
     clear_unfinished_stream: bool
     console_width: int
     debug_output: bool
+    debug_print: bool
     disable_varnames: bool
     #   if source code is obfuscated, disable parsing varnames.
     #   this is usually used with `pyportable-crypto` library.
@@ -54,6 +55,7 @@ class _Config:
         'clear_unfinished_stream': False,
         'console_width': console.width,
         'debug_output': False,
+        'debug_print': os.getenv('NEOPRINT_DEBUG') == '1',
         'disable_varnames': os.getenv('NEOPRINT_DISABLE_VARNAMES') == '1',
         'legacy_windows': os.getenv('NEOPRINT_LEGACY_WINDOWS') == '1',
         'multiline_indent': 2,
@@ -70,9 +72,7 @@ class _Config:
 
     def __init__(self) -> None:
         for k, v in self._preset_conf.items():
-            setattr(self, k, v)
-        assert self.rich_traceback
-        sys.excepthook = self._custom_excepthook
+            self._apply(k, v)
 
     def __call__(self, **kwargs) -> None:
         for k, v in kwargs.items():
@@ -92,7 +92,10 @@ class _Config:
             console.width = val
         elif key == 'debug_output':
             assert isinstance(val, bool)
-            debugger.enabled = val
+            debugger.debug_output = val
+        elif key == 'debug_print':
+            assert isinstance(val, bool)
+            debugger.debug_print = val
         elif key == 'disable_varnames':
             os.environ['NEOPRINT_DISABLE_VARNAMES'] = '1' if val else '0'
         elif key == 'legacy_windows':

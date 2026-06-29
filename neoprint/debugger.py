@@ -2,22 +2,28 @@ from inspect import currentframe
 
 from rich.pretty import pprint
 
+from .frame import FrameInfo
+
 
 class _Debugger:
     def __init__(self) -> None:
-        self.enabled = False
+        self.debug_output = False
+        self.debug_print = False
         self.output = []
 
-    def print(self, *args) -> None:
-        from .frame import FrameInfo
+    @property
+    def enabled(self) -> bool:
+        return self.debug_output
 
-        frame = FrameInfo(currentframe().f_back)  # type: ignore
-        pprint(
-            (
-                '[npdebug]:{}:{}'.format(frame.file_name, frame.line_number),
-                *args,
+    def print(self, *args) -> None:
+        if self.debug_print:
+            frame = FrameInfo(currentframe().f_back)  # type: ignore
+            pprint(
+                (
+                    '[npdbg]:{}:{}'.format(frame.file_name, frame.line_number),
+                    *args,
+                )
             )
-        )
 
 
 debugger = _Debugger()

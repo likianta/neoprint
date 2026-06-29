@@ -88,5 +88,24 @@ TODO(Image): Main picture of this tool.
 ...
 ```
 
+### 2026-06-29
 
+我要使用 `:e` 标记来追踪和漂亮地打印错误堆栈信息.
+
+当前 `:e` 标记值定义:
+
+- `:e0`: 不使用错误堆栈打印 (按照常规打印风格继续).
+- `:e1`: 以红色文字显示 `str(e)` 的内容.
+- `:e2` (默认): 以 rich traceback panel 风格显示打印.
+- `:e3`: 与 `:e2` 类似, 但是显示更多信息 (show_locals=True)
+
+请参考以下代码完成该功能:
+
+- `./docs/mdbook.zh/src/markup_list.md`: 标记含义说明.
+- `./neoprint/config.py:_Config:_custom_excepthook`: 展示了 rich.traceback 的用法, 可作为参考.
+- `./neoprint/console.py:_LegacyRichConsole:capture_output` 和 `./neoprint/text_object/rich.py:RichObject`: 展示了如何捕获 rich.print 并转化为 neoprint TextObject 对象.
+- `./neoprint/markup.py:MarkupAnalyzer:extract`: 当识别到 ":e" 标记时, 其默认值为 2.
+- `./neoprint/format.py:format_list`: 有一个 TODO 标记, 需要完成.
+- `./neoprint/text_object/exception.py`: 待完成.
+- `./test/traceback_exception.py`: 完成上述功能后, 需要通过本测试.
 

@@ -2,6 +2,8 @@ from .base import TextObject
 from .base import TextObjectGroup
 from .bbcode_text import BBCodeText
 from .divider_line import DividerLine
+from .exception import ExceptionLine
+from .exception import ExceptionPanel
 from .expanded_object import ExpandedObject
 from .expanded_object import ExpandedObjectGroup
 from .expanded_object import SpecialExpandedObject

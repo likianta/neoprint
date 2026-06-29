@@ -1,3 +1,4 @@
+import sys
 import typing as tp
 from inspect import currentframe
 
@@ -66,7 +67,7 @@ def format_list(
         markpos = _mark_position
     # dprint(args, markup, args[-1], markup_analyzer.is_valid_markup(args[-1]))
     marks = markup_analyzer.analyze(markup, foreign_frame)
-    
+
     if marks['p']:
         target_frame = foreign_frame.get_parent(marks['p'])
         assert target_frame
@@ -75,19 +76,63 @@ def format_list(
 
     result = []
 
-    # head part
     head_parts = get_head_parts(target_frame)
     result.extend(head_parts)
 
     # --------------------------------------------------------------------------
 
-    # body part
     before_body_parts = []
-    body_parts = []
 
     if marks['i']:
         before_body_parts.append(to.Index(marks['i']))
         before_body_parts.append(to.Space())
+
+    # --------------------------------------------------------------------------
+
+    body_parts = []
+
+    if marks['e']:
+        if marks['e'] == Mark.SIMPLE_ERROR_LINE:
+            for i, arg in enumerate(args or (sys.exc_info()[1],)):
+                if i > 0:
+                    body_parts.append(to.InBodySeparator())
+                    body_parts.append(to.Space())
+                if isinstance(arg, BaseException):
+                    body_parts.append(to.ExceptionLine(arg))
+                else:
+                    body_parts.append(to.Text(arg))
+                body_parts.append(to.InBodySeparator())
+                body_parts.append(to.Space())
+        else:
+            before_body_parts.append(to.LineBreak())
+            if args:
+                is_exception_in_args = any(
+                    isinstance(arg, BaseException) for arg in args
+                )
+                for i, arg in enumerate(args):
+                    if i > 0:
+                        body_parts.append(to.InBodySeparator())
+                        body_parts.append(
+                            to.LineBreak()
+                            if is_exception_in_args
+                            else to.Space()
+                        )
+                    if is_exception_in_args:
+                        if isinstance(arg, BaseException):
+                            body_parts.append(
+                                to.ExceptionPanel(
+                                    arg,
+                                    show_locals=marks['e']
+                                    == Mark.TRACEBACK_EXCEPTION_WITH_LOCALS,
+                                )
+                            )
+                        else:
+                            body_parts.append(to.Text(arg))
+                    else:
+                        body_parts.append(to.Text(arg))
+            else:
+                body_parts.append(to.ExceptionPanel.from_sys_exc())
+        args = ()
 
     if marks['n']:
         varnames = foreign_frame.varnames
@@ -103,14 +148,14 @@ def format_list(
     else:
         varnames = (None,) * len(args)
 
-    for name, arg in zip(varnames, args):
+    for i, name, arg in zip(range(len(args)), varnames, args):
+        if i > 0:
+            body_parts.append(to.InBodySeparator())
+            body_parts.append(to.Space())
         if name is None:
             body_parts.append(to.Text(arg))
         else:
             body_parts.append(to.NamedVariable(name, arg))
-        body_parts.append(to.InBodySeparator())
-        body_parts.append(to.Space())
-    body_parts = body_parts[:-2]
 
     if marks['r'] == Mark.RICH_FORMAT:
         body_parts = [

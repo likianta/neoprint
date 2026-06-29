@@ -159,7 +159,7 @@ def format_list(
             )
         ]
 
-    if marks['v']:
+    if marks['v'] != Mark.NORMAL:
         global_color, global_style = marks['v']
         for part in body_parts:
             if part.editable:

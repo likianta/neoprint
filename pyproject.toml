@@ -1,10 +1,10 @@
 [project]
 name = "neoprint"
-version = "0.1.2"
+version = "0.1.3b4"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
-# readme = "README.md"
+readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "rich>=14.0.0",

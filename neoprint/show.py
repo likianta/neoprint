@@ -6,6 +6,8 @@ from .console import dprint  # noqa
 from .format import extract_markup_from_arguments
 from .format import format_list
 from .frame import FrameInfo
+from .text_object import LineBreak
+from .text_object import Markdown
 
 
 def show(
@@ -47,3 +49,29 @@ expand = partial(_show_alias, ':l1')
 expand2 = partial(_show_alias, ':l2')
 index = partial(_show_alias, ':i2')
 vshow = partial(_show_alias, ':n1')
+
+
+def markdown(*args: str) -> None:
+    text: str
+    markup: str
+    if len(args) == 1:
+        assert args[0][0] != ':'
+        text = args[0]
+        markup = ''
+    elif len(args) == 2:
+        if args[0][0] == ':':
+            text = args[1]
+            markup = args[0]
+        else:
+            text = args[0]
+            markup = args[1]
+    else:
+        raise ValueError(len(args))
+
+    text_objs = []
+    text_objs.extend(format_list(markup=markup, _elevate_parent_level=1))
+    text_objs.append(LineBreak())
+    text_objs.append(Markdown(text))
+    console.print(
+        ''.join(p.render(color_code_scheme='ansi') for p in text_objs)
+    )

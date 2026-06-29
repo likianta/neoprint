@@ -23,6 +23,7 @@ from .show import expand
 from .show import expand2
 from .show import index
 from .show import info
+from .show import markdown
 from .show import show
 from .show import show as print
 from .show import success
@@ -32,4 +33,4 @@ from .text_object import Markdown
 from .text_object import RichObject
 from .text_object import Text
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'

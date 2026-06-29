@@ -3,8 +3,6 @@ import os
 import typing as tp
 from collections import namedtuple
 
-from .console import dprint  # noqa
-
 
 class T:
     CachedData = namedtuple('CachedData', ('file', 'time', 'source', 'tree'))

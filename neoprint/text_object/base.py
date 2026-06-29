@@ -11,7 +11,7 @@ class TextObject:
     style: T.Style = ''
 
     def __len__(self) -> int:
-        return len(self.render(color_code_scheme='none'))
+        return len(self.render(color_code_scheme='plain'))
 
     def render(self, *_, **__) -> str:
         raise NotImplementedError

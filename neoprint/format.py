@@ -226,7 +226,7 @@ def format(*args, markup: tp.Optional[str] = None) -> str:
     result = format_list(
         *args, markup=markup, _elevate_parent_level=1, _mark_position=markpos
     )
-    return ''.join(p.render(color_code_scheme='none') for p in result)
+    return ''.join(p.render(color_code_scheme='plain') for p in result)
 
 
 # ------------------------------------------------------------------------------

@@ -55,7 +55,8 @@ class _Config:
         'clear_unfinished_stream': False,
         'console_width': console.width,
         'debug_output': False,
-        'debug_print': os.getenv('NEOPRINT_DEBUG') == '1',
+        'debug_print': os.getenv('NEOPRINT_DEBUG') == '1'
+        or os.getenv('NEOPRINT_DEBUG_PRINT') == '1',
         'disable_varnames': os.getenv('NEOPRINT_DISABLE_VARNAMES') == '1',
         'legacy_windows': os.getenv('NEOPRINT_LEGACY_WINDOWS') == '1',
         'multiline_indent': 2,

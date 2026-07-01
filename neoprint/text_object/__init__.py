@@ -4,9 +4,9 @@ from .bbcode_text import BBCodeText
 from .divider_line import DividerLine
 from .exception import ExceptionLine
 from .exception import ExceptionPanel
-from .expanded_object import ExpandedObject
-from .expanded_object import ExpandedObjectGroup
-from .expanded_object import SpecialExpandedObject
+from .expanded import ExpandedObject
+from .expanded import ExpandedObjectGroup
+from .expanded import SpecialExpandedObject
 from .index import Index
 from .invisible import LineBreak
 from .invisible import Space

@@ -80,7 +80,7 @@ class ExpandedObject(TextObjectGroup):
         else:
             return super().render(color_code_scheme=color_code_scheme)
 
-    # def render_compact(self, color_code_scheme: T.CodeScheme = 'none') -> str:
+    # def render_compact(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
     #     return (
     #         ''.join(
     #             (
@@ -275,7 +275,7 @@ class ExpandedObjectGroup(TextObjectGroup):
             if isinstance(x, ExpandedObject):
                 text = x.render(color_code_scheme='plain', compact=True)
             else:
-                text = x.render(color_code_scheme='none')
+                text = x.render(color_code_scheme='plain')
             available_space -= len(text)
             if available_space <= 0:
                 can_be_single_line = False

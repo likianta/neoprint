@@ -98,7 +98,7 @@ class TestIndexCounterForms(TestCase):
     def test_line_counter_same_line(self):
         np.format(':i0')
 
-        with np.capture_output(color_code_scheme='none') as output:
+        with np.capture_output(color_code_scheme='plain') as output:
             np.show(':i1', 'call')
 
         lines = output.output[0].strip().split('\n')

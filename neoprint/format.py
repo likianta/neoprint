@@ -5,6 +5,7 @@ from inspect import currentframe
 from . import text_object as to
 from .config import config
 from .console import dprint  # noqa
+from .control import internal_state
 from .frame import FrameInfo
 from .markup import Mark
 from .markup import markup_analyzer
@@ -60,10 +61,18 @@ def format_list(
         foreign_frame: points to `bar(...)`.
         target_frame: points to `bar(...)` if ':p' is not used. ('hello'-case)
         target_frame: points to `foo(...)` if ':p' is used. ('world'-case)
+    
+    params:
+        _frame: if both _frame and _elevate_parent_level are set, then _frame is 
+            used. be careful to handle the elevation level of _frame, you need 
+            to take internal_state['parent_level'] into account by yourself.
+            see also `.control._variable_print : get_last_frame usage`.
     """
     if _frame is None:
         this_frame = FrameInfo(currentframe())  # type: ignore
-        foreign_frame = this_frame.get_parent(1 + _elevate_parent_level)
+        foreign_frame = this_frame.get_parent(
+            1 + _elevate_parent_level + internal_state['parent_level']
+        )
     else:
         foreign_frame = _frame
     target_frame = foreign_frame  # to be determined later.

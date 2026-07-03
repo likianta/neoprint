@@ -3,6 +3,7 @@ from . import util
 from .config import config
 from .console import bprint
 from .console import console
+from .control import elevate_parent_level
 from .control import setup
 from .control import unload
 from .debugger import debugger
@@ -33,4 +34,4 @@ from .text_object import Markdown
 from .text_object import RichObject
 from .text_object import Text
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'

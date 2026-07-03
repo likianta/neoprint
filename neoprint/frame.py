@@ -95,6 +95,8 @@ class FrameInfo:
         self._varnames = None
 
 
-def get_last_frame() -> FrameInfo:
-    frame = inspect.currentframe().f_back.f_back  # type: ignore
-    return FrameInfo(frame)  # type: ignore
+def get_last_frame(traceback_level: int = 1) -> FrameInfo:
+    f = tp.cast(FrameType, inspect.currentframe().f_back)  # ty: ignore
+    for _ in range(traceback_level):
+        f = tp.cast(FrameType, f.f_back)
+    return FrameInfo(f)

@@ -16,6 +16,8 @@ def show(
     *args,
     markup: tp.Optional[str] = None,
     _frame: tp.Optional[FrameInfo] = None,
+    #   seldomly used, only for internal use. see also 
+    #   `.control._variable_print`.
 ) -> None:
     try:
         result = format_list(

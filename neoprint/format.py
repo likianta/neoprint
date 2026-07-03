@@ -226,8 +226,12 @@ def format_list(
             )
         ]
 
-    if marks['v'] != Mark.NORMAL:
-        global_color, global_style = marks['v']
+    if marks['v']:
+        value, global_color, global_style = marks['v']
+        if value == Mark.DEBUG and before_body_parts:
+            for part in before_body_parts:
+                if isinstance(part, to.Index):
+                    part.style = global_style  # 'dim'
         for part in body_parts:
             if part.editable:
                 # dprint(part, global_color, global_style)

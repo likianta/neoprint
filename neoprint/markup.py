@@ -234,17 +234,19 @@ class MarkupAnalyzer:
 
         if marks['v']:
             out['v'] = (
-                None,
-                ('bright_black', ''),
-                ('cyan', ''),
-                ('green', 'dim'),
-                ('green', ''),
-                ('yellow', 'dim'),
-                ('yellow', ''),
-                ('red', 'dim'),
-                ('red', ''),
-                ...,  # TODO
+                (0, 'default', ''),
+                (1, 'bright_black', ''),
+                (2, 'cyan', ''),
+                (3, 'green', 'dim'),
+                (4, 'green', ''),
+                (5, 'yellow', 'dim'),
+                (6, 'yellow', ''),
+                (7, 'red', 'dim'),
+                (8, 'red', ''),
+                ...,  # TODO: (9, 'white on red', '')
             )[marks['v']]
+        else:
+            out['v'] = None
 
         return out
 

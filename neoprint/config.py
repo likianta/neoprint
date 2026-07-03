@@ -137,3 +137,4 @@ class _Config:
 
 
 config = _Config()
+internal_state = {'parent_level': 0}

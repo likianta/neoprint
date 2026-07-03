@@ -2,11 +2,11 @@ import builtins
 import typing as tp
 from contextlib import contextmanager
 
+from .config import internal_state
 from .console import bprint
 from .frame import get_last_frame
 from .show import show
 
-internal_state = {'parent_level': 0}
 _effected_packages = set()
 
 

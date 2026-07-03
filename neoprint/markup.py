@@ -68,8 +68,7 @@ class Mark:
             r2  special rich object (rich.table.Table, rich.panel.Panel, etc.)
             s0  plain text
         *   s1  short / simple / single line
-            s2  builtin-like print (remains markup features)
-            s3  builtin print
+            s2  builtin print
             t0  reset timer
             t1  stop line-level timer and show statistics
         *   t2  stop scoped timer and show statistics
@@ -129,8 +128,7 @@ class Mark:
 
     NO_SHORT_SCHEME = 0  # :s0
     SHORT = 1  # :s1
-    SHORTEN = 2  # :s2
-    BUILTIN_PRINT = 3  # :s3
+    BUILTIN_PRINT = 2  # :s2
 
     NO_TIMER_STUFF = -1
     RESET_TIMER = 0  # :t0
@@ -202,7 +200,11 @@ class MarkupAnalyzer:
         else:
             raise Exception(f':i{marks["i"]}')
 
-        out['l'] = marks['l']
+        if marks['l'] == 2 and marks['r'] == 2:
+            # r2 and l2 have same effect, we remain one of them.
+            out['l'] = 0
+        else:
+            out['l'] = marks['l']
 
         if config.disable_varnames:
             out['n'] = Mark.NO_VARNAMES

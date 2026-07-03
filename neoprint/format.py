@@ -22,12 +22,19 @@ class T:  # Typehint
     MarkupPos = int  # -1, 0, 1
 
 
+class E:
+    class BuiltinPrintRequired(Exception):
+        def __init__(self, args: T.Args) -> None:
+            self.args = args
+
+
 def format_list(
     *args,
     markup: tp.Optional[T.Markup] = None,
     _elevate_parent_level: int = 0,
     _frame: tp.Optional[FrameInfo] = None,
     _mark_position: int = 0,
+    _raise_builtin_print: bool = False,
 ) -> tp.List[to.TextObject]:
     """
     frame relationship:
@@ -68,6 +75,18 @@ def format_list(
     # dprint(args, markup, args[-1], markup_analyzer.is_valid_markup(args[-1]))
     marks = markup_analyzer.analyze(markup, foreign_frame)
 
+    # marks['s'] function in details:
+    #   if marks['s'] is Mark.SHORT, do not show source, funcname and varnames 
+    #   info.
+    #   if marks['s'] is Mark.BUILTIN_PRINT, raise E.BuiltinPrintRequired(args)
+    #   if _raise_builtin_print is set, or return args as is (we wrap them in 
+    #   to.Origin to avoid type checker blames).
+    if marks['s'] == Mark.BUILTIN_PRINT:
+        if _raise_builtin_print:
+            raise E.BuiltinPrintRequired(args)
+        else:
+            return [to.Origin(x) for x in args]
+
     if marks['p']:
         target_frame = foreign_frame.get_parent(marks['p'])
         assert target_frame
@@ -76,8 +95,9 @@ def format_list(
 
     result = []
 
-    head_parts = get_head_parts(target_frame)
-    result.extend(head_parts)
+    if not marks['s']:
+        head_parts = get_head_parts(target_frame)
+        result.extend(head_parts)
 
     # --------------------------------------------------------------------------
 
@@ -163,7 +183,14 @@ def format_list(
             for x in body_parts
         ]
     elif marks['r'] == Mark.RICH_OBJECT:
-        ...
+        body_parts = [
+            to.SpecialExpandedObject(x)
+            if to.SpecialExpandedObject.check_expandable(x)
+            else to.ExpandedObject(x)
+            if to.ExpandedObject.check_expandable(x)
+            else x
+            for x in body_parts
+        ]
 
     if marks['l']:
         # there are three cases:

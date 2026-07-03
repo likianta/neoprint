@@ -1,8 +1,10 @@
 import typing as tp
 from functools import partial
 
-from .console import console
+from .console import bprint
+from .console import cprint
 from .console import dprint  # noqa
+from .format import E
 from .format import extract_markup_from_arguments
 from .format import format_list
 from .frame import FrameInfo
@@ -15,11 +17,19 @@ def show(
     markup: tp.Optional[str] = None,
     _frame: tp.Optional[FrameInfo] = None,
 ) -> None:
-    result = format_list(
-        *args, markup=markup, _frame=_frame, _elevate_parent_level=1
-    )
-    # dprint(args, result)
-    console.print(''.join(p.render(color_code_scheme='ansi') for p in result))
+    try:
+        result = format_list(
+            *args,
+            markup=markup,
+            _frame=_frame,
+            _elevate_parent_level=1,
+            _raise_builtin_print=True,
+        )
+    except E.BuiltinPrintRequired as e:
+        bprint(*e.args)
+    else:
+        # dprint(args, result)
+        cprint(''.join(p.render(color_code_scheme='ansi') for p in result))
 
 
 def _show_alias(
@@ -30,10 +40,18 @@ def _show_alias(
         markup = _verbosity + markup.lstrip(':')
     else:
         markpos, markup = 0, _verbosity + markup.lstrip(':')
-    result = format_list(
-        *args, markup=markup, _elevate_parent_level=1, _mark_position=markpos
-    )
-    console.print(''.join(p.render(color_code_scheme='ansi') for p in result))
+    try:
+        result = format_list(
+            *args,
+            markup=markup,
+            _elevate_parent_level=1,
+            _mark_position=markpos,
+            _raise_builtin_print=True,
+        )
+    except E.BuiltinPrintRequired as e:
+        bprint(*e.args)
+    else:
+        cprint(''.join(p.render(color_code_scheme='ansi') for p in result))
 
 
 # shorthand
@@ -72,6 +90,4 @@ def markdown(*args: str) -> None:
     text_objs.extend(format_list(markup=markup, _elevate_parent_level=1))
     text_objs.append(LineBreak())
     text_objs.append(Markdown(text))
-    console.print(
-        ''.join(p.render(color_code_scheme='ansi') for p in text_objs)
-    )
+    cprint(''.join(p.render(color_code_scheme='ansi') for p in text_objs))

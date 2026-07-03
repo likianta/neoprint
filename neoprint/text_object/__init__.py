@@ -11,6 +11,7 @@ from .index import Index
 from .invisible import LineBreak
 from .invisible import Space
 from .named_variable import NamedVariable
+from .origin import Origin
 from .rich import Markdown
 from .rich import RichObject
 from .separator import BodySeparator

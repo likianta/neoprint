@@ -76,10 +76,10 @@ def format_list(
     marks = markup_analyzer.analyze(markup, foreign_frame)
 
     # marks['s'] function in details:
-    #   if marks['s'] is Mark.SHORT, do not show source, funcname and varnames 
+    #   if marks['s'] is Mark.SHORT, do not show source, funcname and varnames
     #   info.
     #   if marks['s'] is Mark.BUILTIN_PRINT, raise E.BuiltinPrintRequired(args)
-    #   if _raise_builtin_print is set, or return args as is (we wrap them in 
+    #   if _raise_builtin_print is set, or return args as is (we wrap them in
     #   to.Origin to avoid type checker blames).
     if marks['s'] == Mark.BUILTIN_PRINT:
         if _raise_builtin_print:
@@ -182,42 +182,28 @@ def format_list(
             to.BBCodeText(str(x)) if isinstance(x, to.Text) else x
             for x in body_parts
         ]
-    elif marks['r'] == Mark.RICH_OBJECT:
+    if marks['l'] == Mark.EXPAND_FORMAT:
         body_parts = [
-            to.SpecialExpandedObject(x)
-            if to.SpecialExpandedObject.check_expandable(x)
-            else to.ExpandedObject(x)
+            to.ExpandedObject(x)  # type: ignore
             if to.ExpandedObject.check_expandable(x)
             else x
             for x in body_parts
         ]
-
-    if marks['l']:
-        # there are three cases:
-        #   l1 and r*: expand object
-        #   l2 or r2: special expand object
-        #   l0 and r1: bbcode object
-        if marks['l'] == Mark.EXPAND_FORMAT:
-            body_parts = [
-                to.ExpandedObject(x)
-                if to.ExpandedObject.check_expandable(x)
-                else x
-                for x in body_parts
-            ]
-        elif (
-            marks['l'] == Mark.SPECIAL_EXPAND_FORMAT
-            or marks['r'] == Mark.RICH_OBJECT
-        ):
-            body_parts = [
-                to.SpecialExpandedObject(x)
-                if to.SpecialExpandedObject.check_expandable(x)
-                else to.ExpandedObject(x)
-                if to.ExpandedObject.check_expandable(x)
-                else x
-                for x in body_parts
-            ]
-        else:
-            raise Exception('unreachable case')
+        body_parts = [
+            to.ExpandedObjectGroup(body_parts, head_parts + before_body_parts)
+        ]
+    if (
+        marks['r'] == Mark.RICH_OBJECT
+        or marks['l'] == Mark.SPECIAL_EXPAND_FORMAT
+    ):
+        body_parts = [
+            to.SpecialExpandedObject(x)  # type: ignore
+            if to.SpecialExpandedObject.check_expandable(x)
+            else to.ExpandedObject(x)  # type: ignore
+            if to.ExpandedObject.check_expandable(x)
+            else x
+            for x in body_parts
+        ]
         body_parts = [
             to.ExpandedObjectGroup(body_parts, head_parts + before_body_parts)
         ]

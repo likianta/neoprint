@@ -170,6 +170,8 @@ class MarkupAnalyzer:
         if marks['d']:
             out['d'] = marks['d']
             marks['l'] = 0
+            if marks['r'] == 2:
+                marks['r'] = 0
 
         out['e'] = marks['e']
         out['f'] = marks['f']

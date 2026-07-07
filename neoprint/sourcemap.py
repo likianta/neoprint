@@ -35,6 +35,7 @@ class VarnamesAnalyzer(ast.NodeVisitor):
         self.found = False
 
     def visit_Call(self, node: ast.Call) -> None:
+        # from .console import dprint
         if node.lineno == self._target_lineno:
             funcname = ''
             if isinstance(node.func, ast.Name):
@@ -48,7 +49,7 @@ class VarnamesAnalyzer(ast.NodeVisitor):
                     # dprint(i, arg, type(arg))
                     if isinstance(arg, ast.Name):
                         self.varnames.append(arg.id)
-                    elif isinstance(arg, ast.Call):
+                    elif isinstance(arg, (ast.Call, ast.Attribute)):
                         if x := self._reveal_source_of_call(arg):
                             self.varnames.append(x)
                         else:
@@ -57,7 +58,9 @@ class VarnamesAnalyzer(ast.NodeVisitor):
                         self.varnames.append(None)
         self.generic_visit(node)
 
-    def _reveal_source_of_call(self, node: ast.Call) -> str:
+    def _reveal_source_of_call(
+        self, node: tp.Union[ast.Call, ast.Attribute]
+    ) -> str:
         return ast.get_source_segment(self._source, node) or ''
 
 

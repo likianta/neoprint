@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 from .scope import scope_mgr
 
 

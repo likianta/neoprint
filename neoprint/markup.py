@@ -5,6 +5,7 @@ from .config import config
 from .frame import FrameInfo
 from .scope import counter
 from .scope import timer
+from .scope.scope import scope_mgr
 
 
 class T:
@@ -49,8 +50,8 @@ class Mark:
             f2  flush cutoff
             f3  flush eddy                  *(not a good option, maybe removed)*
             i0  reset index
-            i1  line-level index
-        *   i2  scoped index
+        *   i1  line-level index
+            i2  scoped index
             i3  global index
             l0  no expand object
         *   l1  long / loose / expanded (multiple lines) format
@@ -255,7 +256,7 @@ class MarkupAnalyzer:
             'd': 1,
             'e': 2,
             'f': 1,
-            'i': 2,
+            'i': 1 if scope_mgr.current_scope is None else 2,
             'l': 1,
             'n': 1,
             'p': 1,

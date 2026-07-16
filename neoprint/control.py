@@ -21,7 +21,10 @@ def elevate_parent_level() -> tp.Generator:
 
 
 def setup(scope: str = 'this_package') -> None:
-    assert scope == 'this_package', f'scope `{scope}` is not supported'
+    assert scope == 'this_package', (
+        'only "this_package" scope is supported for now',
+        scope,
+    )
     frame = get_last_frame()
     _effected_packages.add(frame.package_name)
     if getattr(builtins, 'print') is bprint:

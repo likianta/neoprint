@@ -1,3 +1,8 @@
+"""
+█▄░█  █▀▀  █▀█  █▀█  █▀█  ▀█▀  █▄░█  ▀█▀
+█░▀█  ██▄  █▄█  █▀▀  █▀▄  ▄█▄  █░▀█  ░█░
+"""
+
 from . import text_object
 from . import util
 from .config import config

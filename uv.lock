@@ -12,14 +12,14 @@ prerelease-mode = "allow"
 
 [[package]]
 name = "argsense"
-version = "1.2.0a7"
+version = "1.1.3a1"
 source = { registry = "http://localhost:2191/" }
 dependencies = [
     { name = "neoprint" },
     { name = "rich" },
 ]
 wheels = [
-    { url = "http://localhost:2191/argsense/argsense-1.2.0a7-py3-none-any.whl" },
+    { url = "http://localhost:2191/argsense/argsense-1.1.3a1-py3-none-any.whl" },
 ]
 
 [[package]]
@@ -185,7 +185,7 @@ wheels = [
 
 [[package]]
 name = "neoprint"
-version = "0.1.5b1"
+version = "0.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "rich" },
@@ -206,7 +206,7 @@ requires-dist = [{ name = "rich", specifier = ">=14.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "argsense", specifier = ">=1.2.0a7", index = "http://localhost:2191/" },
+    { name = "argsense", specifier = ">=1.1.3a1,<1.2.0", index = "http://localhost:2191/" },
     { name = "faker", marker = "python_full_version >= '3.12'", specifier = ">=40.8.0" },
     { name = "ipython", marker = "python_full_version >= '3.12'", specifier = ">=9.15.0" },
     { name = "lk-utils", specifier = ">=3.6.1b1", index = "http://localhost:2191/" },

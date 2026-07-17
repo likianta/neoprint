@@ -63,13 +63,17 @@ def render(
         tp.Tuple[str], tp.Tuple[str, T.Color], tp.Tuple[str, T.Color, T.Style]
     ],
     color_code_scheme: T.ColorCodeScheme = 'plain',
+    true_color_mode: bool = False,
 ) -> str:
     """
-    args: (element, ...)
-        element:
-            (text,): e.g. ('hello',)
-            (text, color): e.g. ('hello', 'red')
-            (text, color, style): e.g. ('hello', 'red', 'bold')
+    params:
+        args: (element, ...)
+            element:
+                (text,): e.g. ('hello',)
+                (text, color): e.g. ('hello', 'red')
+                (text, color, style): e.g. ('hello', 'red', 'bold')
+        true_color_mode: if enabled, it implies that `args` may contain
+            hexadecimal colors like '#b9fab9'.
     """
     result: tp.List[str] = []
     for element in args:
@@ -88,13 +92,14 @@ def render(
             #     element = (element[0], 'bright_black', '')
 
             if color_code_scheme == 'ansi':
+                if true_color_mode and element[1].startswith('#'):
+                    color_code = _hex_to_ansi_color(element[1])
+                else:
+                    color_code = ANSI_COLORS[element[1]]
                 if element[2] == '':
                     result.append(
                         '{}[{}m{}{}'.format(
-                            ANSI_ESCAPE,
-                            ANSI_COLORS[element[1]],
-                            element[0],
-                            ANSI_RESET,
+                            ANSI_ESCAPE, color_code, element[0], ANSI_RESET
                         )
                     )
                 else:
@@ -102,12 +107,12 @@ def render(
                         '{}[{};{}m{}{}'.format(
                             ANSI_ESCAPE,
                             ANSI_STYLES[element[2]],
-                            ANSI_COLORS[element[1]],
+                            color_code,
                             element[0],
                             ANSI_RESET,
                         )
                     )
-            else:
+            else:  # 'bbcode'
                 if element[2] == '':
                     result.append(
                         '[{}]{}[/]'.format(
@@ -187,6 +192,8 @@ def translate(bbcode_text: str) -> tp.Iterator[tp.Tuple[str, T.Color, T.Style]]:
                             new_color = c_to_color[part]
                         elif part in s_to_style:
                             new_style = s_to_style[part]
+                        elif part.startswith('#'):
+                            new_color = part
                         else:
                             # when invalid part found, we treat the tag as plain
                             # text.
@@ -207,3 +214,11 @@ def translate(bbcode_text: str) -> tp.Iterator[tp.Tuple[str, T.Color, T.Style]]:
 
     if current_text:
         yield (current_text, stack[-1][0], stack[-1][1])  # type: ignore
+
+
+def _hex_to_ansi_color(hex_color: str) -> str:
+    hex_str = hex_color.lstrip('#')
+    r = int(hex_str[0:2], 16)
+    g = int(hex_str[2:4], 16)
+    b = int(hex_str[4:6], 16)
+    return '38;2;{};{};{}'.format(r, g, b)

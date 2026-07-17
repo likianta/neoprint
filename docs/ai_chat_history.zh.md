@@ -109,3 +109,17 @@ TODO(Image): Main picture of this tool.
 - `./neoprint/text_object/exception.py`: 待完成.
 - `./test/traceback_exception.py`: 完成上述功能后, 需要通过本测试.
 
+### 2026-07-17
+
+我想让 neoprint 支持 "真彩打印" 模式, 当 `true_color_mode=True` 时, 用户可能会传 hex 格式的颜色值, 例如 `#b9fab9`, `#a9a8df`, `#8f9ea9` 等. 我需要将它们转换成正确的 ANSI_CODE, 这样控制台可以打印丰富的彩色文字.
+
+请阅读以下模块, 了解我当前的工作, 并最终完成 `./neoprint/render.py:render` 中的功能:
+
+- `./neoprint/markup.py:MarkupAnalyzer:analyze`
+- `./neoprint/scope/counter.py:Counter:get_color_by_frame`
+- `./neoprint/format.py:format_list` - `if marks['i']: ...`
+- `./neoprint/text_object/index.py:Index:__init__`
+- `./neoprint/render.py:render`
+
+
+

@@ -113,7 +113,8 @@ def format_list(
     before_body_parts = []
 
     if marks['i']:
-        before_body_parts.append(to.Index(marks['i']))
+        idx, color = marks['i']
+        before_body_parts.append(to.Index(idx, color))
         before_body_parts.append(to.Space())
 
     # --------------------------------------------------------------------------
@@ -228,10 +229,15 @@ def format_list(
 
     if marks['v']:
         value, global_color, global_style = marks['v']
-        if value == Mark.DEBUG and before_body_parts:
+        if before_body_parts and value in (
+            Mark.DEBUG,
+            Mark.WEAK_SUCCESS,
+            Mark.WEAK_WARNING,
+            Mark.WEAK_ERROR,
+        ):
             for part in before_body_parts:
                 if isinstance(part, to.Index):
-                    part.style = global_style  # 'dim'
+                    part.style = 'dim'
         for part in body_parts:
             if part.editable:
                 # dprint(part, global_color, global_style)

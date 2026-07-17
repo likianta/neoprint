@@ -156,6 +156,30 @@ class MarkupAnalyzer:
     def is_valid_markup(self, text: str) -> bool:
         return bool(self._mark_pattern_0.match(text))
 
+    def extract(self, markup: T.Markup) -> T.Marks:
+        defaults = {
+            'd': 1,
+            'e': 2,
+            'f': 1,
+            'i': 1 if scope_mgr.current_scope is None else 2,
+            'l': 1,
+            'n': 1,
+            'p': 1,
+            'r': 1,
+            's': 1,
+            't': 2,
+            'v': 1,
+        }
+        out = {}
+        for m in self._mark_pattern_1.findall(markup) or ():
+            if len(m) == 1:
+                out[m[0]] = defaults[m[0]]
+            else:
+                out[m[0]] = int(m[1:])
+        # if out:
+        #     dbg_print(dict(out))
+        return tp.cast(T.Marks, out)
+
     def analyze(
         self, markup: T.Markup, _frame: FrameInfo
     ) -> tp.Dict[str, tp.Any]:
@@ -177,16 +201,21 @@ class MarkupAnalyzer:
         out['e'] = marks['e']
         out['f'] = marks['f']
 
+        # out['i']: Optional[Tuple[int count, str color]]
         if marks['i'] == -1:
             out['i'] = None
         elif marks['i'] == 0:
             counter.reset()
-            out['i'] = 0
+            # out['i'] = (0, 'default')
+            out['i'] = None
         elif marks['i'] == 1:
-            cnt = counter.update_scoped_index(
-                '{}:{}'.format(_frame.file_path, _frame.line_number)
+            target_frame = (
+                _frame.get_parent(marks['p']) if marks['p'] else _frame
             )
-            out['i'] = cnt
+            cnt = counter.update_scoped_index(
+                '{}:{}'.format(target_frame.file_path, target_frame.line_number)
+            )
+            out['i'] = (cnt, counter.get_color_by_frame(target_frame))
         elif marks['i'] == 2:
             target_frame = (
                 _frame.get_parent(marks['p']) if marks['p'] else _frame
@@ -196,10 +225,10 @@ class MarkupAnalyzer:
                     target_frame.file_path, target_frame.function_name
                 )
             )
-            out['i'] = cnt
+            out['i'] = (cnt, counter.get_color_by_frame(target_frame))
         elif marks['i'] == 3:
             cnt = counter.update_global_index()
-            out['i'] = cnt
+            out['i'] = (cnt, 'red')
         else:
             raise Exception(f':i{marks["i"]}')
 
@@ -223,7 +252,7 @@ class MarkupAnalyzer:
         out['p'] = marks['p']
         out['r'] = marks['r']
         out['s'] = marks['s']
-        
+
         if marks['t'] == -1:
             out['t'] = None
         elif marks['t'] == 0:
@@ -250,30 +279,6 @@ class MarkupAnalyzer:
             out['v'] = None
 
         return out
-
-    def extract(self, markup: T.Markup) -> T.Marks:
-        defaults = {
-            'd': 1,
-            'e': 2,
-            'f': 1,
-            'i': 1 if scope_mgr.current_scope is None else 2,
-            'l': 1,
-            'n': 1,
-            'p': 1,
-            'r': 1,
-            's': 1,
-            't': 2,
-            'v': 1,
-        }
-        out = {}
-        for m in self._mark_pattern_1.findall(markup) or ():
-            if len(m) == 1:
-                out[m[0]] = defaults[m[0]]
-            else:
-                out[m[0]] = int(m[1:])
-        # if out:
-        #     dbg_print(dict(out))
-        return tp.cast(T.Marks, out)
 
     def postfill(self, marks: T.Marks) -> T.Marks:
         """

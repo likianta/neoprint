@@ -1,8 +1,6 @@
 /.idea/
 /dist/
 /docs/mdbook.zh/book/
-/human/
-/neoprint_ai/
 /references/
 /*.py
 __pycache__/

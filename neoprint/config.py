@@ -101,9 +101,13 @@ class _Config:
             os.environ['NEOPRINT_DISABLE_VARNAMES'] = '1' if val else '0'
         elif key == 'legacy_windows':
             os.environ['NEOPRINT_LEGACY_WINDOWS'] = '1' if val else '0'
+            if val:
+                sys.excepthook = _default_excepthook
+            elif hasattr(self, 'rich_traceback') and self.rich_traceback:
+                sys.excepthook = self._custom_excepthook
         elif key == 'rich_traceback':
             # assert isinstance(val, bool)
-            if val:
+            if val and not self.legacy_windows:
                 sys.excepthook = self._custom_excepthook
             else:
                 sys.excepthook = _default_excepthook

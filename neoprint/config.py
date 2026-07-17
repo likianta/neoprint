@@ -5,7 +5,8 @@ from sys import excepthook as _default_excepthook
 
 from rich.traceback import Traceback
 
-from .console import console
+from .console import console as default_console
+from .console import legacy_rich_console
 from .console import rich_console
 from .debugger import debugger
 
@@ -53,7 +54,7 @@ class _Config:
 
     _preset_conf: tp.Dict[str, tp.Union[bool, int, str]] = {
         'clear_unfinished_stream': False,
-        'console_width': console.width,
+        'console_width': default_console.width,
         'debug_output': False,
         'debug_print': os.getenv('NEOPRINT_DEBUG') == '1'
         or os.getenv('NEOPRINT_DEBUG_PRINT') == '1',
@@ -90,7 +91,7 @@ class _Config:
         setattr(self, key, val)
         if key == 'console_width':
             assert isinstance(val, int)
-            console.width = val
+            default_console.width = val
         elif key == 'debug_output':
             assert isinstance(val, bool)
             debugger.debug_output = val
@@ -101,13 +102,9 @@ class _Config:
             os.environ['NEOPRINT_DISABLE_VARNAMES'] = '1' if val else '0'
         elif key == 'legacy_windows':
             os.environ['NEOPRINT_LEGACY_WINDOWS'] = '1' if val else '0'
-            if val:
-                sys.excepthook = _default_excepthook
-            elif hasattr(self, 'rich_traceback') and self.rich_traceback:
-                sys.excepthook = self._custom_excepthook
         elif key == 'rich_traceback':
             # assert isinstance(val, bool)
-            if val and not self.legacy_windows:
+            if val:
                 sys.excepthook = self._custom_excepthook
             else:
                 sys.excepthook = _default_excepthook
@@ -126,7 +123,9 @@ class _Config:
         else:
             # https://rich.readthedocs.io/en/stable/traceback.html
             # dprint(getattr(self, 'show_traceback_locals'))
-            rich_console.print(
+            (
+                legacy_rich_console if self.legacy_windows else rich_console
+            ).print(
                 Traceback.from_exception(
                     type_,
                     value,

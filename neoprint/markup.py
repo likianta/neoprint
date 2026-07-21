@@ -71,9 +71,9 @@ class Mark:
         *   s1  short / simple / single line
             s2  builtin print
             t0  reset timer
-            t1  stop line-level timer and show statistics
-        *   t2  stop scoped timer and show statistics
-            t3  stop global timer and show statistics
+            t1  time stamp
+        *   t2  time since last timer (relative)
+            t3  time since last reset (absolute)
             v0  normal
         *   v1  trace / debug / hint (gray)
             v2  info (blue)
@@ -133,9 +133,9 @@ class Mark:
 
     NO_TIMER_STUFF = -1
     RESET_TIMER = 0  # :t0
-    STOP_LINE_LEVEL_TIMER = 1  # :t1
-    STOP_SCOPED_TIMER = 2  # :t2
-    STOP_GLOBAL_TIMER = 3  # :t3
+    TIMESTAMP = 1  # :t1
+    TIME_SINCE_LAST_TIME = 2  # :t2
+    TIME_SINCE_START_TIME = 3  # :t3
 
     NORMAL = 0  # :v0
     DEBUG = 1  # :v1
@@ -259,8 +259,13 @@ class MarkupAnalyzer:
             timer.reset()
             out['t'] = None
         elif marks['t'] == 1:
-            timer.stop_scoped_timer()
-            out['t'] = None
+            out['t'] = timer.current_time()
+        elif marks['t'] == 2:
+            out['t'] = timer.update_time()
+        elif marks['t'] == 3:
+            out['t'] = timer.update_scoped_time()
+        else:
+            raise Exception(f':t{marks["t"]}')
 
         if marks['v']:
             out['v'] = (

@@ -65,7 +65,7 @@ def main() -> None:
     np.show(':d', 'Combined Markups')
     np.show(name, age, city, markup=':nv2')
 
-    np.show(':d2v7', 'End')
+    np.show(':d2v7t', 'End')
 
 
 if __name__ == '__main__':

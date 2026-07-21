@@ -19,3 +19,5 @@ from .separator import FuncnameSeparator
 from .separator import InBodySeparator
 from .source import Source
 from .text import Text
+from .time import TimeDuration
+from .time import TimeStamp

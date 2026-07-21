@@ -23,9 +23,11 @@ scope_mgr = ScopeManager()
 
 @contextmanager
 def scope(name: str = '') -> tp.Generator[str, None, None]:
+    from .timer import timer
     if not name:
         name = str(uuid4())[:8]
     scope_mgr.push(name)
+    timer.init_scope_timer(name)
     try:
         yield name
     finally:

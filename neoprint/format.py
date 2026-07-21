@@ -112,9 +112,16 @@ def format_list(
 
     before_body_parts = []
 
-    if marks['i']:
+    if marks['i']:  # tuple[int index, str color]
         idx, color = marks['i']
         before_body_parts.append(to.Index(idx, color))
+        before_body_parts.append(to.Space())
+
+    if marks['t']:  # union[float, tuple[float start, float end]]
+        if isinstance(marks['t'], float):
+            before_body_parts.append(to.TimeStamp(marks['t']))
+        else:
+            before_body_parts.append(to.TimeDuration(*marks['t']))
         before_body_parts.append(to.Space())
 
     # --------------------------------------------------------------------------
@@ -238,6 +245,9 @@ def format_list(
             for part in before_body_parts:
                 if isinstance(part, to.Index):
                     part.style = 'dim'
+                elif isinstance(part, to.TimeStamp):
+                    part.color = global_color
+                    part.style = global_style
         for part in body_parts:
             if part.editable:
                 # dprint(part, global_color, global_style)

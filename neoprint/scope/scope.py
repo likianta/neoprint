@@ -2,6 +2,8 @@ import typing as tp
 from contextlib import contextmanager
 from uuid import uuid4
 
+from ..frame import FrameInfo
+
 
 class ScopeManager:
     def __init__(self) -> None:
@@ -24,6 +26,7 @@ scope_mgr = ScopeManager()
 @contextmanager
 def scope(name: str = '') -> tp.Generator[str, None, None]:
     from .timer import timer
+
     if not name:
         name = str(uuid4())[:8]
     scope_mgr.push(name)
@@ -32,3 +35,9 @@ def scope(name: str = '') -> tp.Generator[str, None, None]:
         yield name
     finally:
         scope_mgr.pop(name)
+
+
+# DELETE?
+def frame_to_scope_key(frame: FrameInfo, parent_level: int = 0) -> str:
+    target_frame = frame.get_parent(parent_level) if parent_level else frame
+    return '{}:{}'.format(target_frame.file_path, target_frame.function_name)

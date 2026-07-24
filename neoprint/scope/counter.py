@@ -1,7 +1,6 @@
 from collections import defaultdict
 from random import choices
 
-from .scope import scope_mgr
 from ..frame import FrameInfo
 
 
@@ -26,8 +25,7 @@ class Counter:
         self._global_index += 1
         return self._global_index
 
-    def update_scoped_index(self, uid: str) -> int:
-        key = scope_mgr.current_scope or uid
+    def update_scoped_index(self, key: str) -> int:
         self._scoped_indexes[key] += 1
         return self._scoped_indexes[key]
 

@@ -4,8 +4,8 @@ import typing as tp
 from .config import config
 from .frame import FrameInfo
 from .scope import counter
+from .scope import scope_mgr
 from .scope import timer
-from .scope.scope import scope_mgr
 
 
 class T:
@@ -161,7 +161,7 @@ class MarkupAnalyzer:
             'd': 1,
             'e': 2,
             'f': 1,
-            'i': 1 if scope_mgr.current_scope is None else 2,
+            'i': 1,
             'l': 1,
             'n': 1,
             'p': 1,
@@ -221,7 +221,8 @@ class MarkupAnalyzer:
                 _frame.get_parent(marks['p']) if marks['p'] else _frame
             )
             cnt = counter.update_scoped_index(
-                '{}:{}'.format(
+                scope_mgr.current_scope
+                or '{}:{}'.format(
                     target_frame.file_path, target_frame.function_name
                 )
             )

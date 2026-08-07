@@ -104,7 +104,9 @@ def format_list(
 
     result = []
 
-    if not marks['s']:
+    if marks['s']:
+        head_parts = []
+    else:
         head_parts = get_head_parts(target_frame)
         result.extend(head_parts)
 

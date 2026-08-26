@@ -1,7 +1,7 @@
 import re
 import textwrap
 import textwrap as tw
-import typing as t
+import typing as tp
 from functools import cache
 from types import FunctionType
 
@@ -49,7 +49,7 @@ class ExpandedObject(TextObjectGroup):
     def check_expandable(cls, obj: TextObject) -> bool:
         return isinstance(obj, (Text, NamedVariable))
 
-    def __init__(self, obj: t.Union['Text', 'NamedVariable']) -> None:
+    def __init__(self, obj: tp.Union[Text, NamedVariable]) -> None:
         super().__init__()
         self._origin = obj._origin
 
@@ -103,8 +103,8 @@ class ExpandedObject(TextObjectGroup):
     #     )
 
     def _expand_lines(
-        self, element: t.Any, _level: int = 0
-    ) -> t.Iterator[TextObject]:
+        self, element: tp.Any, _level: int = 0
+    ) -> tp.Iterator[TextObject]:
         def row(*args):
             yield self._indent(_level)
             yield from args
@@ -206,7 +206,7 @@ class ExpandedObject(TextObjectGroup):
     def _indent(self, level: int) -> Indent:
         return ExpandedObject.Indent(level)
 
-    def _pretty_format(self, element: t.Any) -> TextObject:
+    def _pretty_format(self, element: tp.Any) -> TextObject:
         """
         a "single-line" version of `_expand_lines`.
         """
@@ -236,15 +236,15 @@ class ExpandedObject(TextObjectGroup):
                     else text
                 )
 
-    def _quote_string(self, s: t.Any) -> str:
+    def _quote_string(self, s: tp.Any) -> str:
         return NamedVariable.quote_string(s) if isinstance(s, str) else str(s)
 
 
 class ExpandedObjectGroup(TextObjectGroup):
     def __init__(
         self,
-        body_parts: t.Sequence[TextObject],
-        non_body_parts: t.Sequence[TextObject],
+        body_parts: tp.Sequence[TextObject],
+        non_body_parts: tp.Sequence[TextObject],
     ) -> None:
         super().__init__()
         self._objs.append(LineBreak())
@@ -269,18 +269,19 @@ class ExpandedObjectGroup(TextObjectGroup):
                 self._objs.append(element)
                 i += 1
 
-        can_be_single_line = True
-        available_space = console.width - sum(len(x) for x in non_body_parts)
-        for x in self._objs[1:]:
-            if isinstance(x, ExpandedObject):
-                text = x.render(color_code_scheme='plain', compact=True)
-            else:
-                text = x.render(color_code_scheme='plain')
-            available_space -= len(text)
-            if available_space <= 0:
-                can_be_single_line = False
-                break
-        self._single_line = can_be_single_line
+        # can_be_single_line = True
+        # available_space = console.width - sum(len(x) for x in non_body_parts)
+        # for x in self._objs[1:]:
+        #     if isinstance(x, ExpandedObject):
+        #         text = x.render(color_code_scheme='plain', compact=True)
+        #     else:
+        #         text = x.render(color_code_scheme='plain')
+        #     available_space -= len(text)
+        #     if available_space <= 0:
+        #         can_be_single_line = False
+        #         break
+        # self._single_line = can_be_single_line
+        self._single_line = False  # FIXME
 
     def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         if self._single_line:
@@ -304,7 +305,7 @@ class ExpandedObjectGroup(TextObjectGroup):
 
 
 class SpecialExpandedObject(TextObjectGroup):
-    _form_type: t.Literal['transform', 'kv_table', 'table']
+    _form_type: tp.Literal['transform', 'kv_table', 'table']
 
     @classmethod
     def check_expandable(cls, obj: TextObject) -> bool:
@@ -350,7 +351,7 @@ class SpecialExpandedObject(TextObjectGroup):
                     return True
         return False
 
-    def __init__(self, obj: t.Union['Text', 'NamedVariable']) -> None:
+    def __init__(self, obj: tp.Union['Text', 'NamedVariable']) -> None:
         super().__init__()
         origin = obj._origin
         if isinstance(origin, str):

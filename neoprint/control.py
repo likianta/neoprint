@@ -26,9 +26,16 @@ def setup(scope: str = 'this_package') -> None:
         scope,
     )
     frame = get_last_frame()
-    _effected_packages.add(frame.package_name)
-    if getattr(builtins, 'print') is bprint:
-        setattr(builtins, 'print', _variable_print)
+    if frame.package_name:
+        _effected_packages.add(frame.package_name)
+        if getattr(builtins, 'print') is bprint:
+            setattr(builtins, 'print', _variable_print)
+    else:
+        show(
+            'cannot setup neoprint: no package name found, maybe you are in '
+            '<string> evaluation?',
+            ':pv8',
+        )
 
 
 def unload() -> None:

@@ -9,7 +9,7 @@ from ..render import render
 class Source(TextObject):
     def __init__(self, frame: FrameInfo) -> None:
         self._path = frame.file_path
-        self._pname = '[{}]'.format(frame.package_name)
+        self._pname = '[{}]'.format(frame.package_name or 'N/A')
         self._fname = frame.file_name
         if config.sourcemap_alignment == 'left':
             self._lineno = self._pad_lineno(frame.line_number)

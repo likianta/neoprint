@@ -76,7 +76,9 @@ class FrameInfo:
     def refresh(self) -> None:
         frame = self._frame
         self.function_name = frame.f_code.co_name
-        self.package_name = frame.f_globals['__name__'].split('.', 1)[0]
+        self.package_name = frame.f_globals.get('__name__', '.').split('.', 1)[
+            0
+        ]
         self.file_path = (
             frame.f_globals.get('__file__', frame.f_code.co_filename)
             #   note:

@@ -118,47 +118,8 @@ wheels = [
 
 [[package]]
 name = "lk-utils"
-version = "3.8.0a1"
+version = "3.8.1"
 source = { registry = "http://localhost:2131/" }
-resolution-markers = [
-    "python_full_version < '3.10'",
-]
-dependencies = [
-    { name = "argsense", marker = "python_full_version < '3.10'" },
-    { name = "neoprint", marker = "python_full_version < '3.10'" },
-    { name = "psutil", marker = "python_full_version < '3.10'" },
-    { name = "pyyaml", marker = "python_full_version < '3.10'" },
-    { name = "rich", marker = "python_full_version < '3.10'" },
-]
-wheels = [
-    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.0a1-py3-none-any.whl" },
-]
-
-[[package]]
-name = "lk-utils"
-version = "3.8.0a2"
-source = { registry = "http://localhost:2131/" }
-resolution-markers = [
-    "python_full_version >= '3.10' and python_full_version < '3.12'",
-]
-dependencies = [
-    { name = "argsense", marker = "python_full_version >= '3.10' and python_full_version < '3.12'" },
-    { name = "neoprint", marker = "python_full_version >= '3.10' and python_full_version < '3.12'" },
-    { name = "psutil", marker = "python_full_version >= '3.10' and python_full_version < '3.12'" },
-    { name = "pyyaml", marker = "python_full_version >= '3.10' and python_full_version < '3.12'" },
-    { name = "rich", marker = "python_full_version >= '3.10' and python_full_version < '3.12'" },
-]
-wheels = [
-    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.0a2-py3-none-any.whl" },
-]
-
-[[package]]
-name = "lk-utils"
-version = "3.8.0b0"
-source = { registry = "http://localhost:2131/" }
-resolution-markers = [
-    "python_full_version >= '3.12'",
-]
 dependencies = [
     { name = "argsense", marker = "python_full_version >= '3.12'" },
     { name = "neoprint", marker = "python_full_version >= '3.12'" },
@@ -167,7 +128,7 @@ dependencies = [
     { name = "rich", marker = "python_full_version >= '3.12'" },
 ]
 wheels = [
-    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.0b0-py3-none-any.whl" },
+    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.1-py3-none-any.whl" },
 ]
 
 [[package]]
@@ -224,7 +185,7 @@ wheels = [
 
 [[package]]
 name = "neoprint"
-version = "0.1.10a1"
+version = "0.1.10"
 source = { editable = "." }
 dependencies = [
     { name = "rich" },
@@ -235,9 +196,7 @@ dev = [
     { name = "argsense" },
     { name = "faker", marker = "python_full_version >= '3.12'" },
     { name = "ipython", marker = "python_full_version >= '3.12'" },
-    { name = "lk-utils", version = "3.8.0a1", source = { registry = "http://localhost:2131/" }, marker = "python_full_version < '3.10'" },
-    { name = "lk-utils", version = "3.8.0a2", source = { registry = "http://localhost:2131/" }, marker = "python_full_version >= '3.10' and python_full_version < '3.12'" },
-    { name = "lk-utils", version = "3.8.0b0", source = { registry = "http://localhost:2131/" }, marker = "python_full_version >= '3.12'" },
+    { name = "lk-utils", marker = "python_full_version >= '3.12'" },
     { name = "objprint" },
     { name = "rich" },
 ]
@@ -250,7 +209,7 @@ dev = [
     { name = "argsense", specifier = ">=1.1.3a1,<1.2.0", index = "http://localhost:2131/" },
     { name = "faker", marker = "python_full_version >= '3.12'", specifier = ">=40.8.0" },
     { name = "ipython", marker = "python_full_version >= '3.12'", specifier = ">=9.15.0" },
-    { name = "lk-utils", specifier = ">=3.6.1b1", index = "http://localhost:2131/" },
+    { name = "lk-utils", marker = "python_full_version >= '3.12'", specifier = ">=3.8.1", index = "http://localhost:2131/" },
     { name = "objprint", specifier = ">=0.3.0" },
     { name = "rich", specifier = ">=15.0.0" },
 ]

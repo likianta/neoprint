@@ -1,4 +1,5 @@
 import typing as tp
+
 from . import text_object as to
 from .config import config
 from .console import console
@@ -26,9 +27,8 @@ class Progress:
         # for modern terminal, we use same char for filled and unfilled but
         # different colors. for legacy terminal or debug mode, we use different
         # chars for filled and unfilled.
-        # TODO: detect legacy terminal.
-        self.filled_char = '─'
-        self.unfilled_char = '─'
+        self.filled_char = '█' if config.legacy_windows else '─'
+        self.unfilled_char = '░' if config.legacy_windows else '─'
         self._debug_filled_char = '█'
         self._debug_unfilled_char = '░'
 
@@ -127,8 +127,9 @@ class Progress:
             body_parts.append(to.Space())
             left_space -= 1
             body_parts.append(
-                to.Text(item[:left_space]) if isinstance(item, str) else 
-                to.Text(item._origin[:left_space], item.color, item.style)
+                to.Text(item[:left_space])
+                if isinstance(item, str)
+                else to.Text(item._origin[:left_space], item.color, item.style)
             )
 
         line = ''.join(

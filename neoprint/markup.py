@@ -21,7 +21,7 @@ class T:
             'p': int,  # parent layer
             'r': int,  # rich style
             's': int,  # short / simple / single line
-            't': int,  # timer / timestamp / tabular
+            't': int,  # timer / timestamp
             'v': int,  # verbosity / log level
         },
         total=False,
@@ -74,9 +74,9 @@ class Mark:
             t1  time stamp
         *   t2  time since last timer (relative)
             t3  time since last reset (absolute)
-            v0  normal
-        *   v1  trace / debug / hint (gray)
-            v2  info (blue)
+        *   v0  debug (gray)
+            v1  negative info (magenta)
+            v2  positive info (blue)
             v3  weak success (green dim)
             v4  success (green)
             v5  weak warning (yellow dim)
@@ -137,9 +137,9 @@ class Mark:
     TIME_SINCE_LAST_TIME = 2  # :t2
     TIME_SINCE_START_TIME = 3  # :t3
 
-    NORMAL = 0  # :v0
-    DEBUG = 1  # :v1
-    INFO = 2  # :v2
+    DEBUG = 0  # :v0
+    NEGATIVE_INFO = 1  # :v1
+    POSITIVE_INFO = 2  # :v2
     WEAK_SUCCESS = 3  # :v3
     SUCCESS = 4  # :v4
     WEAK_WARNING = 5  # :v5
@@ -168,7 +168,7 @@ class MarkupAnalyzer:
             'r': 1,
             's': 1,
             't': 2,
-            'v': 1,
+            'v': 0,
         }
         out = {}
         for m in self._mark_pattern_1.findall(markup) or ():
@@ -268,10 +268,12 @@ class MarkupAnalyzer:
         else:
             raise Exception(f':t{marks["t"]}')
 
-        if marks['v']:
+        if marks['v'] == -1:
+            out['v'] = None
+        else:
             out['v'] = (
-                (0, 'default', ''),
-                (1, 'bright_black', ''),
+                (0, 'bright_black', ''),
+                (1, 'magenta', ''),
                 (2, 'cyan', ''),
                 (3, 'green', 'dim'),
                 (4, 'green', ''),
@@ -281,19 +283,17 @@ class MarkupAnalyzer:
                 (8, 'red', ''),
                 ...,  # TODO: (9, 'white on red', '')
             )[marks['v']]
-        else:
-            out['v'] = None
 
         return out
 
     def postfill(self, marks: T.Marks) -> T.Marks:
         """
-        fill in the missing marks
+        Fill the missing marks.
         """
         for char in ('d', 'e', 'f', 'i', 'l', 'n', 'p', 'r', 's', 't', 'v'):
             if char not in marks:
                 marks[char] = (  # type: ignore
-                    -1 if char in ('i', 'n', 't') else 0
+                    -1 if char in ('i', 'n', 't', 'v') else 0
                 )
         return marks
 

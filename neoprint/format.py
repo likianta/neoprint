@@ -243,7 +243,7 @@ def format_list(
             Mark.WEAK_SUCCESS,
             Mark.WEAK_WARNING,
             Mark.WEAK_ERROR,
-        ):
+        ):  # if value in dimmed colors, also dim the before_body_parts.
             for part in before_body_parts:
                 if isinstance(part, to.Index):
                     part.style = 'dim'

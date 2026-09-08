@@ -148,6 +148,18 @@ def translate(bbcode_text: str) -> tp.Iterator[tp.Tuple[str, T.Color, T.Style]]:
     i = 0
     length = len(bbcode_text)
 
+    c_to_color = dict(zip(ANSI_COLORS.keys(), ANSI_COLORS.keys()))  # kv as-is.
+    s_to_style = {  # abbr to normal.
+        'bold': 'bold',
+        'dim': 'dim',
+        'nodim': '',
+        'italic': 'italic',
+        'underline': 'underline',
+        'b': 'bold',
+        'i': 'italic',
+        'u': 'underline',
+    }
+
     while i < length:
         ch = bbcode_text[i]
         if ch == '\\' and i + 1 < length and bbcode_text[i + 1] == '[':
@@ -173,20 +185,6 @@ def translate(bbcode_text: str) -> tp.Iterator[tp.Tuple[str, T.Color, T.Style]]:
                     new_color = stack[-1][0]
                     new_style = stack[-1][1]
                     valid_tag = True
-
-                    c_to_color = dict(
-                        zip(ANSI_COLORS.keys(), ANSI_COLORS.keys())
-                    )
-                    s_to_style = {
-                        'bold': 'bold',
-                        'dim': 'dim',
-                        'italic': 'italic',
-                        'underline': 'underline',
-                        'b': 'bold',
-                        'i': 'italic',
-                        'u': 'underline',
-                    }
-
                     for part in tag.split():
                         if part in c_to_color:
                             new_color = c_to_color[part]

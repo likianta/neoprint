@@ -1,4 +1,4 @@
-import typing as t
+import typing as tp
 
 from ..render import T
 
@@ -20,11 +20,15 @@ class TextObject:
 class TextObjectGroup(TextObject):
     editable: bool = True
     _color: T.Color = 'default'
-    _objs: t.List[TextObject]
+    _objs: tp.List[TextObject]
     _style: T.Style = ''
 
     def __init__(self) -> None:
         self._objs = []
+
+    @property
+    def children(self) -> tp.List[TextObject]:
+        return self._objs
 
     @property
     def color(self) -> T.Color:

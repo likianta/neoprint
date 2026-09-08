@@ -33,7 +33,7 @@ def bbcode_to_anscii() -> None:
 @cli
 def nested_bbcode() -> None:
     np.show('[green]AAA [dim]BBB[/] [default dim]CCC[/] DDD[/]', ':r')
-    np.show('[red dim]EEE [default]FFF[/] GGG[/]', ':r')
+    np.show('[red dim]EEE [default nodim]FFF[/] GGG[/]', ':r')
     np.show('HHH [dim]III[/] [green]JJJ[/]', ':rv8')
 
 

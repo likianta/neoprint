@@ -28,7 +28,10 @@ def setup(package_name: tp.Optional[str] = None) -> None:
             import neoprint as np
             np.setup(__package__)
     """
-    if not package_name:
+    if package_name:
+        # NOTE: we collect only the top-level names.
+        package_name = package_name.split('.')[0]
+    else:
         package_name = get_last_frame().package_name
         if not package_name:
             show(
@@ -51,15 +54,15 @@ def unload() -> None:
 
 def _variable_print(*args, **kwargs) -> None:
     frame = get_last_frame(1 + internal_state['parent_level'])
-    # dprint(
-    #     'variable print',
-    #     '{} ({})'.format(
-    #         frame.package_name,
-    #         'hit' if frame.package_name in _effected_packages else 'miss',
-    #     ),
-    #     frame.file_path,
-    #     frame.line_number,
-    # )
+    dprint(
+        'variable print',
+        '{} ({})'.format(
+            frame.package_name,
+            'hit' if frame.package_name in _effected_packages else 'miss',
+        ),
+        frame.file_path,
+        frame.line_number,
+    )
     if frame.package_name in _effected_packages:
         show(*args, _frame=frame, **kwargs)
     else:

@@ -4,10 +4,11 @@ from contextlib import contextmanager
 
 from .config import internal_state
 from .console import bprint
+from .console import dprint
 from .frame import get_last_frame
 from .show import show
 
-_effected_packages = set()
+_effected_packages: tp.Set[str] = {'__main__'}
 
 
 @contextmanager
@@ -20,22 +21,27 @@ def elevate_parent_level() -> tp.Generator:
         # assert internal_state['parent_level'] >= 0
 
 
-def setup(scope: str = 'this_package') -> None:
-    assert scope == 'this_package', (
-        'only "this_package" scope is supported for now',
-        scope,
-    )
-    frame = get_last_frame()
-    if frame.package_name:
-        _effected_packages.add(frame.package_name)
-        if getattr(builtins, 'print') is bprint:
-            setattr(builtins, 'print', _variable_print)
-    else:
-        show(
-            'cannot setup neoprint: no package name found, maybe you are in '
-            '<string> evaluation?',
-            ':pv8',
-        )
+def setup(package_name: tp.Optional[str] = None) -> None:
+    """
+    Usage:
+        foo/__init__.py
+            import neoprint as np
+            np.setup(__package__)
+    """
+    if not package_name:
+        package_name = get_last_frame().package_name
+        if not package_name:
+            show(
+                'cannot setup neoprint: no package name found, are you in '
+                '<string> evaluation?',
+                ':pv8',
+            )
+            return
+
+    dprint('watch prints to package', package_name)
+    _effected_packages.add(package_name)
+    if getattr(builtins, 'print') is bprint:
+        setattr(builtins, 'print', _variable_print)
 
 
 def unload() -> None:
@@ -45,6 +51,15 @@ def unload() -> None:
 
 def _variable_print(*args, **kwargs) -> None:
     frame = get_last_frame(1 + internal_state['parent_level'])
+    # dprint(
+    #     'variable print',
+    #     '{} ({})'.format(
+    #         frame.package_name,
+    #         'hit' if frame.package_name in _effected_packages else 'miss',
+    #     ),
+    #     frame.file_path,
+    #     frame.line_number,
+    # )
     if frame.package_name in _effected_packages:
         show(*args, _frame=frame, **kwargs)
     else:

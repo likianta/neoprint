@@ -34,21 +34,23 @@ class TimeDuration(TextObject):
 
     def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         return render(
+            ('[', 'default', ''),
             (self._time_s, self._color_s, ''),
             (' -> ', 'default', 'dim'),
             (self._time_e, self._color_e, 'dim' if self._too_short else ''),
             (
-                ' ({:>5})'.format(self._time_d),
+                '{:>8}'.format('({})'.format(self._time_d)),
                 self._color_d,
                 'dim' if self._too_short else '',
             ),
+            (']', 'default', ''),
             color_code_scheme=color_code_scheme,
         )
 
 
 class TimeStamp(TextObject):
     def __init__(self, current_time: float) -> None:
-        self._timestamp = pretty_time(current_time)
+        self._timestamp = '[{}]'.format(pretty_time(current_time))
 
     def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
         return render(
@@ -91,4 +93,4 @@ def pretty_duration(duration: float) -> str:
 
 
 def pretty_time(time: float) -> str:
-    return strftime('[%H:%M:%S]', localtime(time))
+    return strftime('%H:%M:%S', localtime(time))

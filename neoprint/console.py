@@ -7,7 +7,8 @@ from rich.console import Console as RichConsole
 
 from .debugger import debugger
 
-_stdout = sys.stdout
+# _stdout = sys.stdout
+_builtin_print = builtins.print
 
 
 class Console:
@@ -34,9 +35,7 @@ class Console:
     def print(self, text: str, end: str = '\n', flush: bool = False) -> None:
         if debugger.enabled:
             debugger.output.append(text)
-        _stdout.write(text + end)
-        if flush:
-            _stdout.flush()
+        _builtin_print(text, end=end, flush=flush)
 
 
 class _LegacyRichConsole(RichConsole):

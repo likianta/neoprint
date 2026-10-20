@@ -17,6 +17,8 @@ main.py:3   | Multiple; arguments; are; semicolon-separated
 main.py:4   | 123; 456; mixed types; True; False; None
 ```
 
+![Semicolon-joined arguments](images/basic-arguments.png)
+
 Booleans are highlighted: `True` is green, `False` is red, `None` is magenta.
 
 If you want a different join style, pass `:l` (one value per line, see

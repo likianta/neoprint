@@ -53,6 +53,8 @@ main.py:6   |
 The panel includes the source snippet of every frame, with the failing line
 marked.
 
+![Traceback panel](../images/exception-panel.png)
+
 ## `:e3` — traceback with locals
 
 Same as `:e2`, plus the local variables of each frame:

@@ -27,6 +27,8 @@ np.show('hello world')
 main.py:3   | hello world
 ```
 
+![Hello world output](images/hello-world.png)
+
 The message is made of two parts:
 
 - a **head** — `main.py:3` — showing where the call happened,

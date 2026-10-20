@@ -21,6 +21,8 @@ with np.Progress(total=len(names)) as prog:
 main.py:6   | ──────────────────────── [  3/3] Carol
 ```
 
+![Progress bar](../images/progress-bar.png)
+
 The bar fills with `─`, the counter shows `index/total`, and `update(label)`
 prints a label on the right, truncated to the remaining width. The head
 (`main.py:6`) comes from the `with` line.
@@ -58,6 +60,8 @@ Setting `total` after the first `update()` raises `ValueError`.
 with np.Progress(total=100, indicator_style='decimal', color='green') as p:
     ...
 ```
+
+![Progress indicators](../images/progress-indicators.png)
 
 ## `np.progress`
 

@@ -39,6 +39,8 @@ np.show(':r1', '[red bold]outer [green]green keeps bold[/][/]')
 
 To print a literal `[`, escape it: `\[`.
 
+![Rich text styles](../images/rich-text-styles.png)
+
 ## `:r2` — tailored layout
 
 `:r2` is an alias of `:l2`: it applies the special layouts described in

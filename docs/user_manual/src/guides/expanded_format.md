@@ -49,6 +49,8 @@ main.py:5   |
   }
 ```
 
+![Expanded tree](../images/expanded-tree.png)
+
 Strings are quoted, trailing commas are added, and the indentation is
 controlled by `np.config(multiline_indent=N)` (default `2`).
 
@@ -109,6 +111,8 @@ main.py:2   |
 ```
 
 (The left side is red, the right side green, the label stays default-colored.)
+
+![Tailored layouts](../images/expanded-layouts.png)
 
 ## Shorthand functions
 

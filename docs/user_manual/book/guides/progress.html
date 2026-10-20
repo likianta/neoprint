@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-879bedc7.js";
+            window.path_to_searchindex_js = "../searchindex-404a9e62.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-113366de.js"></script>
@@ -191,6 +191,7 @@ with np.Progress(total=len(names)) as prog:
 </code></pre>
 <pre><code class="language-text">main.py:6   | ──────────────────────── [  3/3] Carol
 </code></pre>
+<p><img src="../images/progress-bar.png" alt="Progress bar"></p>
 <p>The bar fills with <code>─</code>, the counter shows <code>index/total</code>, and <code>update(label)</code>
 prints a label on the right, truncated to the remaining width. The head
 (<code>main.py:6</code>) comes from the <code>with</code> line.</p>
@@ -224,6 +225,7 @@ or as a property before the first <code>update()</code>:</p>
 <pre><code class="language-python">with np.Progress(total=100, indicator_style='decimal', color='green') as p:
     ...
 </code></pre>
+<p><img src="../images/progress-indicators.png" alt="Progress indicators"></p>
 <h2 id="npprogress-1"><a class="header" href="#npprogress-1"><code>np.progress</code></a></h2>
 <p><code>np.progress(iterable)</code> wraps an iterable in a <code>Progress</code> block and yields its
 items. For sized containers the total is inferred; for generators pass it

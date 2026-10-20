@@ -1,6 +1,6 @@
 # 你是否需要一个更好的 Python 打印 -- Neoprint 库
 
-现代化的终端给了控制台输出更多渲染特性: 从连字符号, 真彩文字, 到动态效果. 这些都在提升程序开发者的体验, 总的来说, 这是一种前卫且愉悦的视觉体验.
+现代化的终端给了控制台输出更多渲染特性: 从连字符号, 真彩文字, 到动态效果. 这些都在提升程序开发者的体验, 总的来说, 这是一种前卫且愉悦的视觉感受.
 
 因此, 颜色是控制台输出的重要的组成部分. 以 IPython 为例, 有语法高亮和没有高亮的感受是不一样的:
 
@@ -47,6 +47,6 @@ from .foo import bar
 
 ## 了解更多
 
-Neoprint 是一个开源项目, 你可以在 GitHub 中找到它: https://github.com/likianta/neoprint.
+Neoprint 是一个开源项目, 你可以在 GitHub 中找到它: <https://github.com/likianta/neoprint>.
 
-完整的文档点此访问: https://likianta.github.io/neoprint/
+完整的文档点此访问: <https://likianta.github.io/neoprint/>

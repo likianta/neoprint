@@ -17,6 +17,8 @@ np.show(name, age, ':n')
 main.py:4   | name = "Alice"; age = 30
 ```
 
+![Neoprint output](images/index-hero.png)
+
 The same line with built-in `print` would be a plain `Alice 30`, invented by
 you and understood by no one six months later.
 

@@ -44,6 +44,8 @@ np.show(box.value, ':n')
 main.py:7   | box.value = 42
 ```
 
+![Variable names and expressions](../images/varnames.png)
+
 ## Enable it globally
 
 If you want variable names on every call without repeating the mark, turn on

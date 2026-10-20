@@ -1,12 +1,14 @@
 [project]
 name = "neoprint"
-version = "1.0.0a0"
+version = "1.0.0b0"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = ["rich>=14.0.0"]
+dependencies = [
+    "rich>=14.0.0",
+]
 
 [build-system]
 build-backend = "hatchling.build"
@@ -69,6 +71,6 @@ name = "likianta"
 url = "http://localhost:2131/"
 explicit = true
 
-[tool.uv.sources]
-argsense = { index = "likianta" }
-lk-utils = { index = "likianta" }
+# [tool.uv.sources]
+# argsense = { index = "likianta" }
+# lk-utils = { index = "likianta" }

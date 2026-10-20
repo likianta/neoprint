@@ -6,10 +6,12 @@ to follow without writing `print(i, ...)`.
 ```python
 import neoprint as np
 
-np.show(':i', 'first')
-np.show(':i', 'second')
-np.show(':i', 'third')
+np.show(':i2', 'first')
+np.show(':i2', 'second')
+np.show(':i2', 'third')
 ```
+
+![Index counters](../images/index-counter.png)
 
 Every counter is rendered as `[n]` before the body, in a color derived from its
 frame, so values stand out from the text.
@@ -98,6 +100,8 @@ with np.scope(name='download'):
 with np.scope():                 # anonymous scope
     np.show(':i2', 'anonymous 1')
 ```
+
+![Custom scopes](../images/index-scopes.png)
 
 Scopes also give `:t3` its own timeline; see [Timing](./timing.md).
 

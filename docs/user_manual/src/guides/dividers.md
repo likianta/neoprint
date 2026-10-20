@@ -31,6 +31,8 @@ np.show(':d1', 'thin')
 np.show(':d2', 'thick')
 ```
 
+![Divider variants](../images/dividers.png)
+
 ## Interaction with other marks
 
 - `:d` cannot be combined with `:l` — a divider needs a single-line body.

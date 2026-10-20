@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-879bedc7.js";
+            window.path_to_searchindex_js = "searchindex-404a9e62.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-113366de.js"></script>
@@ -189,6 +189,7 @@ np.show(name, age, ':n')
 </code></pre>
 <pre><code class="language-text">main.py:4   | name = "Alice"; age = 30
 </code></pre>
+<p><img src="images/index-hero.png" alt="Neoprint output"></p>
 <p>The same line with built-in <code>print</code> would be a plain <code>Alice 30</code>, invented by
 you and understood by no one six months later.</p>
 <h2 id="what-you-get"><a class="header" href="#what-you-get">What you get</a></h2>
@@ -257,6 +258,7 @@ np.show('hello world')
 </code></pre>
 <pre><code class="language-text">main.py:3   | hello world
 </code></pre>
+<p><img src="images/hello-world.png" alt="Hello world output"></p>
 <p>The message is made of two parts:</p>
 <ul>
 <li>a <strong>head</strong> — <code>main.py:3</code> — showing where the call happened,</li>
@@ -318,6 +320,7 @@ np.show(123, 456, 'mixed types', True, False, None)
 <pre><code class="language-text">main.py:3   | Multiple; arguments; are; semicolon-separated
 main.py:4   | 123; 456; mixed types; True; False; None
 </code></pre>
+<p><img src="images/basic-arguments.png" alt="Semicolon-joined arguments"></p>
 <p>Booleans are highlighted: <code>True</code> is green, <code>False</code> is red, <code>None</code> is magenta.</p>
 <p>If you want a different join style, pass <code>:l</code> (one value per line, see
 <a href="#expanded-formatting">Expanded Formatting</a>) or format the string
@@ -654,6 +657,7 @@ np.show(':v8', 'v8 error')
 </tbody>
 </table>
 </div>
+<p><img src="images/verbosity-levels.png" alt="Verbosity levels"></p>
 <p>The color covers the whole body of the message, not the source head.</p>
 <h2 id="shorthand-functions"><a class="header" href="#shorthand-functions">Shorthand functions</a></h2>
 <p>For the levels you use most, import the ready-made helpers:</p>
@@ -712,6 +716,7 @@ np.show(box.value, ':n')
 </code></pre>
 <pre><code class="language-text">main.py:7   | box.value = 42
 </code></pre>
+<p><img src="images/varnames.png" alt="Variable names and expressions"></p>
 <h2 id="enable-it-globally"><a class="header" href="#enable-it-globally">Enable it globally</a></h2>
 <p>If you want variable names on every call without repeating the mark, turn on
 the configuration switch:</p>
@@ -782,6 +787,7 @@ level by two spaces:</p>
     ],
   }
 </code></pre>
+<p><img src="images/expanded-tree.png" alt="Expanded tree"></p>
 <p>Strings are quoted, trailing commas are added, and the indentation is
 controlled by <code>np.config(multiline_indent=N)</code> (default <code>2</code>).</p>
 <h2 id="l2--tailored-layouts"><a class="header" href="#l2--tailored-layouts"><code>:l2</code> — tailored layouts</a></h2>
@@ -822,6 +828,7 @@ main.py:2   |
   status: draft -&gt; published
 </code></pre>
 <p>(The left side is red, the right side green, the label stays default-colored.)</p>
+<p><img src="images/expanded-layouts.png" alt="Tailored layouts"></p>
 <h2 id="shorthand-functions-1"><a class="header" href="#shorthand-functions-1">Shorthand functions</a></h2>
 <p><code>np.expand(x)</code> is <code>np.show(x, ':l')</code>, and <code>np.expand2(x)</code> is
 <code>np.show(x, ':l2')</code>:</p>
@@ -860,6 +867,7 @@ enclosing tag:</p>
 np.show(':r1', '[red bold]outer [green]green keeps bold[/][/]')
 </code></pre>
 <p>To print a literal <code>[</code>, escape it: <code>\[</code>.</p>
+<p><img src="images/rich-text-styles.png" alt="Rich text styles"></p>
 <h2 id="r2--tailored-layout"><a class="header" href="#r2--tailored-layout"><code>:r2</code> — tailored layout</a></h2>
 <p><code>:r2</code> is an alias of <code>:l2</code>: it applies the special layouts described in
 <a href="#expanded-formatting">Expanded Formatting</a> (grids, key-value tables,
@@ -896,10 +904,11 @@ inline markup. It is exported at the top level as <code>np.Text</code>.</p>
 to follow without writing <code>print(i, ...)</code>.</p>
 <pre><code class="language-python">import neoprint as np
 
-np.show(':i', 'first')
-np.show(':i', 'second')
-np.show(':i', 'third')
+np.show(':i2', 'first')
+np.show(':i2', 'second')
+np.show(':i2', 'third')
 </code></pre>
+<p><img src="images/index-counter.png" alt="Index counters"></p>
 <p>Every counter is rendered as <code>[n]</code> before the body, in a color derived from its
 frame, so values stand out from the text.</p>
 <h2 id="the-four-counters"><a class="header" href="#the-four-counters">The four counters</a></h2>
@@ -965,6 +974,7 @@ deliberately not share — a counter:</p>
 with np.scope():                 # anonymous scope
     np.show(':i2', 'anonymous 1')
 </code></pre>
+<p><img src="images/index-scopes.png" alt="Custom scopes"></p>
 <p>Scopes also give <code>:t3</code> its own timeline; see <a href="#timing">Timing</a>.</p>
 <h2 id="colors"><a class="header" href="#colors">Colors</a></h2>
 <p>Counter colors are generated per source frame from a bright hex palette and
@@ -989,6 +999,7 @@ np.show(':t', 'connected')
 main.py:7   | [16:56:11 -&gt; 16:56:11 (200ms)] loaded config
 main.py:9   | [16:56:11 -&gt; 16:56:13 (500ms)] connected
 </code></pre>
+<p><img src="images/timing.png" alt="Timing output"></p>
 <p>The prefix shows the previous timestamp, the current one, and the delta.
 Formatting scales automatically: milliseconds for short gaps, seconds,
 minutes, hours for long ones.</p>
@@ -1055,6 +1066,7 @@ main.py:5   | another line
 <pre><code class="language-python">np.show(':d1', 'thin')
 np.show(':d2', 'thick')
 </code></pre>
+<p><img src="images/dividers.png" alt="Divider variants"></p>
 <h2 id="interaction-with-other-marks"><a class="header" href="#interaction-with-other-marks">Interaction with other marks</a></h2>
 <ul>
 <li><code>:d</code> cannot be combined with <code>:l</code> — a divider needs a single-line body.
@@ -1106,6 +1118,7 @@ renderer:</p>
 </code></pre>
 <p>The panel includes the source snippet of every frame, with the failing line
 marked.</p>
+<p><img src="images/exception-panel.png" alt="Traceback panel"></p>
 <h2 id="e3--traceback-with-locals"><a class="header" href="#e3--traceback-with-locals"><code>:e3</code> — traceback with locals</a></h2>
 <p>Same as <code>:e2</code>, plus the local variables of each frame:</p>
 <pre><code class="language-python">np.show(e, ':e3')
@@ -1167,6 +1180,7 @@ main.py:12   | CCC
 main.py:13   | BBB
 main.py:14   | AAA
 </code></pre>
+<p><img src="images/parent-layers.png" alt="Source layers"></p>
 <p><code>p0</code> reports the line that printed; <code>p1</code> reports the line that called that
 function; and so on. Going further than the stack depth raises an error, so
 the practical range is <code>p0</code> to <code>p3</code>.</p>
@@ -1216,6 +1230,7 @@ with np.Progress(total=len(names)) as prog:
 </code></pre>
 <pre><code class="language-text">main.py:6   | ──────────────────────── [  3/3] Carol
 </code></pre>
+<p><img src="images/progress-bar.png" alt="Progress bar"></p>
 <p>The bar fills with <code>─</code>, the counter shows <code>index/total</code>, and <code>update(label)</code>
 prints a label on the right, truncated to the remaining width. The head
 (<code>main.py:6</code>) comes from the <code>with</code> line.</p>
@@ -1249,6 +1264,7 @@ or as a property before the first <code>update()</code>:</p>
 <pre><code class="language-python">with np.Progress(total=100, indicator_style='decimal', color='green') as p:
     ...
 </code></pre>
+<p><img src="images/progress-indicators.png" alt="Progress indicators"></p>
 <h2 id="npprogress-1"><a class="header" href="#npprogress-1"><code>np.progress</code></a></h2>
 <p><code>np.progress(iterable)</code> wraps an iterable in a <code>Progress</code> block and yields its
 items. For sized containers the total is inferred; for generators pass it

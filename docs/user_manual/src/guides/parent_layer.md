@@ -31,6 +31,8 @@ main.py:13   | BBB
 main.py:14   | AAA
 ```
 
+![Source layers](../images/parent-layers.png)
+
 `p0` reports the line that printed; `p1` reports the line that called that
 function; and so on. Going further than the stack depth raises an error, so
 the practical range is `p0` to `p3`.

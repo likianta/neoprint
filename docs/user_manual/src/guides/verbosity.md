@@ -30,6 +30,8 @@ np.show(':v8', 'v8 error')
 | `v7` | weak error / failure | dim red |
 | `v8` | error / failure | red |
 
+![Verbosity levels](../images/verbosity-levels.png)
+
 The color covers the whole body of the message, not the source head.
 
 ## Shorthand functions

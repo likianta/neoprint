@@ -3,6 +3,7 @@ title = "Neoprint User Manual"
 authors = ["Likianta"]
 description = "The artistic print for modern consoles."
 language = "en"
+src = "docs"
 
 [build]
 create-missing = false

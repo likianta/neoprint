@@ -21,10 +21,10 @@ from textwrap import dedent
 
 import neoprint as np
 
-HERE = Path(__file__).resolve().parent
-IMAGES = HERE / 'src' / 'images'
+ROOT = Path(__file__).resolve().parent.parent
+IMAGES = ROOT / 'docs' / 'src' / 'images'
 SVGS = IMAGES / 'svg'
-SCENES = IMAGES / '.scenes'
+SCENES = ROOT / 'scripts' / 'scenes'
 
 FONT = ('Fira Code Medium', 'Consolas', 'monospace')
 FONT_SIZE = 15

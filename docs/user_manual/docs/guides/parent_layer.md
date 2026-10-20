@@ -59,6 +59,36 @@ bbb.py:10   | borrowed "How the Steel Was Tempered"
 
 That is how you trace which script triggered a shared code path.
 
+## Temporarily elevate stack pointer
+
+Use `np.elevate_parent_level` to redirect `:p<n>` to n+1 place:
+
+```python
+import neoprint as np
+from random import choice
+
+def source_test():
+    if choice((True, False)):
+        print('Server is working fine', ':pv4')
+    else:
+        print('Server is unavailable for now', ':pv8')
+
+def proxy_test():
+    with np.elevate_parent_level():
+        source_test()
+
+# by client a
+source_test()
+
+...
+
+# by client b
+proxy_test()
+```
+
+The proxy hides itself and reveals print header points to the position of 
+client b.
+
 ## Relationship with varnames
 
 `:p` only moves the *head* (the source prefix). Variable names from `:n` are

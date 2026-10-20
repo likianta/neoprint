@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-d09c88b4.js";
+            window.path_to_searchindex_js = "../searchindex-22b7a642.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-113366de.js"></script>
@@ -221,6 +221,31 @@ lib.borrow_book('How the Steel Was Tempered')
 bbb.py:10   | borrowed "How the Steel Was Tempered"
 </code></pre>
 <p>That is how you trace which script triggered a shared code path.</p>
+<h2 id="temporarily-elevate-stack-pointer"><a class="header" href="#temporarily-elevate-stack-pointer">Temporarily elevate stack pointer</a></h2>
+<p>Use <code>np.elevate_parent_level</code> to redirect <code>:p&lt;n&gt;</code> to n+1 place:</p>
+<pre><code class="language-python">import neoprint as np
+from random import choice
+
+def source_test():
+    if choice((True, False)):
+        print('Server is working fine', ':pv4')
+    else:
+        print('Server is unavailable for now', ':pv8')
+
+def proxy_test():
+    with np.elevate_parent_level():
+        source_test()
+
+# by client a
+source_test()
+
+...
+
+# by client b
+proxy_test()
+</code></pre>
+<p>The proxy hides itself and reveals print header points to the position of
+client b.</p>
 <h2 id="relationship-with-varnames"><a class="header" href="#relationship-with-varnames">Relationship with varnames</a></h2>
 <p><code>:p</code> only moves the <em>head</em> (the source prefix). Variable names from <code>:n</code> are
 always read from the line where <code>np.show</code> is written, regardless of <code>:p</code>. In a

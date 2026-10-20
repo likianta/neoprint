@@ -36,6 +36,8 @@ from .show import show as print
 from .show import success
 from .show import vshow
 from .show import warning
+from .termshot import Termshot
+from .termshot import termshot
 from .text_object import Markdown
 from .text_object import RichObject
 from .text_object import Text

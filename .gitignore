@@ -1,5 +1,6 @@
 /.idea/
 /dist/
 /references/
+/test/_termshot_output/
 /*.py
 __pycache__/

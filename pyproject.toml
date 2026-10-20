@@ -15,6 +15,7 @@ requires = ["hatchling>=1.29.0"]
 [dependency-groups]
 dev = [
     "argsense>=3.0.0",
+    "catppuccin[pygments]>=2.5.0",
     "faker>=40.8.0; python_version >= '3.12'",
     "ipython>=9.17.0; python_version >= '3.12'",
     "lk-utils>=3.8.2; python_version >= '3.12'",
@@ -24,13 +25,8 @@ dev = [
     # "svg-ultralight>=0.34.0; python_version >= '3.12'",
 ]
 
-# [project.optional-dependencies]
-# ext = [
-#     # "html2image>=2.0.4",
-#     # "pycairo>=1.27.0",
-#     # "selenium>=4.27.1",
-#     "svg-ultralight>=0.34.0",
-# ]
+[project.optional-dependencies]
+termshot = ["catppuccin[pygments]>=2.5.0"]
 
 # [project.scripts]
 # ...

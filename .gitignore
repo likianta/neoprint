@@ -4,3 +4,4 @@
 /test/_termshot_output/
 /*.py
 __pycache__/
+**/images/svg/

@@ -33,6 +33,17 @@ _BASE_LINE_HEIGHT = 24.4
 _SVG_PADDING_WIDTH = 18.0
 _SVG_PADDING_HEIGHT = 50.0
 
+#   css generic families, which should not be quoted.
+_GENERIC_FAMILIES = (
+    'serif',
+    'sans-serif',
+    'monospace',
+    'cursive',
+    'fantasy',
+    'system-ui',
+    'ui-monospace',
+)
+
 
 def svg_to_png(
     svg: tp.Union[str, Path],
@@ -164,11 +175,7 @@ def _rewrite_style(
     text = style.text
     if font:
         text = re.sub(r'\s*@font-face \{.*?\}', '', text, flags=re.S)
-        family = ', '.join(
-            "'{}'".format(name.replace("'", "\\'"))
-            for name in ([font] if isinstance(font, str) else font)
-        )
-        family += ', monospace'
+        family = _css_font_family(font)
     else:
         family = 'Fira Code, monospace'
 
@@ -193,6 +200,20 @@ def _rewrite_style(
         'line-height: {}px;'.format(_fmt(line_height)),
     )
     style.text = text
+
+
+def _css_font_family(font: tp.Union[str, tp.Sequence[str]]) -> str:
+    names = [font] if isinstance(font, str) else list(font)
+    parts: tp.List[str] = []
+    for name in names:
+        name = name.strip()
+        if name.lower() in _GENERIC_FAMILIES:
+            parts.append(name.lower())
+        else:
+            parts.append("'{}'".format(name.replace("'", "\\'")))
+    if not parts or parts[-1].lower() not in _GENERIC_FAMILIES:
+        parts.append('monospace')
+    return ', '.join(parts)
 
 
 def _rescale_geometry(

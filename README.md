@@ -6,7 +6,7 @@
 
 A powerful alternative to Python's built-in `print` function with rich features for console output.
 
-TODO(Image): Main picture showing neoprint in action.
+![Neoprint in action](docs/images/neoprint-overview.png)
 
 ## Features
 
@@ -39,7 +39,7 @@ np.show('Multiple', 'arguments', 'are', 'semicolon-separated')
 np.show(123, 456, 'mixed types', True, False, None)
 ```
 
-TODO(Image): Show basic hello world output with colored text.
+![Hello World output](docs/images/hello-world.png)
 
 ### Print with Variable Names
 
@@ -52,7 +52,7 @@ city = 'New York'
 np.show(name, age, city, ':n')
 ```
 
-TODO(Image): Show variable names output - `name = "Alice"; age = 30; city = "New York"`.
+![Variable names output](docs/images/variable-names.png)
 
 ### Highlighting and Verbosity Levels
 
@@ -77,21 +77,21 @@ np.warning('This is a warning message')
 np.error('This is an error message')
 ```
 
-TODO(Image): Show verbosity levels and color highlighting.
+![Highlighting and verbosity levels](docs/images/verbosity-levels.png)
 
 ### Indexing
 
 ```python
 import neoprint as np
 
-np.show(':i', 'first item')
-np.show(':i', 'second item')
-np.show(':i', 'third item')
-np.show(':i0')  # reset counter
-np.show(':i', 'counting starts over')
+np.show(':i2', 'first item')
+np.show(':i2', 'second item')
+np.show(':i2', 'third item')
+np.show(':i0', 'counter reset')
+np.show(':i2', 'counting starts over')
 ```
 
-TODO(Image): Show indexed output with counter numbers.
+![Index counter output](docs/images/index-counter.png)
 
 ### Timing
 
@@ -106,7 +106,7 @@ sleep(2)
 np.show(':t', 'after 3 seconds total')
 ```
 
-TODO(Image): Show timing output with elapsed time.
+![Timing output](docs/images/timing.png)
 
 ### Progress Bars
 
@@ -126,7 +126,7 @@ for item in np.progress(items):
     sleep(0.05)
 ```
 
-TODO(Image): Record a GIF to show the progress effect.
+![Progress bar](docs/images/progress-bar.png)
 
 ### Exception Formatting
 
@@ -139,7 +139,7 @@ except ZeroDivisionError:
     np.show(':e')
 ```
 
-TODO(Image): Show pretty exception output.
+![Exception formatting](docs/images/exception-panel.png)
 
 ### Custom Scopes
 
@@ -147,15 +147,15 @@ TODO(Image): Show pretty exception output.
 import neoprint as np
 
 with np.scope():
-    np.show(':i', 'anonymous scope - item 1')
-    np.show(':i', 'anonymous scope - item 2')
+    np.show(':i2', 'anonymous scope - item 1')
+    np.show(':i2', 'anonymous scope - item 2')
 
 with np.scope(name='MyScope'):
-    np.show(':i', 'MyScope - item 1')
-    np.show(':i', 'MyScope - item 2')
+    np.show(':i2', 'MyScope - item 1')
+    np.show(':i2', 'MyScope - item 2')
 ```
 
-TODO(Image): Show scoped indexing with different scopes.
+![Custom scopes](docs/images/custom-scopes.png)
 
 ## Markup Reference
 
@@ -209,7 +209,7 @@ np.show('[green underline]green underline[/]')
 
 ## Screenshots
 
-TODO(Image): Gallery of various neoprint usage scenarios.
+![Feature gallery](docs/images/feature-gallery.png)
 
 ---
 

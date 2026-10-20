@@ -1,6 +1,5 @@
 /.idea/
 /dist/
-/docs/mdbook.zh/book/
 /references/
 /*.py
 __pycache__/

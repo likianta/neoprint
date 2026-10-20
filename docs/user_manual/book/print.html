@@ -1,0 +1,1563 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Neoprint User Manual</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="The artistic print for modern consoles.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-0392ca55.css">
+        <link rel="stylesheet" href="css/chrome-fc474251.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme-dc0b2364.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-879bedc7.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-113366de.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Neoprint User Manual</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="neoprint"><a class="header" href="#neoprint">Neoprint</a></h1>
+<p>Neoprint is a drop-in replacement for Python’s built-in <code>print</code>, made for
+modern consoles. It keeps the API you already know, and adds colors, source
+locations, variable names, readable object layouts, progress bars, and pretty
+tracebacks on top of it.</p>
+<pre><code class="language-python">import neoprint as np
+
+name = 'Alice'
+age = 30
+np.show(name, age, ':n')
+</code></pre>
+<pre><code class="language-text">main.py:4   | name = "Alice"; age = 30
+</code></pre>
+<p>The same line with built-in <code>print</code> would be a plain <code>Alice 30</code>, invented by
+you and understood by no one six months later.</p>
+<h2 id="what-you-get"><a class="header" href="#what-you-get">What you get</a></h2>
+<ul>
+<li><strong>Drop-in API.</strong> <code>neoprint.print</code> is <code>neoprint.show</code>; import it as <code>print</code>
+and existing calls keep working.</li>
+<li><strong>Source locations.</strong> Every message is prefixed with <code>filename:lineno</code>, so
+you always know which line spoke.</li>
+<li><strong>Color everywhere.</strong> True-color text, BBCode-like inline markup, bright and
+dim variants, and proper red/green highlighting for booleans.</li>
+<li><strong>Variable names and expressions.</strong> <code>np.show(len(names), ':n')</code> prints
+<code>len(names) = 2</code>.</li>
+<li><strong>Readable containers.</strong> Nested lists and dicts can be expanded into a tree,
+a key-value table, or a grid.</li>
+<li><strong>Progress bars.</strong> Both <code>with np.Progress(...)</code> and <code>for x in np.progress(...)</code>
+are built in.</li>
+<li><strong>Pretty exceptions.</strong> One mark turns an exception into a Rich traceback
+panel, optionally with local variables.</li>
+<li><strong>One dependency.</strong> Only <code>rich</code>.</li>
+</ul>
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<pre><code class="language-sh">pip install neoprint
+</code></pre>
+<p>Python 3.9 or newer is required.</p>
+<h2 id="hello-world"><a class="header" href="#hello-world">Hello world</a></h2>
+<pre><code class="language-python">from neoprint import print
+
+print('hello world')
+</code></pre>
+<pre><code class="language-text">main.py:3   | hello world
+</code></pre>
+<p>That is the whole story for a single script. Continue with
+<a href="#installation-and-hello-world">Installation and Hello World</a> to learn the package-wide
+<code>setup()</code> mode, or jump to <a href="#printing-basics">Printing Basics</a> for the anatomy
+of a message.</p>
+<h2 id="how-this-manual-is-organized"><a class="header" href="#how-this-manual-is-organized">How this manual is organized</a></h2>
+<ul>
+<li><strong>Getting Started</strong> covers installation and the anatomy of a message.</li>
+<li><strong>Markup</strong> explains the <code>:xN</code> marks, which are the main extension point of
+the library, and lists every mark in one table.</li>
+<li><strong>Guides</strong> walks through each feature with runnable examples: verbosity,
+variable names, expanded formatting, rich text, index counters, timing,
+dividers, exceptions, source layers, and progress bars.</li>
+<li><strong>Reference</strong> documents the configuration switches and the public API.</li>
+</ul>
+<p>If you only read two pages, read
+<a href="#printing-basics">Printing Basics</a> and
+<a href="#markup-reference">Markup Reference</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="installation-and-hello-world"><a class="header" href="#installation-and-hello-world">Installation and Hello World</a></h1>
+<h2 id="requirements"><a class="header" href="#requirements">Requirements</a></h2>
+<ul>
+<li>Python 3.9 or newer</li>
+<li>A modern terminal. Windows Terminal, iTerm2, GNOME Terminal, and the
+integrated terminals of VS Code and PyCharm all work. If colors look wrong on
+an old Windows console, see <a href="#configuration">Configuration</a>.</li>
+</ul>
+<h2 id="install"><a class="header" href="#install">Install</a></h2>
+<pre><code class="language-sh">pip install neoprint
+</code></pre>
+<p>The only runtime dependency is <code>rich</code>.</p>
+<h2 id="hello-world-1"><a class="header" href="#hello-world-1">Hello world</a></h2>
+<pre><code class="language-python">import neoprint as np
+
+np.show('hello world')
+</code></pre>
+<pre><code class="language-text">main.py:3   | hello world
+</code></pre>
+<p>The message is made of two parts:</p>
+<ul>
+<li>a <strong>head</strong> — <code>main.py:3</code> — showing where the call happened,</li>
+<li>a <strong>body</strong> — <code>hello world</code> — the text you passed.</li>
+</ul>
+<p>A thin <code>|</code> separator sits between them. Both parts are colored: the file name
+is blue, the line number green, the separator dim.</p>
+<h2 id="use-it-as-print"><a class="header" href="#use-it-as-print">Use it as <code>print</code></a></h2>
+<p><code>neoprint.print</code> is a plain alias of <code>neoprint.show</code>, so you can keep the name
+you are used to:</p>
+<pre><code class="language-python">from neoprint import print
+
+print('hello world')
+</code></pre>
+<p>If you want to swap it in for an entire script without touching every call,
+simply shadow the built-in:</p>
+<pre><code class="language-python">from neoprint import print
+
+print('this is neoprint now', 1, 2, 3)
+</code></pre>
+<p>Note that the built-in <code>print</code> accepts keyword arguments such as <code>file=</code> and
+<code>end=</code>. Neoprint’s print does not; for those cases use the mark <code>:s2</code> (see
+<a href="#printing-basics">Printing Basics</a>) or the real <code>builtins.print</code>.</p>
+<h2 id="enable-it-for-a-whole-package"><a class="header" href="#enable-it-for-a-whole-package">Enable it for a whole package</a></h2>
+<p>Editing imports in every module is noisy. Call <code>setup()</code> once in your
+package’s <code>__init__.py</code>:</p>
+<pre><code class="language-python"># some_package/__init__.py
+import neoprint
+neoprint.setup()
+
+# regular exports
+from .foo import bar
+</code></pre>
+<p>From then on, every built-in <code>print(...)</code> call <strong>inside <code>some_package</code></strong> is
+routed through neoprint automatically. Calls in other packages, and in the
+standard library, keep using the built-in <code>print</code> — <code>setup()</code> patches the
+built-in only for the package that called it.</p>
+<p>To undo the patch:</p>
+<pre><code class="language-python">import neoprint
+neoprint.unload()
+</code></pre>
+<h2 id="try-the-examples"><a class="header" href="#try-the-examples">Try the examples</a></h2>
+<p>The repository ships runnable examples:</p>
+<pre><code class="language-sh">python examples/hello_world.py
+python examples/all_markup_usage.py
+python examples/progress.py
+</code></pre>
+<p>Next: <a href="#printing-basics">Printing Basics</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="printing-basics"><a class="header" href="#printing-basics">Printing Basics</a></h1>
+<h2 id="arguments-are-joined-with-semicolons"><a class="header" href="#arguments-are-joined-with-semicolons">Arguments are joined with semicolons</a></h2>
+<p>Multiple positional arguments are printed one after another, separated by a
+dim <code>; </code> and a space:</p>
+<pre><code class="language-python">import neoprint as np
+
+np.show('Multiple', 'arguments', 'are', 'semicolon-separated')
+np.show(123, 456, 'mixed types', True, False, None)
+</code></pre>
+<pre><code class="language-text">main.py:3   | Multiple; arguments; are; semicolon-separated
+main.py:4   | 123; 456; mixed types; True; False; None
+</code></pre>
+<p>Booleans are highlighted: <code>True</code> is green, <code>False</code> is red, <code>None</code> is magenta.</p>
+<p>If you want a different join style, pass <code>:l</code> (one value per line, see
+<a href="#expanded-formatting">Expanded Formatting</a>) or format the string
+yourself and pass a single argument.</p>
+<h2 id="where-to-put-a-markup"><a class="header" href="#where-to-put-a-markup">Where to put a markup</a></h2>
+<p>A <em>markup</em> is a short string such as <code>':n'</code>, <code>':v8'</code> or <code>':d2v7t'</code> that
+changes how the message is rendered. Each character in it enables one feature;
+an optional digit selects a variant.</p>
+<p>A markup is recognized in exactly two positions:</p>
+<ol>
+<li>as the <strong>first</strong> positional argument,</li>
+<li>as the <strong>last</strong> positional argument.</li>
+</ol>
+<pre><code class="language-python">np.show(':d', 'Section title')          # first
+np.show('Section title', ':d')          # last
+np.show('Section title', markup=':d')   # keyword
+</code></pre>
+<p>Anything else is treated as ordinary text:</p>
+<pre><code class="language-python">np.show('a', ':n', 'b')   # ':n' is printed literally
+</code></pre>
+<pre><code class="language-text">main.py:1   | a; :n; b
+</code></pre>
+<p>The string must look like a markup to be treated as one: it has to start with
+<code>:</code> and contain only the known mark letters. Something like <code>':)'</code> or
+<code>': not a markup'</code> is plain text.</p>
+<h2 id="combining-marks"><a class="header" href="#combining-marks">Combining marks</a></h2>
+<p>Marks can be stacked in a single string. Each mark letter may carry at most one
+digit:</p>
+<pre><code class="language-python">np.show(':d2v7t', 'End')
+</code></pre>
+<pre><code class="language-text">main.py:1   | [16:57:41 -&gt; 16:57:41 (4ms)] ██████████ End ██████████
+</code></pre>
+<p>Read it as <code>:d2</code> + <code>:v7</code> + <code>:t</code>. Order does not matter.</p>
+<h2 id="bare-marks-and-their-defaults"><a class="header" href="#bare-marks-and-their-defaults">Bare marks and their defaults</a></h2>
+<p>Writing a mark without a digit selects its default variant. For example <code>:i</code>
+is <code>:i1</code> and <code>:e</code> is <code>:e2</code>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Mark</th><th style="text-align: left">Bare form means</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>:d</code></td><td style="text-align: left"><code>:d1</code> thin divider</td></tr>
+<tr><td style="text-align: left"><code>:e</code></td><td style="text-align: left"><code>:e2</code> traceback panel</td></tr>
+<tr><td style="text-align: left"><code>:i</code></td><td style="text-align: left"><code>:i1</code> line-level counter</td></tr>
+<tr><td style="text-align: left"><code>:l</code></td><td style="text-align: left"><code>:l1</code> expanded format</td></tr>
+<tr><td style="text-align: left"><code>:n</code></td><td style="text-align: left"><code>:n1</code> show variable names</td></tr>
+<tr><td style="text-align: left"><code>:p</code></td><td style="text-align: left"><code>:p1</code> parent frame</td></tr>
+<tr><td style="text-align: left"><code>:r</code></td><td style="text-align: left"><code>:r1</code> inline markup enabled</td></tr>
+<tr><td style="text-align: left"><code>:s</code></td><td style="text-align: left"><code>:s1</code> short form</td></tr>
+<tr><td style="text-align: left"><code>:t</code></td><td style="text-align: left"><code>:t2</code> time since last mark</td></tr>
+<tr><td style="text-align: left"><code>:v</code></td><td style="text-align: left"><code>:v0</code> debug level</td></tr>
+</tbody>
+</table>
+</div>
+<p>The full list is in <a href="#markup-reference">Markup Reference</a>.</p>
+<h2 id="quiet-and-plain-modes"><a class="header" href="#quiet-and-plain-modes">Quiet and plain modes</a></h2>
+<p>Two marks reduce or remove neoprint’s decoration:</p>
+<ul>
+<li><code>:s1</code> keeps colors but drops the source head and variable names.</li>
+<li><code>:s2</code> hands the arguments to the built-in <code>print</code> untouched.</li>
+</ul>
+<pre><code class="language-python">np.show(':s1', 'no source, no varnames')
+np.show(':s2', 'built-in print behaviour')
+</code></pre>
+<pre><code class="language-text">no source, no varnames
+built-in print behaviour
+</code></pre>
+<p><code>:s2</code> is handy when a call must accept the same keyword arguments as the
+built-in <code>print</code> (for example <code>file=sys.stderr</code>).</p>
+<h2 id="a-note-on-string-formatting"><a class="header" href="#a-note-on-string-formatting">A note on string formatting</a></h2>
+<p>Neoprint follows the convention of this project: prefer <code>str.format</code> over
+f-strings, because f-strings in log calls are evaluated even when the output
+is filtered by verbosity.</p>
+<pre><code class="language-python">np.show(':v1', 'loaded {} items'.format(count))
+</code></pre>
+<p>Next: <a href="#how-markup-works">How Markup Works</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="how-markup-works"><a class="header" href="#how-markup-works">How Markup Works</a></h1>
+<p>Neoprint keeps the <code>print</code> signature. Instead of adding dozens of keyword
+arguments, it adds one optional string — the <strong>markup</strong> — that switches
+features on.</p>
+<h2 id="grammar"><a class="header" href="#grammar">Grammar</a></h2>
+<p>A markup starts with <code>:</code> and is a concatenation of mark <em>letters</em>, each
+optionally followed by a single digit:</p>
+<pre><code class="language-text">:n          one mark, default variant
+:v8          one mark, variant 8
+:i0         reset the index counter
+:d2v7t      three marks combined
+</code></pre>
+<p>The valid letters are <code>d</code>, <code>e</code>, <code>f</code>, <code>i</code>, <code>l</code>, <code>n</code>, <code>p</code>, <code>r</code>, <code>s</code>, <code>t</code>, <code>v</code>.
+Digits are <code>0</code>-<code>9</code>.</p>
+<p>A string is only treated as a markup when it matches this grammar exactly and
+is in the first or last positional slot (or passed via <code>markup=</code>). Otherwise it
+is printed literally, so ordinary text like <code>':'</code> or <code>':)'</code> never gets
+misinterpreted.</p>
+<h2 id="what-a-mark-can-change"><a class="header" href="#what-a-mark-can-change">What a mark can change</a></h2>
+<p>Every mark affects one of three layers of the output:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Layer</th><th style="text-align: left">Marks</th><th style="text-align: left">Examples</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">The <strong>head</strong> (left of the separator)</td><td style="text-align: left"><code>p</code></td><td style="text-align: left">show the caller of the caller</td></tr>
+<tr><td style="text-align: left">The <strong>prefix</strong> inside the body</td><td style="text-align: left"><code>i</code>, <code>t</code></td><td style="text-align: left"><code>[3]</code> index, <code>[12:00 -&gt; 12:01 (1m)]</code> timing</td></tr>
+<tr><td style="text-align: left">The <strong>values and layout</strong></td><td style="text-align: left"><code>d</code>, <code>e</code>, <code>l</code>, <code>n</code>, <code>r</code>, <code>s</code>, <code>v</code></td><td style="text-align: left">colors, tables, dividers, tracebacks</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="order-of-marks-does-not-matter"><a class="header" href="#order-of-marks-does-not-matter">Order of marks does not matter</a></h2>
+<p><code>:tiv2</code> and <code>:v2it</code> are the same markup. What matters is the position inside
+the call, and the digits.</p>
+<h2 id="some-pairs-conflict"><a class="header" href="#some-pairs-conflict">Some pairs conflict</a></h2>
+<ul>
+<li><code>:d</code> (divider style) and <code>:l</code> (expanded format) cannot be used together.
+A divider wraps the body in a single line, an expanded format spreads it over
+many; neoprint rejects that combination with an <code>AssertionError</code>.</li>
+<li><code>:r2</code> and <code>:l2</code> mean the same thing. When both are given, the <code>:l</code> one is
+kept.</li>
+<li><code>:d</code> overrides <code>:r2</code> by turning it off.</li>
+</ul>
+<p>When in doubt, enable one layout mark at a time.</p>
+<h2 id="marks-are-per-call"><a class="header" href="#marks-are-per-call">Marks are per call</a></h2>
+<p>Marks do not stick. <code>np.show('x', ':v8')</code> prints one red line; the next call
+starts from the defaults again. The only stateful features are the index
+counters (<code>:i</code>) and timers (<code>:t</code>), and they have explicit reset marks
+(<code>:i0</code>, <code>:t0</code>).</p>
+<h2 id="where-to-go-next"><a class="header" href="#where-to-go-next">Where to go next</a></h2>
+<ul>
+<li><a href="#markup-reference">Markup Reference</a> — every mark, every variant.</li>
+<li>Individual guides under <strong>Guides</strong> explain each feature in depth.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="markup-reference"><a class="header" href="#markup-reference">Markup Reference</a></h1>
+<p>One table, every mark. The <strong>Default</strong> column marks the variant used when the
+letter is written without a digit (<code>*</code> = the bare form selects this variant).</p>
+<h2 id="divider-d"><a class="header" href="#divider-d">Divider <code>d</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:d0</code></td><td style="text-align: left">no divider</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:d1</code></td><td style="text-align: left">thin divider line</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:d2</code></td><td style="text-align: left">thick divider line</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#dividers">Dividers</a>.</p>
+<h2 id="exception-e"><a class="header" href="#exception-e">Exception <code>e</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:e0</code></td><td style="text-align: left">no special handling; print as ordinary value</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:e1</code></td><td style="text-align: left">print the exception message in red</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:e2</code></td><td style="text-align: left">Rich traceback panel</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:e3</code></td><td style="text-align: left">Rich traceback panel with locals (<code>show_locals</code>)</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:e4</code></td><td style="text-align: left">reserved, not implemented</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#exception-printing">Exception Printing</a>.</p>
+<h2 id="flush-f"><a class="header" href="#flush-f">Flush <code>f</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:f1</code></td><td style="text-align: left">reserved</td></tr>
+</tbody>
+</table>
+</div>
+<p>The <code>f</code> mark is parsed for forward compatibility but currently has no effect on
+the output. Do not rely on it.</p>
+<h2 id="index-i"><a class="header" href="#index-i">Index <code>i</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:i0</code></td><td style="text-align: left">reset counters</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:i1</code></td><td style="text-align: left">line-level counter (one counter per source line)</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:i2</code></td><td style="text-align: left">scoped counter (per function, or per <code>np.scope</code>)</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:i3</code></td><td style="text-align: left">global counter</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#index-counters">Index Counters</a>.</p>
+<h2 id="layout-l"><a class="header" href="#layout-l">Layout <code>l</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:l0</code></td><td style="text-align: left">inline representation</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:l1</code></td><td style="text-align: left">expand containers over multiple lines</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:l2</code></td><td style="text-align: left">tailored layout (tables, key-value grids, <code>a -&gt; b</code> transforms)</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#expanded-formatting">Expanded Formatting</a>.</p>
+<h2 id="varnames-n"><a class="header" href="#varnames-n">Varnames <code>n</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:n0</code></td><td style="text-align: left">hide variable names</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:n1</code></td><td style="text-align: left">show variable names and expressions</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#variable-names">Variable Names</a>.</p>
+<h2 id="parent-layer-p"><a class="header" href="#parent-layer-p">Parent layer <code>p</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:p0</code></td><td style="text-align: left">head points at the current frame</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:p1</code></td><td style="text-align: left">head points at the caller</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:p2</code></td><td style="text-align: left">caller’s caller</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:p3</code>+</td><td style="text-align: left">one frame further up per number</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#source-layers">Source Layers</a>.</p>
+<h2 id="rich-text-r"><a class="header" href="#rich-text-r">Rich text <code>r</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:r0</code></td><td style="text-align: left">inline markup disabled</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:r1</code></td><td style="text-align: left">inline markup enabled (<code>[red]...[/]</code>)</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:r2</code></td><td style="text-align: left">same as <code>:l2</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#rich-text">Rich Text</a>.</p>
+<h2 id="short-s"><a class="header" href="#short-s">Short <code>s</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:s0</code></td><td style="text-align: left">full output</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:s1</code></td><td style="text-align: left">short form: no source head, no variable names</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:s2</code></td><td style="text-align: left">delegate to the built-in <code>print</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#quiet-and-plain-modes">Printing Basics</a>.</p>
+<h2 id="timing-t"><a class="header" href="#timing-t">Timing <code>t</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:t0</code></td><td style="text-align: left">reset the timer</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:t1</code></td><td style="text-align: left">absolute timestamp</td></tr>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:t2</code></td><td style="text-align: left">time since the previous <code>:t2</code>/<code>:t3</code> call</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:t3</code></td><td style="text-align: left">time since the scope timer was reset</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#timing">Timing</a>.</p>
+<h2 id="verbosity-v"><a class="header" href="#verbosity-v">Verbosity <code>v</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: center">Default</th><th style="text-align: left">Mark</th><th style="text-align: left">Description</th><th style="text-align: left">Color</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: center">*</td><td style="text-align: left"><code>:v0</code></td><td style="text-align: left">debug</td><td style="text-align: left">gray</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v1</code></td><td style="text-align: left">negative info</td><td style="text-align: left">magenta</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v2</code></td><td style="text-align: left">positive info</td><td style="text-align: left">blue</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v3</code></td><td style="text-align: left">weak success</td><td style="text-align: left">dim green</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v4</code></td><td style="text-align: left">success</td><td style="text-align: left">green</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v5</code></td><td style="text-align: left">weak warning</td><td style="text-align: left">dim yellow</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v6</code></td><td style="text-align: left">warning</td><td style="text-align: left">yellow</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v7</code></td><td style="text-align: left">weak error</td><td style="text-align: left">dim red</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v8</code></td><td style="text-align: left">error</td><td style="text-align: left">red</td></tr>
+<tr><td style="text-align: center"></td><td style="text-align: left"><code>:v9</code></td><td style="text-align: left">critical</td><td style="text-align: left">reserved, not implemented</td></tr>
+</tbody>
+</table>
+</div>
+<p>See <a href="#verbosity-levels">Verbosity Levels</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="verbosity-levels"><a class="header" href="#verbosity-levels">Verbosity Levels</a></h1>
+<p>The <code>v</code> mark colors a message according to its severity. The scale runs from
+<code>v0</code> (debug) to <code>v8</code> (error); odd numbers are dim variants of the even one
+above them.</p>
+<pre><code class="language-python">import neoprint as np
+
+np.show(':v0', 'v0 debug')
+np.show(':v1', 'v1 negative info')
+np.show(':v2', 'v2 positive info')
+np.show(':v3', 'v3 weak success')
+np.show(':v4', 'v4 success')
+np.show(':v5', 'v5 weak warning')
+np.show(':v6', 'v6 warning')
+np.show(':v7', 'v7 weak error')
+np.show(':v8', 'v8 error')
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Level</th><th style="text-align: left">Meaning</th><th style="text-align: left">Color</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>v0</code></td><td style="text-align: left">debug</td><td style="text-align: left">gray</td></tr>
+<tr><td style="text-align: left"><code>v1</code></td><td style="text-align: left">negative or serious info</td><td style="text-align: left">magenta</td></tr>
+<tr><td style="text-align: left"><code>v2</code></td><td style="text-align: left">positive or neutral info</td><td style="text-align: left">blue</td></tr>
+<tr><td style="text-align: left"><code>v3</code></td><td style="text-align: left">weak success</td><td style="text-align: left">dim green</td></tr>
+<tr><td style="text-align: left"><code>v4</code></td><td style="text-align: left">success</td><td style="text-align: left">green</td></tr>
+<tr><td style="text-align: left"><code>v5</code></td><td style="text-align: left">weak warning</td><td style="text-align: left">dim yellow</td></tr>
+<tr><td style="text-align: left"><code>v6</code></td><td style="text-align: left">warning</td><td style="text-align: left">yellow</td></tr>
+<tr><td style="text-align: left"><code>v7</code></td><td style="text-align: left">weak error / failure</td><td style="text-align: left">dim red</td></tr>
+<tr><td style="text-align: left"><code>v8</code></td><td style="text-align: left">error / failure</td><td style="text-align: left">red</td></tr>
+</tbody>
+</table>
+</div>
+<p>The color covers the whole body of the message, not the source head.</p>
+<h2 id="shorthand-functions"><a class="header" href="#shorthand-functions">Shorthand functions</a></h2>
+<p>For the levels you use most, import the ready-made helpers:</p>
+<pre><code class="language-python">from neoprint import debug, info, success, warning, error
+
+debug('user has come here')
+info('welcome to the city')
+success('file created')
+warning('target file exists, will overwrite it')
+error('failed to create the file')
+</code></pre>
+<p>Each helper is just a call with the matching mark already applied, so marks can
+still be appended:</p>
+<pre><code class="language-python">error('failed: {}'.format(err), ':d')   # red message wrapped by dividers
+</code></pre>
+<p>The helpers are <code>functools.partial</code> objects, not separate implementations, so
+they accept the same arguments as <code>np.show</code>.</p>
+<h2 id="choosing-a-level"><a class="header" href="#choosing-a-level">Choosing a level</a></h2>
+<p>A useful rule of thumb:</p>
+<ul>
+<li><code>v0</code>/<code>v1</code> for traces you read while developing;</li>
+<li><code>v2</code>/<code>v4</code> for confirmations the user of your program cares about;</li>
+<li><code>v6</code> for recoverable surprises;</li>
+<li><code>v8</code> for failures that stop the current task.</li>
+</ul>
+<p>If you only need <em>colored</em> text and not a semantic level, prefer inline markup
+in <code>:r1</code> mode — see <a href="#rich-text">Rich Text</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="variable-names"><a class="header" href="#variable-names">Variable Names</a></h1>
+<p>The <code>n</code> mark prints each argument next to its source expression. Neoprint reads
+the source line you called it from, so you never have to type <code>'name ='</code>
+yourself.</p>
+<pre><code class="language-python">import neoprint as np
+
+name = 'Alice'
+age = 30
+city = 'New York'
+np.show(name, age, city, ':n')
+</code></pre>
+<pre><code class="language-text">main.py:6   | name = "Alice"; age = 30; city = "New York"
+</code></pre>
+<h2 id="expressions-work-too"><a class="header" href="#expressions-work-too">Expressions work too</a></h2>
+<p>Plain names are only the beginning. Function calls and attribute accesses are
+also reconstructed:</p>
+<pre><code class="language-python">names = ['Alice', 'Bob']
+np.show(len(names), ':n')
+</code></pre>
+<pre><code class="language-text">main.py:2   | len(names) = 2
+</code></pre>
+<pre><code class="language-python">class Box:
+    def __init__(self):
+        self.value = 42
+
+box = Box()
+np.show(box.value, ':n')
+</code></pre>
+<pre><code class="language-text">main.py:7   | box.value = 42
+</code></pre>
+<h2 id="enable-it-globally"><a class="header" href="#enable-it-globally">Enable it globally</a></h2>
+<p>If you want variable names on every call without repeating the mark, turn on
+the configuration switch:</p>
+<pre><code class="language-python">import neoprint as np
+
+np.config(show_varnames=True)
+
+name = 'Alice'
+np.show(name)       # name = "Alice"
+</code></pre>
+<p>Restore the default with <code>np.config(show_varnames=False)</code> or
+<code>np.config.reset()</code>.</p>
+<h2 id="limitations"><a class="header" href="#limitations">Limitations</a></h2>
+<ul>
+<li><strong>The function has to keep a recognizable name.</strong> Neoprint only inspects
+calls to <code>print</code>, <code>show</code>, <code>debug</code>, <code>info</code>, <code>success</code>, <code>warning</code>, <code>error</code>,
+<code>format</code>, and <code>format_list</code>. If you alias the import, for example
+<code>from neoprint import show as s</code>, the call no longer looks like one of those
+names and the mark cannot resolve the arguments. Use
+<code>from neoprint import print</code> (the name is <code>print</code>) instead of renaming.</li>
+<li><strong>Literals have no name.</strong> <code>np.show(42, ':n')</code> prints <code>42</code>, because there is
+nothing to reflect.</li>
+<li><strong>Truthiness of the mark.</strong> <code>:n0</code> hides names, <code>:n1</code> (bare <code>:n</code>) shows them.</li>
+</ul>
+<h2 id="how-it-works-briefly"><a class="header" href="#how-it-works-briefly">How it works, briefly</a></h2>
+<p>The source file of the calling frame is parsed with <code>ast</code> and cached per
+modification time. The analyzer finds the <code>Call</code> node on the reported line and
+reads the source segment of each argument. That is why the names are exactly
+what you wrote — including spacing inside longer expressions — and why the
+feature costs one file parse per source change, not per call.</p>
+<p>See also <a href="#source-layers">Source Layers</a> for how the head of a message is
+resolved.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="expanded-formatting"><a class="header" href="#expanded-formatting">Expanded Formatting</a></h1>
+<p>By default neoprint prints values the way <code>repr</code> would — on one line. The <code>l</code>
+mark trades width for readability.</p>
+<h2 id="l0--inline-default"><a class="header" href="#l0--inline-default"><code>:l0</code> — inline (default)</a></h2>
+<pre><code class="language-python">import neoprint as np
+
+data = {'users': [{'name': 'Alice', 'tags': ['dev', 'ops']},
+                  {'name': 'Bob', 'tags': ['design']}]}
+np.show(data)
+</code></pre>
+<pre><code class="language-text">main.py:5   | {'users': [{'name': 'Alice', 'tags': ['dev', 'ops']}, {'name': 'Bob', 'tags': ['design']}]}
+</code></pre>
+<p>Readable for a glance, painful for anything deeper.</p>
+<h2 id="l1--expand-over-multiple-lines"><a class="header" href="#l1--expand-over-multiple-lines"><code>:l1</code> — expand over multiple lines</a></h2>
+<p><code>:l1</code> (or the bare <code>:l</code>) walks the container recursively and indents each
+level by two spaces:</p>
+<pre><code class="language-python">np.show(data, ':l')
+</code></pre>
+<pre><code class="language-text">main.py:5   |
+  {
+    "users": [
+      {
+        "name": "Alice",
+        "tags": [
+          "dev",
+          "ops",
+        ],
+      },
+      {
+        "name": "Bob",
+        "tags": [
+          "design",
+        ],
+      },
+    ],
+  }
+</code></pre>
+<p>Strings are quoted, trailing commas are added, and the indentation is
+controlled by <code>np.config(multiline_indent=N)</code> (default <code>2</code>).</p>
+<h2 id="l2--tailored-layouts"><a class="header" href="#l2--tailored-layouts"><code>:l2</code> — tailored layouts</a></h2>
+<p>Certain shapes get a purpose-built layout instead of the generic tree. If an
+object does not match any of them, <code>:l2</code> falls back to <code>:l1</code> behaviour.</p>
+<h3 id="sequence-of-rows--grid"><a class="header" href="#sequence-of-rows--grid">Sequence of rows → grid</a></h3>
+<p>A list or tuple whose first row is a header of strings becomes a table:</p>
+<pre><code class="language-python">np.show(':l2', [('id', 'name'), ('1', 'Alice'), ('2', 'Bob')])
+</code></pre>
+<pre><code class="language-text">main.py:1   |
+  ╭────┬───────╮
+  │ id │ name  │
+  ├────┼───────┤
+  │ 1  │ Alice │
+  │ 2  │ Bob   │
+  ╰────┴───────╯
+</code></pre>
+<h3 id="dictstr-str--key-value-table"><a class="header" href="#dictstr-str--key-value-table"><code>dict[str, str]</code> → key-value table</a></h3>
+<pre><code class="language-python">np.show(':l2', {'name': 'neoprint', 'version': '1.0.0'})
+</code></pre>
+<pre><code class="language-text">main.py:1   |
+  ╭─────────┬──────────╮
+  │ KEY     │ VALUE    │
+  ├─────────┼──────────┤
+  │ name    │ neoprint │
+  │ version │ 1.0.0    │
+  ╰─────────┴──────────╯
+</code></pre>
+<h3 id="a---b-strings--colored-transform"><a class="header" href="#a---b-strings--colored-transform"><code>a -&gt; b</code> strings → colored transform</a></h3>
+<p>A string containing <code>-&gt;</code> is rendered as a red-to-green transition, with an
+optional label before a colon:</p>
+<pre><code class="language-python">np.show(':l2', 'v0.1.0 -&gt; v0.2.0')
+np.show(':l2', 'status: draft -&gt; published')
+</code></pre>
+<pre><code class="language-text">main.py:1   |
+  v0.1.0 -&gt; v0.2.0
+main.py:2   |
+  status: draft -&gt; published
+</code></pre>
+<p>(The left side is red, the right side green, the label stays default-colored.)</p>
+<h2 id="shorthand-functions-1"><a class="header" href="#shorthand-functions-1">Shorthand functions</a></h2>
+<p><code>np.expand(x)</code> is <code>np.show(x, ':l')</code>, and <code>np.expand2(x)</code> is
+<code>np.show(x, ':l2')</code>:</p>
+<pre><code class="language-python">from neoprint import expand, expand2
+
+expand([1, 2, 3])
+expand2([('k', 'v'), ('a', 'b')])
+</code></pre>
+<p>Note that <code>:l</code> cannot be combined with <code>:d</code> on the same call; see
+<a href="#how-markup-works">How Markup Works</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="rich-text"><a class="header" href="#rich-text">Rich Text</a></h1>
+<p>The <code>r</code> mark controls inline styling <em>inside</em> the strings you print.</p>
+<h2 id="r1--inline-markup"><a class="header" href="#r1--inline-markup"><code>:r1</code> — inline markup</a></h2>
+<p>With <code>:r1</code> (or bare <code>:r</code>), text enclosed in BBCode-like tags is colored and
+styled:</p>
+<pre><code class="language-python">import neoprint as np
+
+np.show(':r1', '[red]red[/] [green bold]green bold[/] [dim]dim[/]')
+</code></pre>
+<pre><code class="language-text">main.py:3   | red green bold dim
+</code></pre>
+<p>The console output is colored; the plain rendering above shows the text only.</p>
+<h3 id="tags"><a class="header" href="#tags">Tags</a></h3>
+<p>A tag is <code>[</code> + space-separated parts + <code>]</code>. Parts are either a color name or a
+style name:</p>
+<ul>
+<li>colors: <code>black</code>, <code>red</code>, <code>green</code>, <code>yellow</code>, <code>blue</code>, <code>magenta</code>, <code>cyan</code>,
+<code>white</code>, <code>default</code>, and the <code>bright_*</code> variants of the first eight;</li>
+<li>styles: <code>bold</code>, <code>dim</code>, <code>italic</code>, <code>underline</code>, plus the short forms <code>b</code>, <code>i</code>,
+<code>u</code>.</li>
+</ul>
+<p>Close a tag with <code>[/]</code>. Tags nest, and unclosed attributes inherit from the
+enclosing tag:</p>
+<pre><code class="language-python">np.show(':r1', '[red bold]both[/] [red]red only[/]')
+np.show(':r1', '[red bold]outer [green]green keeps bold[/][/]')
+</code></pre>
+<p>To print a literal <code>[</code>, escape it: <code>\[</code>.</p>
+<h2 id="r2--tailored-layout"><a class="header" href="#r2--tailored-layout"><code>:r2</code> — tailored layout</a></h2>
+<p><code>:r2</code> is an alias of <code>:l2</code>: it applies the special layouts described in
+<a href="#expanded-formatting">Expanded Formatting</a> (grids, key-value tables,
+<code>a -&gt; b</code> strings). Use it when you think of the flag as “render this nicely”
+rather than “expand this structure”; the result is the same.</p>
+<h2 id="markdown"><a class="header" href="#markdown">Markdown</a></h2>
+<p>For long-form text, neoprint offers a dedicated helper:</p>
+<pre><code class="language-python">import neoprint as np
+
+np.markdown('''
+# Title
+
+- item 1
+- item 2
+''')
+</code></pre>
+<p>The string is rendered by Rich’s Markdown renderer, with headings, lists,
+and inline code styled. An optional markup can be given as the first argument
+to add a source head or other prefixes:</p>
+<pre><code class="language-python">np.markdown(':d', '# Chapter 1')
+</code></pre>
+<h2 id="pre-colored-segments"><a class="header" href="#pre-colored-segments">Pre-colored segments</a></h2>
+<p>For programmatic use — building a message from pieces with their own colors —
+neoprint exposes a small text object:</p>
+<pre><code class="language-python">import neoprint as np
+
+np.show(np.Text('plain text object', 'cyan', 'bold'))
+</code></pre>
+<p><code>Text(value, color, style)</code> accepts the same color and style names as the
+inline markup. It is exported at the top level as <code>np.Text</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="index-counters"><a class="header" href="#index-counters">Index Counters</a></h1>
+<p>The <code>i</code> mark attaches a running counter to the message, so sequences are easy
+to follow without writing <code>print(i, ...)</code>.</p>
+<pre><code class="language-python">import neoprint as np
+
+np.show(':i', 'first')
+np.show(':i', 'second')
+np.show(':i', 'third')
+</code></pre>
+<p>Every counter is rendered as <code>[n]</code> before the body, in a color derived from its
+frame, so values stand out from the text.</p>
+<h2 id="the-four-counters"><a class="header" href="#the-four-counters">The four counters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Mark</th><th style="text-align: left">Scope</th><th style="text-align: left">Counter increments</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>:i1</code></td><td style="text-align: left">one per source <strong>line</strong></td><td style="text-align: left">every time <em>that line</em> runs</td></tr>
+<tr><td style="text-align: left"><code>:i2</code></td><td style="text-align: left">one per <strong>scope</strong></td><td style="text-align: left">every call in the same function, class body, module, or <code>np.scope()</code> block</td></tr>
+<tr><td style="text-align: left"><code>:i3</code></td><td style="text-align: left">global</td><td style="text-align: left">every call, anywhere</td></tr>
+<tr><td style="text-align: left"><code>:i0</code></td><td style="text-align: left">—</td><td style="text-align: left">resets all counters</td></tr>
+</tbody>
+</table>
+</div>
+<p>Bare <code>:i</code> is <code>:i1</code>.</p>
+<h3 id="line-level-i1"><a class="header" href="#line-level-i1">Line-level (<code>:i1</code>)</a></h3>
+<p>Best for loops and repeated single lines:</p>
+<pre><code class="language-python">for _ in range(3):
+    np.show(':i1', 'line')
+</code></pre>
+<pre><code class="language-text">main.py:2   | [1] line
+main.py:2   | [2] line
+main.py:2   | [3] line
+</code></pre>
+<p>Two different lines each start at <code>[1]</code>, because they own separate counters.</p>
+<h3 id="scoped-i2"><a class="header" href="#scoped-i2">Scoped (<code>:i2</code>)</a></h3>
+<p>Best when several lines form one logical stream. The scope is the enclosing
+function (or class body, or module):</p>
+<pre><code class="language-python">def stage():
+    np.show(':i2', 'step one')
+    np.show(':i2', 'step two')
+
+stage()
+stage()
+</code></pre>
+<pre><code class="language-text">main.py:3   | [1] step one
+main.py:4   | [2] step two
+main.py:3   | [3] step one
+main.py:4   | [4] step two
+</code></pre>
+<h3 id="global-i3"><a class="header" href="#global-i3">Global (<code>:i3</code>)</a></h3>
+<p>A single counter shared by the whole program:</p>
+<pre><code class="language-python">np.show(':i3', 'G1')
+np.show(':i3', 'G2')
+</code></pre>
+<pre><code class="language-text">main.py:1   | [1] G1
+main.py:2   | [2] G2
+</code></pre>
+<h2 id="resetting"><a class="header" href="#resetting">Resetting</a></h2>
+<pre><code class="language-python">np.show(':i0')      # reset every counter
+np.show(':i', 'back to [1]')
+</code></pre>
+<h2 id="custom-scopes"><a class="header" href="#custom-scopes">Custom scopes</a></h2>
+<p><code>np.scope()</code> opens a named region. Inside it, <code>:i2</code> counters are keyed by the
+scope name instead of the function, which lets unrelated blocks share — or
+deliberately not share — a counter:</p>
+<pre><code class="language-python">with np.scope(name='download'):
+    np.show(':i2', 'file A')
+    np.show(':i2', 'file B')
+
+with np.scope():                 # anonymous scope
+    np.show(':i2', 'anonymous 1')
+</code></pre>
+<p>Scopes also give <code>:t3</code> its own timeline; see <a href="#timing">Timing</a>.</p>
+<h2 id="colors"><a class="header" href="#colors">Colors</a></h2>
+<p>Counter colors are generated per source frame from a bright hex palette and
+rendered with terminal true color. You do not choose them; they only serve to
+tell frames apart. <code>:i3</code> is always red.</p>
+<h2 id="shorthand"><a class="header" href="#shorthand">Shorthand</a></h2>
+<p><code>np.index(x)</code> is <code>np.show(x, ':i2')</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="timing"><a class="header" href="#timing">Timing</a></h1>
+<p>The <code>t</code> mark appends a timestamp to the message. It is useful for tracing how
+long stages take without exporting metrics.</p>
+<pre><code class="language-python">from time import sleep
+import neoprint as np
+
+np.show(':t', 'starting')
+sleep(0.2)
+np.show(':t', 'loaded config')
+sleep(0.5)
+np.show(':t', 'connected')
+</code></pre>
+<pre><code class="language-text">main.py:5   | [16:56:11 -&gt; 16:56:11   (2ms)] starting
+main.py:7   | [16:56:11 -&gt; 16:56:11 (200ms)] loaded config
+main.py:9   | [16:56:11 -&gt; 16:56:13 (500ms)] connected
+</code></pre>
+<p>The prefix shows the previous timestamp, the current one, and the delta.
+Formatting scales automatically: milliseconds for short gaps, seconds,
+minutes, hours for long ones.</p>
+<h2 id="the-four-variants"><a class="header" href="#the-four-variants">The four variants</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Mark</th><th style="text-align: left">Means</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>:t1</code></td><td style="text-align: left">absolute timestamp only, no delta</td></tr>
+<tr><td style="text-align: left"><code>:t2</code></td><td style="text-align: left">time since the previous <code>:t2</code>/<code>:t3</code> call (bare <code>:t</code>)</td></tr>
+<tr><td style="text-align: left"><code>:t3</code></td><td style="text-align: left">time since the scope timer started, or since <code>:t0</code></td></tr>
+<tr><td style="text-align: left"><code>:t0</code></td><td style="text-align: left">reset the timer</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>:t2</code> and <code>:t3</code> share one “instant” pointer, so alternating them measures each
+step against the previous call. <code>:t0</code> moves that pointer to now and restarts
+the current scope’s timer.</p>
+<h2 id="scopes"><a class="header" href="#scopes">Scopes</a></h2>
+<p>Inside <code>np.scope()</code>, <code>:t3</code> measures from the moment the scope was entered:</p>
+<pre><code class="language-python">with np.scope(name='job'):
+    np.show(':t3', 'start')
+    sleep(1)
+    np.show(':t3', 'one second into the job')
+</code></pre>
+<p>Outside a scope, <code>:t3</code> measures from the most recent <code>:t0</code>.</p>
+<h2 id="practical-pattern"><a class="header" href="#practical-pattern">Practical pattern</a></h2>
+<p><code>:t</code> is most useful as a drop-in replacement for ad-hoc
+<code>time.perf_counter()</code> logging:</p>
+<pre><code class="language-python">np.show(':t', 'begin download')
+data = download()
+np.show(':t', 'downloaded {} bytes'.format(len(data)))
+np.show(':t', 'done')
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dividers"><a class="header" href="#dividers">Dividers</a></h1>
+<p>The <code>d</code> mark frames a message with a horizontal rule. It is a lightweight way
+to separate sections in a long run of output.</p>
+<pre><code class="language-python">import neoprint as np
+
+np.show(':d', 'Section title')
+np.show('some line')
+np.show('another line')
+</code></pre>
+<pre><code class="language-text">main.py:3   | ──────────────────── Section title ─────────────────────
+main.py:4   | some line
+main.py:5   | another line
+</code></pre>
+<p>The rule spans the console width; the text you passed sits in the middle.</p>
+<h2 id="variants"><a class="header" href="#variants">Variants</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Mark</th><th style="text-align: left">Look</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>:d1</code></td><td style="text-align: left">thin line (bare <code>:d</code>)</td></tr>
+<tr><td style="text-align: left"><code>:d2</code></td><td style="text-align: left">thick block line</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-python">np.show(':d1', 'thin')
+np.show(':d2', 'thick')
+</code></pre>
+<h2 id="interaction-with-other-marks"><a class="header" href="#interaction-with-other-marks">Interaction with other marks</a></h2>
+<ul>
+<li><code>:d</code> cannot be combined with <code>:l</code> — a divider needs a single-line body.
+Combining them raises an <code>AssertionError</code>; see
+<a href="#how-markup-works">How Markup Works</a>.</li>
+<li><code>:d</code> turns <code>:r2</code> off, because <code>:r2</code> produces multi-line layouts too.</li>
+<li>Any other mark, such as <code>:v8</code> or <code>:i</code>, still applies:
+<code>np.show(':d2v7t', 'End')</code> yields a thick divider with a timestamp,
+rendered in the <code>v7</code> (dim red) style.</li>
+</ul>
+<h2 id="shorthand-1"><a class="header" href="#shorthand-1">Shorthand</a></h2>
+<pre><code class="language-python">from neoprint import divider
+
+divider('Section title')
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="exception-printing"><a class="header" href="#exception-printing">Exception Printing</a></h1>
+<p>The <code>e</code> mark decides what happens when an exception object is among the
+arguments.</p>
+<h2 id="e0--plain"><a class="header" href="#e0--plain"><code>:e0</code> — plain</a></h2>
+<p>No special handling; the exception is printed like any other value.</p>
+<pre><code class="language-python">import neoprint as np
+
+try:
+    1 / 0
+except ZeroDivisionError as e:
+    np.show(e, ':e0')
+</code></pre>
+<pre><code class="language-text">main.py:6   | division by zero
+</code></pre>
+<h2 id="e1--red-message"><a class="header" href="#e1--red-message"><code>:e1</code> — red message</a></h2>
+<p>The message is printed in red, without a traceback:</p>
+<pre><code class="language-python">np.show(e, ':e1')
+</code></pre>
+<p>Use it when you only want to signal a failure, not explain it.</p>
+<h2 id="e2--traceback-panel-default"><a class="header" href="#e2--traceback-panel-default"><code>:e2</code> — traceback panel (default)</a></h2>
+<p>This is what bare <code>:e</code> does. The exception is rendered through Rich’s traceback
+renderer:</p>
+<pre><code class="language-python">np.show(e, ':e2')
+</code></pre>
+<pre><code class="language-text">main.py:6   |
+  ╭───────────────────── Traceback (most recent call last) ─────────────────────╮
+  │ main.py:4 in &lt;module&gt;                                                       │
+  │                                                                             │
+  │   3 try:                                                                    │
+  │ ❱ 4     1 / 0                                                               │
+  ╰─────────────────────────────────────────────────────────────────────────────╯
+  ZeroDivisionError: division by zero
+</code></pre>
+<p>The panel includes the source snippet of every frame, with the failing line
+marked.</p>
+<h2 id="e3--traceback-with-locals"><a class="header" href="#e3--traceback-with-locals"><code>:e3</code> — traceback with locals</a></h2>
+<p>Same as <code>:e2</code>, plus the local variables of each frame:</p>
+<pre><code class="language-python">np.show(e, ':e3')
+</code></pre>
+<p>Useful when the bug depends on values you cannot guess from the code. Locals
+whose names start with dunder or sunder (<code>__x__</code>, <code>_x_</code>) are hidden.</p>
+<h2 id="printing-the-current-exception"><a class="header" href="#printing-the-current-exception">Printing the <em>current</em> exception</a></h2>
+<p>Inside an <code>except</code> block you can omit the argument entirely; neoprint reads the
+current exception from <code>sys.exc_info()</code>:</p>
+<pre><code class="language-python">try:
+    load_config()
+except Exception:
+    np.show(':e')       # same as np.show(':e2')
+</code></pre>
+<h2 id="combining-with-other-marks"><a class="header" href="#combining-with-other-marks">Combining with other marks</a></h2>
+<p><code>e</code> combines freely with <code>v</code>, <code>d</code>, and <code>i</code>:</p>
+<pre><code class="language-python">np.show(e, ':v8')       # one red line, no traceback
+</code></pre>
+<h2 id="shorthand-2"><a class="header" href="#shorthand-2">Shorthand</a></h2>
+<pre><code class="language-python">from neoprint import exception
+
+try:
+    ...
+except Exception as e:
+    exception(e)        # same as np.show(e, ':e2')
+</code></pre>
+<h2 id="global-excepthook"><a class="header" href="#global-excepthook">Global excepthook</a></h2>
+<p>When <code>config.rich_traceback</code> is on (the default), uncaught exceptions are
+printed by Rich’s excepthook instead of Python’s bare traceback, without any
+call to <code>np.show</code>. Set <code>show_traceback_locals</code> to include locals there too:</p>
+<pre><code class="language-python">import neoprint as np
+
+np.config(show_traceback_locals=True)
+</code></pre>
+<p>See <a href="#configuration">Configuration</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="source-layers"><a class="header" href="#source-layers">Source Layers</a></h1>
+<p>Every message starts with a head like <code>main.py:10</code>. By default that head points
+at the line that called <code>np.show</code>. The <code>p</code> mark moves the head up the call
+stack, so a shared logging helper can report the place that <em>used</em> it.</p>
+<h2 id="the-stack"><a class="header" href="#the-stack">The stack</a></h2>
+<p><code>p0</code> is the frame of the <code>np.show</code> call itself, <code>p1</code> is its caller, <code>p2</code> its
+caller’s caller, and so on. Bare <code>:p</code> is <code>:p1</code>.</p>
+<pre><code class="language-python">import neoprint as np            # ln1
+
+def aaa():                       # ln3
+    def bbb():                   # ln4
+        def ccc():               # ln5
+            np.show('DDD', ':p0')    # ln7
+            np.show('CCC', ':p1')    # ln8
+            np.show('BBB', ':p2')    # ln9
+            np.show('AAA', ':p3')    # ln10
+        ccc()                    # ln12
+    bbb()                        # ln13
+aaa()                            # ln14
+</code></pre>
+<pre><code class="language-text">main.py:7    | DDD
+main.py:12   | CCC
+main.py:13   | BBB
+main.py:14   | AAA
+</code></pre>
+<p><code>p0</code> reports the line that printed; <code>p1</code> reports the line that called that
+function; and so on. Going further than the stack depth raises an error, so
+the practical range is <code>p0</code> to <code>p3</code>.</p>
+<h2 id="why-it-matters"><a class="header" href="#why-it-matters">Why it matters</a></h2>
+<p>Consider a library method that is called from many places. With <code>:p</code>, each
+message points at the <em>caller</em>, not at the library:</p>
+<pre><code class="language-python">import neoprint as np
+
+class Library:
+    def borrow_book(self, book_name):
+        np.show('borrowed "{}"'.format(book_name), ':p')
+        return Book(book_name)
+
+lib = Library()
+
+# in aaa.py
+lib.borrow_book('Stray Birds')
+
+# in bbb.py
+lib.borrow_book('How the Steel Was Tempered')
+</code></pre>
+<pre><code class="language-text">aaa.py:8    | borrowed "Stray Birds"
+bbb.py:10   | borrowed "How the Steel Was Tempered"
+</code></pre>
+<p>That is how you trace which script triggered a shared code path.</p>
+<h2 id="relationship-with-varnames"><a class="header" href="#relationship-with-varnames">Relationship with varnames</a></h2>
+<p><code>:p</code> only moves the <em>head</em> (the source prefix). Variable names from <code>:n</code> are
+always read from the line where <code>np.show</code> is written, regardless of <code>:p</code>. In a
+shared helper, the values passed to the helper still come from the helper’s own
+line, while the head shows the outside caller.</p>
+<p>Note that <code>p2</code> and above rely on the interpreter’s stack being intact. Inside
+heavy wrappers or asynchronous code, prefer <code>:p1</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="progress-bars"><a class="header" href="#progress-bars">Progress Bars</a></h1>
+<p>Neoprint ships two forms of progress display: an object you drive manually
+(<code>np.Progress</code>) and a generator you wrap around an iterable (<code>np.progress</code>).</p>
+<h2 id="npprogress"><a class="header" href="#npprogress"><code>np.Progress</code></a></h2>
+<pre><code class="language-python">from time import sleep
+import neoprint as np
+
+names = ['Alice', 'Bob', 'Carol']
+
+with np.Progress(total=len(names)) as prog:
+    for name in names:
+        prog.update(name)
+        sleep(0.05)
+</code></pre>
+<pre><code class="language-text">main.py:6   | ──────────────────────── [  3/3] Carol
+</code></pre>
+<p>The bar fills with <code>─</code>, the counter shows <code>index/total</code>, and <code>update(label)</code>
+prints a label on the right, truncated to the remaining width. The head
+(<code>main.py:6</code>) comes from the <code>with</code> line.</p>
+<h3 id="total-is-required"><a class="header" href="#total-is-required"><code>total</code> is required</a></h3>
+<p><code>update()</code> decides the bar type on its first call. If <code>total</code> is still <code>None</code>
+at that point, neoprint raises <code>NotImplementedError</code> — the spinner-style
+indeterminate bar is not implemented yet. Set <code>total</code> either in the constructor
+or as a property before the first <code>update()</code>:</p>
+<pre><code class="language-python">with np.Progress() as prog:
+    prog.total = len(items)
+    for item in items:
+        prog.update()
+</code></pre>
+<p>Setting <code>total</code> after the first <code>update()</code> raises <code>ValueError</code>.</p>
+<h3 id="indicators"><a class="header" href="#indicators">Indicators</a></h3>
+<p><code>indicator_style</code> selects the read-out:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Style</th><th style="text-align: left">Example</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>'counter'</code> (default)</td><td style="text-align: left"><code>[ 42/100]</code></td></tr>
+<tr><td style="text-align: left"><code>'digital'</code></td><td style="text-align: left"><code>( 42%)</code></td></tr>
+<tr><td style="text-align: left"><code>'decimal'</code></td><td style="text-align: left"><code>( 42.00%)</code></td></tr>
+<tr><td style="text-align: left"><code>'none'</code></td><td style="text-align: left">bar only</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>color</code> accepts <code>'red'</code> (default), <code>'green'</code>, <code>'yellow'</code>, or <code>'blue'</code>.</p>
+<pre><code class="language-python">with np.Progress(total=100, indicator_style='decimal', color='green') as p:
+    ...
+</code></pre>
+<h2 id="npprogress-1"><a class="header" href="#npprogress-1"><code>np.progress</code></a></h2>
+<p><code>np.progress(iterable)</code> wraps an iterable in a <code>Progress</code> block and yields its
+items. For sized containers the total is inferred; for generators pass it
+explicitly:</p>
+<pre><code class="language-python">for name in np.progress(names):
+    sleep(0.05)
+
+def gen():
+    for name in names:
+        yield name
+
+for name in np.progress(gen(), total=len(names)):
+    sleep(0.05)
+</code></pre>
+<p>Plain items only update the counter. To show a label, wrap the value in
+<code>np.ProgressItem</code>:</p>
+<pre><code class="language-python">for name in np.progress([np.ProgressItem(n) for n in names]):
+    sleep(0.05)
+</code></pre>
+<p><code>ProgressItem(data, label='')</code> yields <code>data</code> from the loop while displaying
+<code>label</code> (defaults to <code>str(data)</code>).</p>
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<ul>
+<li>The bar width adapts to the console width, measured when the <code>Progress</code>
+object is created.</li>
+<li><code>close()</code> (called by the <code>with</code> block) resets the object, so a <code>Progress</code>
+instance can be reused.</li>
+<li>In debug mode (<code>np.config(debug_print=True)</code>), the bar prints one line per
+update instead of overwriting; useful when output is captured to a file.</li>
+<li><code>np.Spinner</code>, <code>np.spinner</code>, and <code>Progress</code> without <code>total</code> are placeholders; do
+not rely on them yet.</li>
+</ul>
+<h2 id="a-combined-example"><a class="header" href="#a-combined-example">A combined example</a></h2>
+<pre><code class="language-python">import neoprint as np
+from time import sleep
+
+items = ['a', 'b', 'c']
+np.show(':d', 'downloading')
+
+with np.Progress(total=len(items), color='green') as p:
+    for item in items:
+        p.update(item)
+        sleep(0.05)
+
+np.show(':d2v4t', 'done')
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="configuration"><a class="header" href="#configuration">Configuration</a></h1>
+<p>Global switches live in a single object, <code>np.config</code>. Call it with keyword
+arguments to change settings, and <code>np.config.reset()</code> to restore defaults.</p>
+<pre><code class="language-python">import neoprint as np
+
+np.config(show_varnames=True)
+...
+np.config.reset()
+</code></pre>
+<p>Unknown names raise <code>AssertionError</code>, which catches typos early.</p>
+<h2 id="options"><a class="header" href="#options">Options</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Option</th><th style="text-align: left">Default</th><th style="text-align: left">Effect</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>show_source</code></td><td style="text-align: left"><code>True</code></td><td style="text-align: left">show the <code>filename:lineno</code> head</td></tr>
+<tr><td style="text-align: left"><code>show_varnames</code></td><td style="text-align: left"><code>False</code></td><td style="text-align: left">always show variable names, as if <code>:n</code> were passed</td></tr>
+<tr><td style="text-align: left"><code>disable_varnames</code></td><td style="text-align: left"><code>False</code></td><td style="text-align: left">never show variable names, and skip source parsing</td></tr>
+<tr><td style="text-align: left"><code>console_width</code></td><td style="text-align: left">terminal width</td><td style="text-align: left">width used for dividers, progress bars, wrapping</td></tr>
+<tr><td style="text-align: left"><code>multiline_indent</code></td><td style="text-align: left"><code>2</code></td><td style="text-align: left">spaces per nesting level in expanded output</td></tr>
+<tr><td style="text-align: left"><code>legacy_windows</code></td><td style="text-align: left"><code>False</code></td><td style="text-align: left">reduce color effects on legacy consoles</td></tr>
+<tr><td style="text-align: left"><code>rich_traceback</code></td><td style="text-align: left"><code>True</code></td><td style="text-align: left">install Rich’s excepthook for uncaught exceptions</td></tr>
+<tr><td style="text-align: left"><code>show_traceback_locals</code></td><td style="text-align: left"><code>False</code></td><td style="text-align: left">include locals in uncaught-exception panels</td></tr>
+<tr><td style="text-align: left"><code>sourcemap_alignment</code></td><td style="text-align: left"><code>'left'</code></td><td style="text-align: left">pad line numbers so heads align</td></tr>
+<tr><td style="text-align: left"><code>debug_print</code></td><td style="text-align: left"><code>False</code></td><td style="text-align: left">verbose internal logging of neoprint itself</td></tr>
+<tr><td style="text-align: left"><code>debug_output</code></td><td style="text-align: left"><code>False</code></td><td style="text-align: left">collect printed output for tests</td></tr>
+</tbody>
+</table>
+</div>
+<p>A few options are accepted but have no visible effect yet: <code>show_funcname</code>,
+<code>show_verbosity_tag</code>, <code>path_style</code>, <code>clear_unfinished_stream</code>, <code>subthreaded</code>.
+They are reserved for upcoming releases.</p>
+<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment variables</a></h2>
+<p>Some switches can be set before the interpreter imports neoprint:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Variable</th><th style="text-align: left">Equivalent</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>NEOPRINT_DEBUG=1</code></td><td style="text-align: left"><code>debug_print=True</code></td></tr>
+<tr><td style="text-align: left"><code>NEOPRINT_DEBUG_PRINT=1</code></td><td style="text-align: left"><code>debug_print=True</code></td></tr>
+<tr><td style="text-align: left"><code>NEOPRINT_DISABLE_VARNAMES=1</code></td><td style="text-align: left"><code>disable_varnames=True</code></td></tr>
+<tr><td style="text-align: left"><code>NEOPRINT_LEGACY_WINDOWS=1</code></td><td style="text-align: left"><code>legacy_windows=True</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>This is useful for CI, where you may want to disable variable-name lookups
+without touching the code. Note that <code>console_width</code> has no environment
+variable; set it from code with <code>np.config(console_width=100)</code>.</p>
+<h2 id="a-typical-setup"><a class="header" href="#a-typical-setup">A typical setup</a></h2>
+<pre><code class="language-python">import neoprint as np
+
+# a wide, stable layout in CI, verbose helpers locally
+np.config(
+    console_width=120,
+    multiline_indent=2,
+    show_varnames=True,
+)
+</code></pre>
+<h2 id="debugging-neoprint-itself"><a class="header" href="#debugging-neoprint-itself">Debugging neoprint itself</a></h2>
+<p><code>debug_print=True</code> makes neoprint narrate its own decisions (frame resolution,
+markup analysis, varname lookups) to stderr. It is meant for reporting bugs,
+not for daily use.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="api-reference"><a class="header" href="#api-reference">API Reference</a></h1>
+<p>Everything below is available from the package root:</p>
+<pre><code class="language-python">import neoprint as np
+</code></pre>
+<h2 id="printing"><a class="header" href="#printing">Printing</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Name</th><th style="text-align: left">Signature</th><th style="text-align: left">Equivalent</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>np.show</code></td><td style="text-align: left"><code>show(*args, markup=None)</code></td><td style="text-align: left">the main entry point</td></tr>
+<tr><td style="text-align: left"><code>np.print</code></td><td style="text-align: left"><code>print(*args, markup=None)</code></td><td style="text-align: left">alias of <code>np.show</code></td></tr>
+<tr><td style="text-align: left"><code>np.debug</code></td><td style="text-align: left"><code>debug(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':v1')</code></td></tr>
+<tr><td style="text-align: left"><code>np.info</code></td><td style="text-align: left"><code>info(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':v2')</code></td></tr>
+<tr><td style="text-align: left"><code>np.success</code></td><td style="text-align: left"><code>success(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':v4')</code></td></tr>
+<tr><td style="text-align: left"><code>np.warning</code></td><td style="text-align: left"><code>warning(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':v6')</code></td></tr>
+<tr><td style="text-align: left"><code>np.error</code></td><td style="text-align: left"><code>error(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':v8')</code></td></tr>
+<tr><td style="text-align: left"><code>np.divider</code></td><td style="text-align: left"><code>divider(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':d1')</code></td></tr>
+<tr><td style="text-align: left"><code>np.exception</code></td><td style="text-align: left"><code>exception(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':e2')</code></td></tr>
+<tr><td style="text-align: left"><code>np.expand</code></td><td style="text-align: left"><code>expand(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':l1')</code></td></tr>
+<tr><td style="text-align: left"><code>np.expand2</code></td><td style="text-align: left"><code>expand2(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':l2')</code></td></tr>
+<tr><td style="text-align: left"><code>np.index</code></td><td style="text-align: left"><code>index(*args, markup=None)</code></td><td style="text-align: left"><code>show(..., ':i2')</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>All printing functions return <code>None</code>. A markup passed as the first or last
+positional argument is merged with the shorthand’s own markup, so
+<code>np.warning(x, ':n')</code> is the same as <code>np.show(x, ':v6n')</code>.</p>
+<p><code>np.vshow</code> exists as the <code>:n1</code> shorthand, but variable-name resolution keys on
+the called function name, and <code>vshow</code> is not recognizable to the analyzer.
+Use <code>np.show(x, ':n1')</code> instead.</p>
+<h3 id="markdown-1"><a class="header" href="#markdown-1">markdown</a></h3>
+<pre><code class="language-python">markdown(*args: str) -&gt; None
+</code></pre>
+<p>Accept one argument (the Markdown text) or two arguments (the text and a
+markup, in either order):</p>
+<pre><code class="language-python">np.markdown('# Title\n\nSome **bold** text.')
+np.markdown(':n', '**bold**')
+</code></pre>
+<h2 id="formatting"><a class="header" href="#formatting">Formatting</a></h2>
+<pre><code class="language-python">format(*args, markup=None) -&gt; str
+</code></pre>
+<p>Returns the same layout that <code>np.show</code> would print, but with color codes
+stripped, so it can be logged to a file or embedded in another message.</p>
+<pre><code class="language-python">format_list(*args, markup=None) -&gt; list[TextObject]
+</code></pre>
+<p>The lower-level pipeline. Each returned object has a
+<code>render(color_code_scheme=...)</code> method, where the scheme is <code>'plain'</code>,
+<code>'ansi'</code>, or <code>'bbcode'</code>. Use it when you want to post-process pieces rather
+than print them directly. The remaining parameters (<code>_frame</code>,
+<code>_elevate_parent_level</code>, <code>_mark_position</code>, <code>_raise_builtin_print</code>) are
+internal.</p>
+<h3 id="text-objects"><a class="header" href="#text-objects">Text objects</a></h3>
+<pre><code class="language-python">Text(obj, color='default', style='')
+</code></pre>
+<p>A piece of text with an explicit color and style. <code>True</code>, <code>False</code>, and <code>None</code>
+are rendered green, red, and magenta by default. Colors can be names, Rich
+styles, or <code>#rrggbb</code> values.</p>
+<pre><code class="language-python">Markdown(text)
+</code></pre>
+<p>A Rich-rendered Markdown block. Prefer <code>np.markdown()</code> for printing, which
+also takes care of the markup and line break.</p>
+<h2 id="scopes-and-counters"><a class="header" href="#scopes-and-counters">Scopes and counters</a></h2>
+<pre><code class="language-python">scope(name='') -&gt; contextmanager
+</code></pre>
+<p>Opens a named scope for the <code>with</code> block. Inside it, <code>:i2</code> (and <code>np.index</code>)
+counts per scope and <code>:t3</code> reports scope-level timing. Without a name, a
+random short id is generated.</p>
+<h2 id="progress-bars-1"><a class="header" href="#progress-bars-1">Progress bars</a></h2>
+<pre><code class="language-python">Progress(total=None, indicator_style='counter', color='red')
+</code></pre>
+<p>A manual progress bar. <code>indicator_style</code> is one of <code>'counter'</code>, <code>'digital'</code>,
+<code>'decimal'</code>, or <code>'none'</code>; <code>color</code> is one of <code>'blue'</code>, <code>'green'</code>, <code>'yellow'</code>,
+<code>'red'</code>.</p>
+<p>Methods:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Method</th><th style="text-align: left">Effect</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>update(item=None)</code></td><td style="text-align: left">advance one step; <code>item</code> is an optional label</td></tr>
+<tr><td style="text-align: left"><code>close()</code></td><td style="text-align: left">move to a new line and reset</td></tr>
+<tr><td style="text-align: left"><code>reset()</code></td><td style="text-align: left">reset the counter and total</td></tr>
+<tr><td style="text-align: left"><code>total</code> (property)</td><td style="text-align: left">read or set the total before the first <code>update()</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><code>total</code> is required for a normal bar. A <code>Progress</code> without a total raises
+<code>NotImplementedError</code> on the first <code>update()</code>.</p>
+<pre><code class="language-python">progress(obj, total=None, **kwargs) -&gt; Iterator
+</code></pre>
+<p>A generator that wraps an iterable and advances automatically. For concrete
+sized containers, <code>total</code> is inferred from <code>len(obj)</code>; generators need an
+explicit <code>total</code>.</p>
+<pre><code class="language-python">ProgressItem(data, label='')
+</code></pre>
+<p>Wraps one item of a <code>progress()</code> iteration to attach a label. The loop
+receives <code>data</code>, and the bar shows <code>label</code> (or <code>str(data)</code> when omitted).</p>
+<p><code>Spinner</code> and <code>spinner()</code> are exported as reserved names and are not
+implemented yet.</p>
+<h2 id="configuration-1"><a class="header" href="#configuration-1">Configuration</a></h2>
+<pre><code class="language-python">config(**kwargs) -&gt; None
+config.reset() -&gt; None
+</code></pre>
+<p>Change global options, or restore defaults. See
+<a href="#configuration">Configuration</a> for the full option table.</p>
+<h2 id="package-control"><a class="header" href="#package-control">Package control</a></h2>
+<pre><code class="language-python">setup(package_name=None) -&gt; None
+unload() -&gt; None
+</code></pre>
+<p><code>np.setup(__package__)</code> replaces the builtin <code>print</code> with <code>np.print</code> for the
+given package, so existing <code>print</code> calls gain neoprint’s formatting without
+being edited. <code>np.unload()</code> restores the builtin <code>print</code>.</p>
+<h2 id="advanced"><a class="header" href="#advanced">Advanced</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Name</th><th style="text-align: left">Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>np.console</code></td><td style="text-align: left">the underlying Rich console</td></tr>
+<tr><td style="text-align: left"><code>np.bprint</code></td><td style="text-align: left">the original builtin-style print, always unformatted</td></tr>
+<tr><td style="text-align: left"><code>np.FrameInfo</code></td><td style="text-align: left">frame inspection used by source prefixes and aliases</td></tr>
+<tr><td style="text-align: left"><code>np.elevate_parent_level</code></td><td style="text-align: left">adjust which frame is reported as the caller</td></tr>
+<tr><td style="text-align: left"><code>np.debugger</code></td><td style="text-align: left">internal debugger switch object</td></tr>
+<tr><td style="text-align: left"><code>np.text_object</code></td><td style="text-align: left">all text object classes</td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-c22b7243.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>

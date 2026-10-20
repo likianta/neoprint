@@ -28,27 +28,6 @@ level by two spaces:
 np.show(data, ':l')
 ```
 
-```text
-main.py:5   |
-  {
-    "users": [
-      {
-        "name": "Alice",
-        "tags": [
-          "dev",
-          "ops",
-        ],
-      },
-      {
-        "name": "Bob",
-        "tags": [
-          "design",
-        ],
-      },
-    ],
-  }
-```
-
 ![Expanded tree](../images/expanded-tree.png)
 
 Strings are quoted, trailing commas are added, and the indentation is
@@ -104,10 +83,8 @@ np.show(':l2', 'status: draft -> published')
 ```
 
 ```text
-main.py:1   |
-  v0.1.0 -> v0.2.0
-main.py:2   |
-  status: draft -> published
+main.py:1   | v0.1.0 -> v0.2.0
+main.py:2   | status: draft -> published
 ```
 
 (The left side is red, the right side green, the label stays default-colored.)

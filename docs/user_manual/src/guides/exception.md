@@ -39,17 +39,6 @@ renderer:
 np.show(e, ':e2')
 ```
 
-```text
-main.py:6   |
-  ╭───────────────────── Traceback (most recent call last) ─────────────────────╮
-  │ main.py:4 in <module>                                                       │
-  │                                                                             │
-  │   3 try:                                                                    │
-  │ ❱ 4     1 / 0                                                               │
-  ╰─────────────────────────────────────────────────────────────────────────────╯
-  ZeroDivisionError: division by zero
-```
-
 The panel includes the source snippet of every frame, with the failing line
 marked.
 

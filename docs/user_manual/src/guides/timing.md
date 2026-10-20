@@ -14,12 +14,6 @@ sleep(0.5)
 np.show(':t', 'connected')
 ```
 
-```text
-main.py:5   | [16:56:11 -> 16:56:11   (2ms)] starting
-main.py:7   | [16:56:11 -> 16:56:11 (200ms)] loaded config
-main.py:9   | [16:56:11 -> 16:56:13 (500ms)] connected
-```
-
 ![Timing output](../images/timing.png)
 
 The prefix shows the previous timestamp, the current one, and the delta.

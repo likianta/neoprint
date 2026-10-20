@@ -24,13 +24,6 @@ def aaa():                       # ln3
 aaa()                            # ln14
 ```
 
-```text
-main.py:7    | DDD
-main.py:12   | CCC
-main.py:13   | BBB
-main.py:14   | AAA
-```
-
 ![Source layers](../images/parent-layers.png)
 
 `p0` reports the line that printed; `p1` reports the line that called that

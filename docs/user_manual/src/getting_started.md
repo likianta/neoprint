@@ -23,10 +23,6 @@ import neoprint as np
 np.show('hello world')
 ```
 
-```text
-main.py:3   | hello world
-```
-
 ![Hello world output](images/hello-world.png)
 
 The message is made of two parts:

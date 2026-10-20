@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-404a9e62.js";
+            window.path_to_searchindex_js = "../searchindex-d09c88b4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-113366de.js"></script>
@@ -193,25 +193,6 @@ np.show(data)
 level by two spaces:</p>
 <pre><code class="language-python">np.show(data, ':l')
 </code></pre>
-<pre><code class="language-text">main.py:5   |
-  {
-    "users": [
-      {
-        "name": "Alice",
-        "tags": [
-          "dev",
-          "ops",
-        ],
-      },
-      {
-        "name": "Bob",
-        "tags": [
-          "design",
-        ],
-      },
-    ],
-  }
-</code></pre>
 <p><img src="../images/expanded-tree.png" alt="Expanded tree"></p>
 <p>Strings are quoted, trailing commas are added, and the indentation is
 controlled by <code>np.config(multiline_indent=N)</code> (default <code>2</code>).</p>
@@ -247,10 +228,8 @@ optional label before a colon:</p>
 <pre><code class="language-python">np.show(':l2', 'v0.1.0 -&gt; v0.2.0')
 np.show(':l2', 'status: draft -&gt; published')
 </code></pre>
-<pre><code class="language-text">main.py:1   |
-  v0.1.0 -&gt; v0.2.0
-main.py:2   |
-  status: draft -&gt; published
+<pre><code class="language-text">main.py:1   | v0.1.0 -&gt; v0.2.0
+main.py:2   | status: draft -&gt; published
 </code></pre>
 <p>(The left side is red, the right side green, the label stays default-colored.)</p>
 <p><img src="../images/expanded-layouts.png" alt="Tailored layouts"></p>

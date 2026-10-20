@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-404a9e62.js";
+            window.path_to_searchindex_js = "../searchindex-d09c88b4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-113366de.js"></script>
@@ -212,12 +212,14 @@ rather than “expand this structure”; the result is the same.</p>
 <p>For long-form text, neoprint offers a dedicated helper:</p>
 <pre><code class="language-python">import neoprint as np
 
-np.markdown('''
-# Title
+np.markdown(
+    '''
+    # Title
 
-- item 1
-- item 2
-''')
+    - item 1
+    - item 2
+    '''
+)
 </code></pre>
 <p>The string is rendered by Rich’s Markdown renderer, with headings, lists,
 and inline code styled. An optional markup can be given as the first argument

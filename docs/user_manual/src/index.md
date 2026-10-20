@@ -7,14 +7,13 @@ tracebacks on top of it.
 
 ```python
 import neoprint as np
-
 name = 'Alice'
 age = 30
 np.show(name, age, ':n')
 ```
 
 ```text
-main.py:4   | name = "Alice"; age = 30
+main.py:4 | name = "Alice"; age = 30
 ```
 
 ![Neoprint output](images/index-hero.png)
@@ -52,12 +51,11 @@ Python 3.9 or newer is required.
 
 ```python
 from neoprint import print
-
 print('hello world')
 ```
 
 ```text
-main.py:3   | hello world
+main.py:2 | hello world
 ```
 
 That is the whole story for a single script. Continue with

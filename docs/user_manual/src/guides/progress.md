@@ -17,10 +17,6 @@ with np.Progress(total=len(names)) as prog:
         sleep(0.05)
 ```
 
-```text
-main.py:6   | ──────────────────────── [  3/3] Carol
-```
-
 ![Progress bar](../images/progress-bar.png)
 
 The bar fills with `─`, the counter shows `index/total`, and `update(label)`

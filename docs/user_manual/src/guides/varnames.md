@@ -27,10 +27,6 @@ names = ['Alice', 'Bob']
 np.show(len(names), ':n')
 ```
 
-```text
-main.py:2   | len(names) = 2
-```
-
 ```python
 class Box:
     def __init__(self):
@@ -38,10 +34,6 @@ class Box:
 
 box = Box()
 np.show(box.value, ':n')
-```
-
-```text
-main.py:7   | box.value = 42
 ```
 
 ![Variable names and expressions](../images/varnames.png)

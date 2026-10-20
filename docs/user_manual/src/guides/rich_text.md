@@ -55,12 +55,14 @@ For long-form text, neoprint offers a dedicated helper:
 ```python
 import neoprint as np
 
-np.markdown('''
-# Title
+np.markdown(
+    '''
+    # Title
 
-- item 1
-- item 2
-''')
+    - item 1
+    - item 2
+    '''
+)
 ```
 
 The string is rendered by Rich's Markdown renderer, with headings, lists,

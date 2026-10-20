@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-404a9e62.js";
+            window.path_to_searchindex_js = "searchindex-d09c88b4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-113366de.js"></script>
@@ -181,12 +181,11 @@ modern consoles. It keeps the API you already know, and adds colors, source
 locations, variable names, readable object layouts, progress bars, and pretty
 tracebacks on top of it.</p>
 <pre><code class="language-python">import neoprint as np
-
 name = 'Alice'
 age = 30
 np.show(name, age, ':n')
 </code></pre>
-<pre><code class="language-text">main.py:4   | name = "Alice"; age = 30
+<pre><code class="language-text">main.py:4 | name = "Alice"; age = 30
 </code></pre>
 <p><img src="images/index-hero.png" alt="Neoprint output"></p>
 <p>The same line with built-in <code>print</code> would be a plain <code>Alice 30</code>, invented by
@@ -215,10 +214,9 @@ panel, optionally with local variables.</li>
 <p>Python 3.9 or newer is required.</p>
 <h2 id="hello-world"><a class="header" href="#hello-world">Hello world</a></h2>
 <pre><code class="language-python">from neoprint import print
-
 print('hello world')
 </code></pre>
-<pre><code class="language-text">main.py:3   | hello world
+<pre><code class="language-text">main.py:2 | hello world
 </code></pre>
 <p>That is the whole story for a single script. Continue with
 <a href="./getting_started.html">Installation and Hello World</a> to learn the package-wide

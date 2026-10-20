@@ -40,4 +40,4 @@ from .text_object import Markdown
 from .text_object import RichObject
 from .text_object import Text
 
-__version__ = '0.1.13'
+__version__ = '1.0.0'

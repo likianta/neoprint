@@ -1,14 +1,12 @@
 [project]
 name = "neoprint"
-version = "0.1.13"
+version = "1.0.0a0"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "rich>=14.0.0",
-]
+dependencies = ["rich>=14.0.0"]
 
 [build-system]
 build-backend = "hatchling.build"
@@ -16,10 +14,10 @@ requires = ["hatchling>=1.29.0"]
 
 [dependency-groups]
 dev = [
-    "argsense>=1.4.0",
+    "argsense>=3.0.0",
     "faker>=40.8.0; python_version >= '3.12'",
-    "ipython>=9.15.0; python_version >= '3.12'",
-    "lk-utils>=3.8.1; python_version >= '3.12'",
+    "ipython>=9.17.0; python_version >= '3.12'",
+    "lk-utils>=3.8.2; python_version >= '3.12'",
     # "loguru>=0.7.3",
     "objprint>=0.3.0",
     "rich>=15.0.0",
@@ -76,5 +74,5 @@ url = "http://localhost:2131/"
 explicit = true
 
 [tool.uv.sources]
-# argsense = { index = "likianta" }
+argsense = { index = "likianta" }
 lk-utils = { index = "likianta" }

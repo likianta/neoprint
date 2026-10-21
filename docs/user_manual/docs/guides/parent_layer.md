@@ -10,18 +10,17 @@ stack, so a shared logging helper can report the place that *used* it.
 caller's caller, and so on. Bare `:p` is `:p1`.
 
 ```python
-import neoprint as np            # ln1
-
-def aaa():                       # ln3
-    def bbb():                   # ln4
-        def ccc():               # ln5
-            np.show('DDD', ':p0')    # ln7
-            np.show('CCC', ':p1')    # ln8
-            np.show('BBB', ':p2')    # ln9
-            np.show('AAA', ':p3')    # ln10
-        ccc()                    # ln12
-    bbb()                        # ln13
-aaa()                            # ln14
+import neoprint as np               # ln1
+def aaa():                          # ln2
+    def bbb():                      # ln3
+        def ccc():                  # ln4
+            np.show('DDD', ':p0')   # ln5 -> ln5
+            np.show('CCC', ':p1')   # ln6 -> ln9
+            np.show('BBB', ':p2')   # ln7 -> ln10
+            np.show('AAA', ':p3')   # ln8 -> ln11
+        ccc()                       # ln9
+    bbb()                           # ln10
+aaa()                               # ln11
 ```
 
 ![Source layers](../images/parent-layers.png)

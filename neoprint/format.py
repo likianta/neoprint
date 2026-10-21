@@ -306,7 +306,7 @@ def get_head_parts(frame: FrameInfo) -> tp.List[to.TextObject]:
             out.append(to.Space())
             out.append(to.FuncnameSeparator())
             out.append(to.Space())
-        out.append(...)  # TODO
+        out.append(to.FunctionName(frame))
     if out:
         out.append(to.Space())
         out.append(to.BodySeparator())

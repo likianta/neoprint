@@ -12,12 +12,12 @@ def main() -> None:
     age = 20
     city = 'New York'
 
-    np.show(name, age, city, ':ni')
-    np.show(name, age, city, ':nvi')
-    np.show(name, len(name), ':ni')
+    np.show(name, age, city, ':ni2')
+    np.show(name, age, city, ':nvi2')
+    np.show(name, len(name), ':ni2')
 
     person = Person(name, age, city)
-    np.show(person.name, person.age, person.city, ':ni')
+    np.show(person.name, person.age, person.city, ':ni2')
 
     # pprint([np.util.strip_ansi_code(x) for x in np.debugger.output])
 

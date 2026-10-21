@@ -1,5 +1,6 @@
 from .base import T
 from .base import TextObject
+from .text import Text
 from ..config import config
 from ..frame import FrameInfo
 from ..path_scope import path_glob
@@ -12,7 +13,7 @@ class Source(TextObject):
         self._pname = '[{}]'.format(frame.package_name or 'N/A')
         self._fname = frame.file_name
         if config.sourcemap_alignment == 'left':
-            self._lineno = self._pad_lineno(frame.line_number)
+            self._lineno = _pad_text(str(frame.line_number))
         else:
             self._lineno = str(frame.line_number)
 
@@ -60,6 +61,22 @@ class Source(TextObject):
                 color_code_scheme=color_code_scheme,
             )
 
-    def _pad_lineno(self, number: int, width: int = 3) -> str:
-        a, b = divmod(len(str(number)), width)
-        return str(number).ljust(width * (a + (1 if b else 0)))
+
+class FunctionName(Text):
+    def __init__(self, frame: FrameInfo) -> None:
+        super().__init__(
+            _pad_text(
+                frame.function_name,
+                unit_width=2,
+                least_width=8,  # 8 for the length of '<module>'
+            ),
+            color='yellow',
+        )
+
+
+def _pad_text(text: str, *, unit_width: int = 3, least_width: int = 0) -> str:
+    if len(text) <= least_width:
+        return text.ljust(least_width)
+    else:
+        a, b = divmod(len(text), unit_width)
+        return text.ljust(unit_width * (a + (1 if b else 0)))

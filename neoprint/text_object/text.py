@@ -1,4 +1,4 @@
-import typing as t
+import typing as tp
 
 from .base import T
 from .base import TextObject
@@ -7,7 +7,7 @@ from ..render import render
 
 class Text(TextObject):
     def __init__(
-        self, obj: t.Any, color: T.Color = 'default', style: T.Style = ''
+        self, obj: tp.Any, color: T.Color = 'default', style: T.Style = ''
     ) -> None:
         self._origin = obj
         self._text = str(obj)

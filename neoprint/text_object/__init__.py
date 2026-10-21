@@ -17,6 +17,7 @@ from .rich import RichObject
 from .separator import BodySeparator
 from .separator import FuncnameSeparator
 from .separator import InBodySeparator
+from .source import FunctionName
 from .source import Source
 from .text import Text
 from .time import TimeDuration

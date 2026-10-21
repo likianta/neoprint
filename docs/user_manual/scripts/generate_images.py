@@ -19,12 +19,13 @@ from pathlib import Path
 from random import seed
 from textwrap import dedent
 
+from argsense import cli
 import neoprint as np
 
-ROOT = Path(__file__).resolve().parent.parent
-IMAGES = ROOT / 'docs' / 'src' / 'images'
+MDBOOK_ROOT = Path(__file__).resolve().parent.parent
+IMAGES = MDBOOK_ROOT / 'docs' / 'images'
 SVGS = IMAGES / 'svg'
-SCENES = ROOT / 'scripts' / 'scenes'
+SCENES = MDBOOK_ROOT / 'scripts' / 'scenes'
 
 FONT = ('Fira Code Medium', 'Consolas', 'monospace')
 FONT_SIZE = 15
@@ -34,15 +35,33 @@ THEME = 'catppuccin-mocha'
 SCALE = 2
 
 
-def main() -> None:
+def main(unit: str = 'all') -> None:
     seed(0)  # keep the random index colors stable across runs.
     IMAGES.mkdir(parents=True, exist_ok=True)
     SVGS.mkdir(exist_ok=True)
     SCENES.mkdir(exist_ok=True)
-    _render_all()
+    if unit == 'all':
+        _render_index_hero()
+        _render_hello_world()
+        _render_basic_arguments()
+        _render_verbosity_levels()
+        _render_varnames()
+        _render_expanded_tree()
+        _render_expanded_layouts()
+        _render_rich_text_styles()
+        _render_index_counter()
+        _render_index_scopes()
+        _render_timing()
+        _render_dividers()
+        _render_exception_panel()
+        _render_parent_layers()
+        _render_progress_bar()
+        _render_progress_indicators()
+    else:
+        globals()['_render_{}'.format(unit)]()
 
 
-def _render_all() -> None:
+def _render_index_hero() -> None:
     render(
         'index-hero',
         'Neoprint',
@@ -66,6 +85,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_hello_world() -> None:
     render(
         'hello-world',
         'Hello World',
@@ -79,6 +100,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_basic_arguments() -> None:
     render(
         'basic-arguments',
         'Semicolon-Joined Arguments',
@@ -93,6 +116,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_verbosity_levels() -> None:
     render(
         'verbosity-levels',
         'Verbosity Levels',
@@ -114,6 +139,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_varnames() -> None:
     render(
         'varnames',
         'Variable Names',
@@ -140,6 +167,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_expanded_tree() -> None:
     render(
         'expanded-tree',
         'Expanded Tree',
@@ -159,6 +188,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_expanded_layouts() -> None:
     render(
         'expanded-layouts',
         'Tailored Layouts',
@@ -174,6 +205,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_rich_text_styles() -> None:
     render(
         'rich-text-styles',
         'Rich Text',
@@ -189,6 +222,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_index_counter() -> None:
     render(
         'index-counter',
         'Index Counters',
@@ -204,6 +239,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_index_scopes() -> None:
     render(
         'index-scopes',
         'Custom Scopes',
@@ -222,6 +259,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_timing() -> None:
     render(
         'timing',
         'Timing',
@@ -241,6 +280,8 @@ def _render_all() -> None:
         reset_timer=True,
     )
 
+
+def _render_dividers() -> None:
     render(
         'dividers',
         'Dividers',
@@ -250,6 +291,7 @@ def _render_all() -> None:
         """
         import neoprint as np
 
+        np.show(':d')  # thin gray line
         np.show(':d1', 'thin')
         np.show('some line')
         np.show(':d2', 'thick')
@@ -258,6 +300,8 @@ def _render_all() -> None:
         reset_timer=True,
     )
 
+
+def _render_exception_panel() -> None:
     render(
         'exception-panel',
         'Traceback Panel',
@@ -274,6 +318,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_parent_layers() -> None:
     render(
         'parent-layers',
         'Source Layers',
@@ -283,14 +329,15 @@ def _render_all() -> None:
         """
         import neoprint as np
 
+        np.config(show_funcname=True)
 
         def aaa():
             def bbb():
                 def ccc():
-                    np.show('DDD', ':p0')
-                    np.show('CCC', ':p1')
-                    np.show('BBB', ':p2')
-                    np.show('AAA', ':p3')
+                    np.show('👈 in "ccc" function', ':p0')
+                    np.show('👈 in "bbb" function', ':p1')
+                    np.show('👈 in "aaa" function', ':p2')
+                    np.show('👈 in "<module>" scope', ':p3')
 
                 ccc()
             bbb()
@@ -298,6 +345,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_progress_bar() -> None:
     render(
         'progress-bar',
         'Progress Bar',
@@ -315,6 +364,8 @@ def _render_all() -> None:
         """,
     )
 
+
+def _render_progress_indicators() -> None:
     render(
         'progress-indicators',
         'Progress Indicators',
@@ -363,7 +414,7 @@ def render(
 
     scene = SCENES / filename
     scene.write_text(source, encoding='utf-8')
-    relative = scene.relative_to(HERE.parent.parent).as_posix()
+    relative = scene.relative_to(MDBOOK_ROOT.parent.parent).as_posix()
     with shot:
         exec(
             compile(source, relative, 'exec'),
@@ -374,8 +425,8 @@ def render(
     png = IMAGES / '{}.png'.format(name)
     shot.save_svg(svg)
     shot.save_png(png, scale=SCALE)
-    print('wrote', png.relative_to(HERE.parent.parent))
+    print('wrote', png.relative_to(MDBOOK_ROOT.parent.parent))
 
 
 if __name__ == '__main__':
-    main()
+    cli.run(main)

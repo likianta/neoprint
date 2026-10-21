@@ -4,7 +4,7 @@ Generate the README illustrations with neoprint.termshot.
 The png files are saved in `docs/images`, and the svg files they are
 rasterized from are kept in `docs/images/svg`.
 
-Every scene is executed from a script in `docs/images/.scenes`, so the
+Every scene is executed from a script in `docs/images/scenes`, so the
 source location printed by neoprint shows a natural file name (e.g.
 `hello_world.py:4`) instead of this generator. Those scripts are kept for
 reference.
@@ -24,7 +24,7 @@ import neoprint as np
 HERE = Path(__file__).resolve().parent
 IMAGES = HERE / 'images'
 SVGS = IMAGES / 'svg'
-SCENES = IMAGES / '.scenes'
+SCENES = IMAGES / 'scenes'
 
 FONT = ('Fira Code Medium', 'Consolas', 'monospace')
 FONT_SIZE = 15
@@ -200,6 +200,17 @@ def _render_all() -> None:
         'custom_scopes.py',
         """
         import neoprint as np
+        from neoprint.scope import counter as index_counter
+
+        COLORS = ['#8aafde', '#ffcf88']
+        _assigned = {}
+
+        def get_color_by_id(id: str) -> str:
+            if id not in _assigned:
+                _assigned[id] = COLORS[len(_assigned) % len(COLORS)]
+            return _assigned[id]
+
+        setattr(index_counter, 'get_color_by_id', get_color_by_id)
 
         with np.scope():
             np.show(':i2', 'anonymous scope - item 1')

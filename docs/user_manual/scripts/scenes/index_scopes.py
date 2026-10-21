@@ -1,4 +1,17 @@
 import neoprint as np
+from neoprint.scope import counter as index_counter
+
+COLORS = {'foo': '#8aafde', 'bar': '#ffcf88'}
+
+_get_color_by_id = index_counter.get_color_by_id
+
+def get_color_by_id(id: str) -> str:
+    for name, color in COLORS.items():
+        if id.endswith(':' + name):
+            return color
+    return _get_color_by_id(id)
+
+setattr(index_counter, 'get_color_by_id', get_color_by_id)
 
 np.config(show_funcname=True)
 

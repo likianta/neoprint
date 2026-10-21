@@ -1,6 +1,6 @@
 [project]
 name = "neoprint"
-version = "1.0.0b0"
+version = "1.0.0"
 description = "The artistic print for modern consoles."
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 license = "MIT"
@@ -24,14 +24,10 @@ dev = [
     # "loguru>=0.7.3",
     "objprint>=0.3.0",
     "rich>=15.0.0",
-    # "svg-ultralight>=0.34.0; python_version >= '3.12'",
 ]
 
 [project.optional-dependencies]
 termshot = ["catppuccin[pygments]>=2.5.0"]
-
-# [project.scripts]
-# ...
 
 [project.urls]
 homepage = "https://github.com/likianta/neoprint"

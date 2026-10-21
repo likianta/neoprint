@@ -10,12 +10,15 @@ class TimeDuration(TextObject):
     _color_d: T.Color
     _color_e: T.Color
     _color_s: T.Color
+    _short_form: bool
     _time_d: str
     _time_e: str
     _time_s: str
     _too_short: bool
 
-    def __init__(self, start: float, end: float) -> None:
+    def __init__(
+        self, start: float, end: float, short_form: bool = False
+    ) -> None:
         duration = end - start
         self._color_s = 'green'
         self._color_e = (
@@ -30,22 +33,36 @@ class TimeDuration(TextObject):
         self._time_s = pretty_time(start)
         self._time_e = pretty_time(end)
         self._time_d = pretty_duration(duration)
+        self._short_form = short_form
         self.editable = False
 
     def render(self, color_code_scheme: T.ColorCodeScheme = 'plain') -> str:
-        return render(
-            ('[', 'default', ''),
-            (self._time_s, self._color_s, ''),
-            (' -> ', 'default', 'dim'),
-            (self._time_e, self._color_e, 'dim' if self._too_short else ''),
-            (
-                '{:>8}'.format('({})'.format(self._time_d)),
-                self._color_d,
-                'dim' if self._too_short else '',
-            ),
-            (']', 'default', ''),
-            color_code_scheme=color_code_scheme,
-        )
+        if self._short_form:
+            return render(
+                ('[', self._color_e, 'dim' if self._too_short else ''),
+                (self._time_e, self._color_e, 'dim' if self._too_short else ''),
+                (
+                    '{:>8}'.format('({})'.format(self._time_d)),
+                    self._color_d,
+                    'dim' if self._too_short else '',
+                ),
+                (']', self._color_e, 'dim' if self._too_short else ''),
+                color_code_scheme=color_code_scheme,
+            )
+        else:
+            return render(
+                ('[', 'default', ''),
+                (self._time_s, self._color_s, ''),
+                (' -> ', 'default', 'dim'),
+                (self._time_e, self._color_e, 'dim' if self._too_short else ''),
+                (
+                    '{:>8}'.format('({})'.format(self._time_d)),
+                    self._color_d,
+                    'dim' if self._too_short else '',
+                ),
+                (']', 'default', ''),
+                color_code_scheme=color_code_scheme,
+            )
 
 
 class TimeStamp(TextObject):

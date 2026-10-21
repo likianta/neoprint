@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-a4ec39b5.js";
+            window.path_to_searchindex_js = "../searchindex-a6ffdec1.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-113366de.js"></script>
@@ -176,10 +176,10 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="timing"><a class="header" href="#timing">Timing</a></h1>
-<p>The <code>t</code> mark appends a timestamp to the message. It is useful for tracing how
+<p>The <code>t</code> mark prepends a timestamp to the message. It is useful for tracing how
 long stages take without exporting metrics.</p>
-<pre><code class="language-python">from time import sleep
-import neoprint as np
+<pre><code class="language-python">import neoprint as np
+from time import sleep
 
 np.show(':t', 'starting')
 sleep(0.2)
@@ -188,7 +188,7 @@ sleep(0.5)
 np.show(':t', 'connected')
 </code></pre>
 <p><img src="../images/timing.png" alt="Timing output"></p>
-<p>The prefix shows the previous timestamp, the current one, and the delta.
+<p>The prefix shows <code>[&lt;previous_timestamp&gt; -&gt; &lt;current_timestamp&gt; (&lt;delta&gt;)]</code>.
 Formatting scales automatically: milliseconds for short gaps, seconds,
 minutes, hours for long ones.</p>
 <h2 id="the-four-variants"><a class="header" href="#the-four-variants">The four variants</a></h2>
@@ -208,6 +208,9 @@ minutes, hours for long ones.</p>
 <p><code>:t2</code> and <code>:t3</code> share one “instant” pointer, so alternating them measures each
 step against the previous call. <code>:t0</code> moves that pointer to now and restarts
 the current scope’s timer.</p>
+<p>To shorten the duration form, use <code>:ts</code>/<code>:t2s</code>/<code>:t3s</code>, it strips the previous
+timestamp from the output:</p>
+<p><img src="../images/short-timing.png" alt="Timing output"></p>
 <h2 id="scopes"><a class="header" href="#scopes">Scopes</a></h2>
 <p>Inside <code>np.scope()</code>, <code>:t3</code> measures from the moment the scope was entered:</p>
 <pre><code class="language-python">with np.scope(name='job'):

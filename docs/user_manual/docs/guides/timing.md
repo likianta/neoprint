@@ -1,11 +1,11 @@
 # Timing
 
-The `t` mark appends a timestamp to the message. It is useful for tracing how
+The `t` mark prepends a timestamp to the message. It is useful for tracing how
 long stages take without exporting metrics.
 
 ```python
-from time import sleep
 import neoprint as np
+from time import sleep
 
 np.show(':t', 'starting')
 sleep(0.2)
@@ -16,7 +16,7 @@ np.show(':t', 'connected')
 
 ![Timing output](../images/timing.png)
 
-The prefix shows the previous timestamp, the current one, and the delta.
+The prefix shows `[<previous_timestamp> -> <current_timestamp> (<delta>)]`.
 Formatting scales automatically: milliseconds for short gaps, seconds,
 minutes, hours for long ones.
 
@@ -32,6 +32,11 @@ minutes, hours for long ones.
 `:t2` and `:t3` share one "instant" pointer, so alternating them measures each
 step against the previous call. `:t0` moves that pointer to now and restarts
 the current scope's timer.
+
+To shorten the duration form, use `:ts`/`:t2s`/`:t3s`, it strips the previous 
+timestamp from the output:
+
+![Timing output](../images/short-timing.png)
 
 ## Scopes
 

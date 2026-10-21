@@ -123,7 +123,9 @@ def format_list(
         if isinstance(marks['t'], float):
             before_body_parts.append(to.TimeStamp(marks['t']))
         else:
-            before_body_parts.append(to.TimeDuration(*marks['t']))
+            before_body_parts.append(
+                to.TimeDuration(*marks['t'], short_form=bool(marks['s']))
+            )
         before_body_parts.append(to.Space())
 
     # --------------------------------------------------------------------------

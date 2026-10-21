@@ -11,11 +11,14 @@ class Counter:
         self._scoped_indexes = defaultdict(int)
 
     def get_color_by_frame(self, frame: FrameInfo) -> str:
-        if frame.id not in self._colors:
+        return self.get_color_by_id(frame.id)
+
+    def get_color_by_id(self, id: str) -> str:
+        if id not in self._colors:
             # random bright color
             # https://stackoverflow.com/questions/43437309
-            self._colors[frame.id] = '#' + ''.join(choices('89abcdef', k=6))
-        return self._colors[frame.id]
+            self._colors[id] = '#' + ''.join(choices('89abcdef', k=6))
+        return self._colors[id]
 
     def reset(self) -> None:
         self._global_index = 0

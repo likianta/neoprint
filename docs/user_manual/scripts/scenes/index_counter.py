@@ -1,5 +1,5 @@
 import neoprint as np
 
-np.show(':i2', 'first')
-np.show(':i2', 'second')
-np.show(':i2', 'third')
+np.show(':i2', 'Monday')
+np.show(':i2', 'Tuesday')
+np.show(':i2', 'Wednesday')

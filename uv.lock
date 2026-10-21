@@ -12,14 +12,14 @@ prerelease-mode = "allow"
 
 [[package]]
 name = "argsense"
-version = "3.0.1a0"
-source = { registry = "http://localhost:2131/" }
+version = "3.0.0"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
 dependencies = [
     { name = "neoprint" },
     { name = "rich" },
 ]
 wheels = [
-    { url = "http://localhost:2131/argsense/argsense-3.0.1a0-py3-none-any.whl" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/ad/f5/50a78dc8fbf19450c45ec88702d8a65444103c9e69571caf8cd616a14459/argsense-3.0.0-py3-none-any.whl", hash = "sha256:3f6e612377b6438dd2bbfef2f6af9f69b9d88cf43647a2b758eea6c070cbf787", size = 85554, upload-time = "2026-10-19T10:58:45.582Z" },
 ]
 
 [[package]]
@@ -123,7 +123,7 @@ wheels = [
 [[package]]
 name = "lk-utils"
 version = "3.8.2"
-source = { registry = "http://localhost:2131/" }
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple/" }
 dependencies = [
     { name = "argsense", marker = "python_full_version >= '3.12'" },
     { name = "neoprint", marker = "python_full_version >= '3.12'" },
@@ -132,7 +132,7 @@ dependencies = [
     { name = "rich", marker = "python_full_version >= '3.12'" },
 ]
 wheels = [
-    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.2-py3-none-any.whl" },
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/68/af/5aaa74f6690a659da769958b0f1197adbc77a4298109d6ca1be5fb3766fb/lk_utils-3.8.2-py3-none-any.whl", hash = "sha256:1cf1840b8c2b61cf9ce1175a2fdca32fe92842587decc658a97e810853c1824d", size = 51782, upload-time = "2026-10-19T10:48:30.823Z" },
 ]
 
 [[package]]
@@ -189,10 +189,15 @@ wheels = [
 
 [[package]]
 name = "neoprint"
-version = "1.0.0a0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "rich" },
+]
+
+[package.optional-dependencies]
+termshot = [
+    { name = "catppuccin", extra = ["pygments"] },
 ]
 
 [package.dev-dependencies]
@@ -207,15 +212,19 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "rich", specifier = ">=14.0.0" }]
+requires-dist = [
+    { name = "catppuccin", extras = ["pygments"], marker = "extra == 'termshot'", specifier = ">=2.5.0" },
+    { name = "rich", specifier = ">=14.0.0" },
+]
+provides-extras = ["termshot"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "argsense", specifier = ">=3.0.0", index = "http://localhost:2131/" },
+    { name = "argsense", specifier = ">=3.0.0" },
     { name = "catppuccin", extras = ["pygments"], specifier = ">=2.5.0" },
     { name = "faker", marker = "python_full_version >= '3.12'", specifier = ">=40.8.0" },
     { name = "ipython", marker = "python_full_version >= '3.12'", specifier = ">=9.17.0" },
-    { name = "lk-utils", marker = "python_full_version >= '3.12'", specifier = ">=3.8.2", index = "http://localhost:2131/" },
+    { name = "lk-utils", marker = "python_full_version >= '3.12'", specifier = ">=3.8.2" },
     { name = "objprint", specifier = ">=0.3.0" },
     { name = "rich", specifier = ">=15.0.0" },
 ]

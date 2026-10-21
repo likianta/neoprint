@@ -65,11 +65,7 @@ class Source(TextObject):
 class FunctionName(Text):
     def __init__(self, frame: FrameInfo) -> None:
         super().__init__(
-            _pad_text(
-                frame.function_name,
-                unit_width=2,
-                least_width=8,  # 8 for the length of '<module>'
-            ),
+            _pad_text(frame.function_name, unit_width=2, least_width=4),
             color='yellow',
         )
 

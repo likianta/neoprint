@@ -233,9 +233,9 @@ def _render_index_counter() -> None:
         """
         import neoprint as np
 
-        np.show(':i2', 'first')
-        np.show(':i2', 'second')
-        np.show(':i2', 'third')
+        np.show(':i2', 'Monday')
+        np.show(':i2', 'Tuesday')
+        np.show(':i2', 'Wednesday')
         """,
     )
 
@@ -244,18 +244,27 @@ def _render_index_scopes() -> None:
     render(
         'index-scopes',
         'Custom Scopes',
-        'python scopes.py',
+        'python index_scopes.py',
         74,
-        'scopes.py',
+        'index_scopes.py',
         """
         import neoprint as np
 
-        with np.scope(name='download'):
+        np.config(show_funcname=True)
+
+        def foo():
             np.show(':i2', 'file A')
             np.show(':i2', 'file B')
+            np.show(':i2', 'file C')
+            np.show(':i2', 'file D')
+            np.show(':i2', 'file E')
 
-        with np.scope():
+        def bar():
             np.show(':i2', 'anonymous 1')
+            np.show(':i2', 'anonymous 2')
+
+        foo()
+        bar()
         """,
     )
 

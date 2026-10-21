@@ -2,6 +2,7 @@ import re
 import typing as tp
 
 from .config import config
+from .console import dprint
 from .frame import FrameInfo
 from .scope import counter
 from .scope import scope_mgr
@@ -226,7 +227,28 @@ class MarkupAnalyzer:
                     target_frame.file_path, target_frame.function_name
                 )
             )
-            out['i'] = (cnt, counter.get_color_by_frame(target_frame))
+            out['i'] = (
+                cnt,
+                counter.get_color_by_id(
+                    scope_mgr.current_scope
+                    or '{}:{}'.format(
+                        target_frame.file_path, target_frame.function_name
+                    )
+                ),
+            )
+            dprint(
+                scope_mgr.current_scope,
+                '{}:{}'.format(
+                    target_frame.file_path, target_frame.function_name
+                ),
+                cnt,
+                counter.get_color_by_id(
+                    scope_mgr.current_scope
+                    or '{}:{}'.format(
+                        target_frame.file_path, target_frame.function_name
+                    )
+                ),
+            )
         elif marks['i'] == 3:
             cnt = counter.update_global_index()
             out['i'] = (cnt, 'red')

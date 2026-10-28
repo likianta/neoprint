@@ -6,9 +6,9 @@ to follow without writing `print(i, ...)`.
 ```python
 import neoprint as np
 
-np.show(':i2', 'first')
-np.show(':i2', 'second')
-np.show(':i2', 'third')
+np.show(':i2', 'Monday')
+np.show(':i2', 'Tuesday')
+np.show(':i2', 'Wednesday')
 ```
 
 ![Index counters](../images/index-counter.png)
@@ -96,9 +96,13 @@ deliberately not share — a counter:
 with np.scope(name='download'):
     np.show(':i2', 'file A')
     np.show(':i2', 'file B')
+    np.show(':i2', 'file C')
+    np.show(':i2', 'file D')
+    np.show(':i2', 'file E')
 
 with np.scope():                 # anonymous scope
     np.show(':i2', 'anonymous 1')
+    np.show(':i2', 'anonymous 2')
 ```
 
 ![Custom scopes](../images/index-scopes.png)

@@ -15,8 +15,10 @@ from .text_object import Markdown
 def show(
     *args,
     markup: tp.Optional[str] = None,
+    end: str = '\n',
+    flush: tp.Optional[bool] = None,
     _frame: tp.Optional[FrameInfo] = None,
-    #   seldomly used, only for internal use. see also 
+    #   seldomly used, only for internal use. see also
     #   `.control._variable_print`.
 ) -> None:
     try:
@@ -28,14 +30,22 @@ def show(
             _raise_builtin_print=True,
         )
     except E.BuiltinPrintRequired as e:
-        bprint(*e.args)
+        bprint(*e.args, end=end, flush=flush)
     else:
         # dprint(args, result)
-        cprint(''.join(p.render(color_code_scheme='ansi') for p in result))
+        cprint(
+            ''.join(p.render(color_code_scheme='ansi') for p in result),
+            end=end,
+            flush=flush,
+        )
 
 
 def _show_alias(
-    _verbosity: str, *args, markup: tp.Optional[str] = None
+    _verbosity: str,
+    *args,
+    markup: tp.Optional[str] = None,
+    end: str = '\n',
+    flush: tp.Optional[bool] = None,
 ) -> None:
     if markup is None:
         args, markpos, markup = extract_markup_from_arguments(args)
@@ -51,9 +61,13 @@ def _show_alias(
             _raise_builtin_print=True,
         )
     except E.BuiltinPrintRequired as e:
-        bprint(*e.args)
+        bprint(*e.args, end=end, flush=flush)
     else:
-        cprint(''.join(p.render(color_code_scheme='ansi') for p in result))
+        cprint(
+            ''.join(p.render(color_code_scheme='ansi') for p in result),
+            end=end,
+            flush=flush,
+        )
 
 
 # shorthand

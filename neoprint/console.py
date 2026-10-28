@@ -32,9 +32,13 @@ class Console:
             return int(fallback)
         return 80
 
-    def print(self, text: str, end: str = '\n', flush: bool = False) -> None:
+    def print(
+        self, text: str, end: str = '\n', flush: tp.Optional[bool] = None
+    ) -> None:
         if debugger.enabled:
             debugger.output.append(text)
+        if flush is None:
+            flush = not sys.stdout.isatty()
         _builtin_print(text, end=end, flush=flush)
 
 

@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-a6ffdec1.js";
+            window.path_to_searchindex_js = "searchindex-329a3f58.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-113366de.js"></script>
@@ -874,9 +874,9 @@ inline markup. It is exported at the top level as <code>np.Text</code>.</p>
 to follow without writing <code>print(i, ...)</code>.</p>
 <pre><code class="language-python">import neoprint as np
 
-np.show(':i2', 'first')
-np.show(':i2', 'second')
-np.show(':i2', 'third')
+np.show(':i2', 'Monday')
+np.show(':i2', 'Tuesday')
+np.show(':i2', 'Wednesday')
 </code></pre>
 <p><img src="images/index-counter.png" alt="Index counters"></p>
 <p>Every counter is rendered as <code>[n]</code> before the body, in a color derived from its
@@ -940,9 +940,13 @@ deliberately not share — a counter:</p>
 <pre><code class="language-python">with np.scope(name='download'):
     np.show(':i2', 'file A')
     np.show(':i2', 'file B')
+    np.show(':i2', 'file C')
+    np.show(':i2', 'file D')
+    np.show(':i2', 'file E')
 
 with np.scope():                 # anonymous scope
     np.show(':i2', 'anonymous 1')
+    np.show(':i2', 'anonymous 2')
 </code></pre>
 <p><img src="images/index-scopes.png" alt="Custom scopes"></p>
 <p>Scopes also give <code>:t3</code> its own timeline; see <a href="#timing">Timing</a>.</p>
